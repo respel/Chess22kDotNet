@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,12 +7,7 @@ namespace Chess22kDotNet.JavaWrappers
 {
     public static class Arrays
     {
-        public static string ToString(IEnumerable<int> a)
-        {
-            return "[" + string.Join(", ", a) + "]";
-        }
-
-        public static string ToString(IEnumerable<float> a)
+        public static string ToString(IEnumerable a)
         {
             return "[" + string.Join(", ", a) + "]";
         }
