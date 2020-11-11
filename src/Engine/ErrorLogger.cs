@@ -56,7 +56,6 @@ namespace Chess22kDotNet.Engine
             }
             finally
             {
-                Serilog.Log.CloseAndFlush();
                 if (systemExit)
                 {
                     Environment.Exit(1);

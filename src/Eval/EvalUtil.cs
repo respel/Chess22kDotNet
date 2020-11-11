@@ -155,17 +155,11 @@ namespace Chess22kDotNet.Eval
         private static int CalculateScaleFactor(in ChessBoard cb)
         {
             // opposite bishops endgame?
-            if (MaterialUtil.OppositeBishops(cb.MaterialKey))
-            {
-                if ((cb.Pieces[White][Bishop] & Bitboard.BlackSquares) == 0 ==
-                    ((cb.Pieces[Black][Bishop] & Bitboard.WhiteSquares) == 0))
-                {
-                    return 2;
-                }
-            }
+            if (!MaterialUtil.OppositeBishops(cb.MaterialKey)) return 1;
+            return (cb.Pieces[White][Bishop] & Bitboard.BlackSquares) == 0 ==
+                   ((cb.Pieces[Black][Bishop] & Bitboard.WhiteSquares) == 0) ? 2 : 1;
 
             // TODO rook and pawns without passed pawns
-            return 1;
         }
 
         public static int CalculateSpace(in ChessBoard cb)

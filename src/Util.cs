@@ -77,17 +77,7 @@ namespace Chess22kDotNet
                    (RightTripleShift(i, 16) & 0xffff0000L) | RightTripleShift(i, 48);
         }
 
-        public static void Reverse(int[] array)
-        {
-            for (var i = 0; i < array.Length / 2; i++)
-            {
-                var temp = array[i];
-                array[i] = array[array.Length - 1 - i];
-                array[array.Length - 1 - i] = temp;
-            }
-        }
-
-        public static void Reverse(long[] array)
+        public static void Reverse<T>(T[] array)
         {
             for (var i = 0; i < array.Length / 2; i++)
             {

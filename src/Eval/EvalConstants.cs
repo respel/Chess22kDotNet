@@ -6,8 +6,8 @@ using static Chess22kDotNet.ChessConstants;
 namespace Chess22kDotNet.Eval
 {
     /**
- * Values have been tuned using the Texel's tuning method
- */
+    * Values have been tuned using the Texel's tuning method
+    */
     public static class EvalConstants
     {
         public const int SideToMoveBonus = 16; //cannot be tuned //TODO lower in endgame

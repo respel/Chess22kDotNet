@@ -96,28 +96,22 @@ namespace Chess22kDotNet.Eval
 
         public static bool onlyWhitePawnsOrOneNightOrBishop(in int material)
         {
-            switch (BitOperations.PopCount((ulong) (material & MaskMinorMajorWhite)))
+            return BitOperations.PopCount((ulong) (material & MaskMinorMajorWhite)) switch
             {
-                case 0:
-                    return true;
-                case 1:
-                    return BitOperations.PopCount((ulong) (material & MaskSingleBishopNightWhite)) == 1;
-                default:
-                    return false;
-            }
+                0 => true,
+                1 => BitOperations.PopCount((ulong) (material & MaskSingleBishopNightWhite)) == 1,
+                _ => false
+            };
         }
 
         public static bool onlyBlackPawnsOrOneNightOrBishop(in int material)
         {
-            switch (BitOperations.PopCount((ulong) (material & MaskMinorMajorBlack)))
+            return BitOperations.PopCount((ulong) (material & MaskMinorMajorBlack)) switch
             {
-                case 0:
-                    return true;
-                case 1:
-                    return BitOperations.PopCount((ulong) (material & MaskSingleBishopNightBlack)) == 1;
-                default:
-                    return false;
-            }
+                0 => true,
+                1 => BitOperations.PopCount((ulong) (material & MaskSingleBishopNightBlack)) == 1,
+                _ => false
+            };
         }
 
         public static bool HasPawns(in int material)

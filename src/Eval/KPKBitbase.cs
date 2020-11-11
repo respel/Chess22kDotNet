@@ -4,8 +4,8 @@ using static Chess22kDotNet.ChessConstants;
 namespace Chess22kDotNet.Eval
 {
     /**
- * Derived from Carballo which is derived from Stockfish bitbase.cpp
- */
+    * Derived from Carballo which is derived from Stockfish bitbase.cpp
+    */
     public static class KpkBitbase
     {
         // Each int stores results of 32 positions, one per bit, 24Kbytes
@@ -1603,7 +1603,7 @@ namespace Chess22kDotNet.Eval
             unchecked((int) 0xfcfcffff), unchecked((int) 0xffffefff), unchecked((int) 0xf8f8ffff),
             -4097, unchecked((int) 0xf0f1ffff), unchecked((int) 0xffffefff), 0x60e3ffff, unchecked((int) 0xffffefff),
             0xc7ffff, unchecked((int) 0xffffefff), 0xc8fffff, unchecked((int) 0xffffefff), 0x1e1fffff,
-            unchecked((int) 0xffffefff), 0x3f3fffff,
+            unchecked((int) 0xffffefff), 0x3f3fffff
         };
 
         // A KPK bitbase index is an integer in [0, IndexMax] range
