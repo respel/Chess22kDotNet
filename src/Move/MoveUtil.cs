@@ -125,8 +125,8 @@ namespace Chess22kDotNet.Move
         }
 
         /**
-	 * no promotion and no attack
-	 */
+	    * no promotion and no attack
+	    */
         public static bool IsQuiet(in int move)
         {
             return (move & MaskQuiet) == 0;
