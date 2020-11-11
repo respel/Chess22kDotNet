@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace Chess22kDotNet.Move
@@ -106,14 +107,14 @@ namespace Chess22kDotNet.Move
 
             CalculateBishopMovementMasks();
             CalculateRookMovementMasks();
-            GenerateShiftArrys();
+            GenerateShiftArrays();
             var bishopOccupancyVariations = CalculateVariations(BishopMagics);
             var rookOccupancyVariations = CalculateVariations(RookMagics);
             GenerateBishopMoveDatabase(bishopOccupancyVariations);
             GenerateRookMoveDatabase(rookOccupancyVariations);
         }
 
-        private static void GenerateShiftArrys()
+        private static void GenerateShiftArrays()
         {
             for (var i = 0x0; i < 0x40; i++)
             {
@@ -122,7 +123,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static long[][] CalculateVariations(Magic[] magics)
+        private static long[][] CalculateVariations(IReadOnlyList<Magic> magics)
         {
             var occupancyVariations = new long[0x40][];
             for (var index = 0x0; index < 0x40; index++)
@@ -209,7 +210,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void GenerateRookMoveDatabase(long[][] rookOccupancyVariations)
+        private static void GenerateRookMoveDatabase(IReadOnlyList<long[]> rookOccupancyVariations)
         {
             for (var index = 0x0; index < 0x40; index++)
             {
@@ -262,7 +263,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void GenerateBishopMoveDatabase(long[][] bishopOccupancyVariations)
+        private static void GenerateBishopMoveDatabase(IReadOnlyList<long[]> bishopOccupancyVariations)
         {
             for (var index = 0x0; index < 0x40; index++)
             {

@@ -102,19 +102,17 @@ namespace Chess22kDotNet.Eval
             }
 
             queenMoves &= cb.Attacks[enemyColor][Queen];
-            if (queenMoves != 0)
+            if (queenMoves == 0) return counter;
+            // safe check queen
+            if ((queenMoves & notDefended) != 0)
             {
-                // safe check queen
-                if ((queenMoves & notDefended) != 0)
-                {
-                    counter += EvalConstants.KsCheckQueen[BitOperations.PopCount((ulong) cb.Pieces[kingColor][All])];
-                }
+                counter += EvalConstants.KsCheckQueen[BitOperations.PopCount((ulong) cb.Pieces[kingColor][All])];
+            }
 
-                // safe check queen touch
-                if ((queenMoves & unsafeKingMoves) != 0)
-                {
-                    counter += EvalConstants.KsOther[0];
-                }
+            // safe check queen touch
+            if ((queenMoves & unsafeKingMoves) != 0)
+            {
+                counter += EvalConstants.KsOther[0];
             }
 
             return counter;
@@ -149,12 +147,7 @@ namespace Chess22kDotNet.Eval
                 return 0;
             }
 
-            if ((bishopMoves & safeSquares) == 0)
-            {
-                return EvalConstants.KsOther[3];
-            }
-
-            return EvalConstants.KsOther[2];
+            return (bishopMoves & safeSquares) == 0 ? EvalConstants.KsOther[3] : EvalConstants.KsOther[2];
         }
 
         private static bool KingBlockedAtLastRank(in long safeKingMoves)
