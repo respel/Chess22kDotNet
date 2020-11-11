@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using Chess22kDotNet.JavaWrappers;
 using Chess22kDotNet.Move;
 using Chess22kDotNet.Search;
-using Serilog;
 
 namespace Chess22kDotNet.Engine
 {
@@ -124,16 +122,6 @@ namespace Chess22kDotNet.Engine
             InfoThread.IsBackground = true;
 
             InfoThread.Priority = ThreadPriority.Lowest;
-
-            SetupLogger();
-        }
-
-        private static void SetupLogger()
-        {
-            // setup logger
-            const string dateFormat = "yyyy-MM-dd_HH.mm.ss.fff";
-            var completeFilePath = Path.GetTempPath() + "Chess22kDotNet_" + DateTime.Now.ToString(dateFormat) + ".log";
-            Log.Logger = new LoggerConfiguration().WriteTo.File(completeFilePath).CreateLogger();
         }
 
         public static void Main()

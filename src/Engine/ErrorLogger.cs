@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Serilog;
 
 namespace Chess22kDotNet.Engine
 {
@@ -7,15 +8,15 @@ namespace Chess22kDotNet.Engine
     {
         public static string StartFen = "";
 
-        // static ErrorLogger()
-        // {
-        //     // setup logger
-        //     const string dateFormat = "yyyy-MM-dd_HH.mm.ss.fff";
-        //     var completeFilePath = Path.GetTempPath() + "Chess22kDotNet_" + DateTime.Now.ToString(dateFormat) + ".log";
-        //     Serilog.Log.Logger = new LoggerConfiguration()
-        //         .WriteTo.File(completeFilePath)
-        //         .CreateLogger();
-        // }
+        static ErrorLogger()
+        {
+            // setup logger
+            const string dateFormat = "yyyy-MM-dd_HH.mm.ss.fff";
+            var completeFilePath = Path.GetTempPath() + "Chess22kDotNet_" + DateTime.Now.ToString(dateFormat) + ".log";
+            Serilog.Log.Logger = new LoggerConfiguration()
+                .WriteTo.File(completeFilePath)
+                .CreateLogger();
+        }
 
         public static void Log(ChessBoard cb, Exception e, bool systemExit)
         {
