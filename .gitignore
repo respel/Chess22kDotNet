@@ -1,0 +1,6 @@
+/bin
+/obj
+/.vs
+/.idea
+Folder.DotSettings.user
+.DS_Store
