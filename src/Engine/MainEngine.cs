@@ -15,7 +15,6 @@ namespace Chess22kDotNet.Engine
 
         public static bool Pondering;
         private static bool _maxTimeExceeded;
-        private static bool _calculating;
 
         public static int MaxDepth = EngineConstants.MaxPlies;
 
@@ -30,7 +29,6 @@ namespace Chess22kDotNet.Engine
                 SearchUtil.Start(_cb);
 
                 // calculation ready
-                _calculating = false;
                 source.Cancel();
 
                 UciOut.SendBestMove(_threadData);
@@ -64,10 +62,7 @@ namespace Chess22kDotNet.Engine
             while (!cancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(2000, cancellationToken);
-                if (_calculating)
-                {
-                    UciOut.SendInfo();
-                }
+                UciOut.SendInfo();
             }
         }
 
@@ -286,8 +281,7 @@ namespace Chess22kDotNet.Engine
             }
 
             TimeUtil.Start();
-
-            _calculating = true;
+            
             Task.Run(SearchTask);
         }
 
