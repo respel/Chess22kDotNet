@@ -124,12 +124,10 @@ namespace Chess22kDotNet.Eval
                        - GetSeeScore(cb, cb.ColorToMoveInverse, index, MoveUtil.GetMoveType(move), allPieces,
                            slidingMask);
             }
-            else
-            {
-                return EvalConstants.Material[MoveUtil.GetAttackedPieceIndex(move)]
-                       - GetSeeScore(cb, cb.ColorToMoveInverse, index, MoveUtil.GetSourcePieceIndex(move), allPieces,
-                           slidingMask);
-            }
+
+            return EvalConstants.Material[MoveUtil.GetAttackedPieceIndex(move)]
+                   - GetSeeScore(cb, cb.ColorToMoveInverse, index, MoveUtil.GetSourcePieceIndex(move), allPieces,
+                       slidingMask);
         }
     }
 }
