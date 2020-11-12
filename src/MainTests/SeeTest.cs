@@ -7,9 +7,9 @@ using Chess22kDotNet.Texel;
 namespace Chess22kDotNet.MainTests
 {
     /**
- * compares SEE scores vs Quiescence scores (material score with attacks on the same square)
- *
- */
+    * compares SEE scores vs Quiescence scores (material score with attacks on the same square)
+    *
+    */
     public class SeeTest
     {
         private static ThreadData _threadData = new ThreadData(0);

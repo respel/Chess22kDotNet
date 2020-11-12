@@ -1,17 +1,18 @@
 using System;
+using System.Diagnostics;
 using Chess22kDotNet.Engine;
 using Chess22kDotNet.Search;
 using Chess22kDotNet.Texel;
 
 namespace Chess22kDotNet.MainTests
-{
+{ 
     /**
- * compares regular search scores vs Quiescence scores
- *
- */
+    * * compares regular search scores vs Quiescence scores
+    *
+    */
     public class QSearchTest
     {
-        private static ThreadData _threadData = new ThreadData(0);
+        private static readonly ThreadData ThreadData = new ThreadData(0);
 
         public static void Main()
         {
@@ -28,7 +29,8 @@ namespace Chess22kDotNet.MainTests
             double totalPositions = 0;
             double sameScore = 0;
             long totalError = 0;
-            var start = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var watch = new Stopwatch();
+            watch.Start();
             foreach (var entry in fens)
             {
                 ChessBoardUtil.SetFen(entry.Key, cb);
@@ -38,9 +40,9 @@ namespace Chess22kDotNet.MainTests
                 }
 
                 totalPositions++;
-                var searchScore = NegamaxUtil.CalculateBestMove(cb, _threadData, 0, 1, Util.ShortMin, Util.ShortMax, 0);
+                var searchScore = NegamaxUtil.CalculateBestMove(cb, ThreadData, 0, 1, Util.ShortMin, Util.ShortMax, 0);
                 TtUtil.ClearValues();
-                var qScore = QuiescenceUtil.CalculateBestMove(cb, _threadData, Util.ShortMin, Util.ShortMax);
+                var qScore = QuiescenceUtil.CalculateBestMove(cb, ThreadData, Util.ShortMin, Util.ShortMax);
 
                 if (searchScore == qScore)
                 {
@@ -60,7 +62,7 @@ namespace Chess22kDotNet.MainTests
 
             var averageError = (int) (totalError / (totalPositions - sameScore));
             Console.WriteLine($"{sameScore / totalPositions:f4} {averageError}");
-            Console.WriteLine("msec: " + (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - start));
+            Console.WriteLine("msec: " + watch.ElapsedMilliseconds);
         }
     }
 }
