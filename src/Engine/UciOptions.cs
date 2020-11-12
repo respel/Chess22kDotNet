@@ -13,7 +13,6 @@ namespace Chess22kDotNet.Engine
             ThreadCount = threadCount;
             ChessBoardInstances.Init(threadCount);
             ThreadData.InitInstances(threadCount);
-            SearchUtil.SetThreadCount(threadCount);
         }
 
         public static void SetPonder(bool ponder)

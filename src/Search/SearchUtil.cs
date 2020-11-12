@@ -7,10 +7,6 @@ namespace Chess22kDotNet.Search
 {
     public static class SearchUtil
     {
-        public static void SetThreadCount(in int threadCount)
-        {
-        }
-
         public static void Start(in ChessBoard cb)
         {
             NegamaxUtil.IsRunning = true;
