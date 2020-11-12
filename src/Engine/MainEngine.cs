@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Chess22kDotNet.JavaWrappers;
 using Chess22kDotNet.Move;
 using Chess22kDotNet.Search;
@@ -18,110 +19,56 @@ namespace Chess22kDotNet.Engine
 
         public static int MaxDepth = EngineConstants.MaxPlies;
 
-        private static readonly object SynchronizedObject = new object();
-        private static readonly Thread SearchThread;
-        private static readonly Thread MaxTimeThread;
-        public static readonly Thread InfoThread;
-
-        private static void SearchWork()
+        private static void SearchTask()
         {
-            while (true)
+            try
             {
-                try
-                {
-                    lock (SynchronizedObject)
-                    {
-                        // to prevent spurious wakeups
-                        while (!_calculating)
-                        {
-                            Monitor.Wait(SynchronizedObject);
-                        }
-                    }
+                var source = new CancellationTokenSource();
+                Task.Run(async () => await MaxTimeTask(source.Token), source.Token);
+                Task.Run(async () => await InfoTask(source.Token), source.Token);
+                _maxTimeExceeded = false;
+                SearchUtil.Start(_cb);
 
-                    _maxTimeExceeded = false;
-                    SearchUtil.Start(_cb);
+                // calculation ready
+                _calculating = false;
+                source.Cancel();
 
-                    // calculation ready
-                    _calculating = false;
-                    MaxTimeThread.Interrupt();
-                    InfoThread.Interrupt();
-
-                    UciOut.SendBestMove(_threadData);
-                }
-                catch (Exception e)
-                {
-                    ErrorLogger.Log(_cb, e, true);
-                }
+                UciOut.SendBestMove(_threadData);
+            }
+            catch (Exception e)
+            {
+                ErrorLogger.Log(_cb, e, true);
             }
         }
 
-        private static void MaxTimeWork()
+        private static async Task MaxTimeTask(CancellationToken cancellationToken)
         {
-            while (true)
+            await Task.Delay((int) TimeUtil.GetMaxTimeMs(), cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
             {
-                try
-                {
-                    lock (SynchronizedObject)
-                    {
-                        // to prevent spurious wakeups
-                        while (!_calculating)
-                        {
-                            Monitor.Wait(SynchronizedObject);
-                        }
-                    }
-
-                    Thread.Sleep((int) TimeUtil.GetMaxTimeMs());
-                    if (Pondering)
-                    {
-                        _maxTimeExceeded = true;
-                    }
-                    else if (_threadData.GetBestMove() != 0)
-                    {
-                        Console.WriteLine("info string max time exceeded");
-                        NegamaxUtil.IsRunning = false;
-                    }
-                }
-                catch (ThreadInterruptedException)
-                {
-                    // do nothing
-                }
+                return;
+            }
+            if (Pondering)
+            {
+                _maxTimeExceeded = true;
+            }
+            else if (_threadData.GetBestMove() != 0)
+            {
+                Console.WriteLine("info string max time exceeded");
+                NegamaxUtil.IsRunning = false;
             }
         }
-
-        private static void InfoWork()
+        
+        private static async Task InfoTask(CancellationToken cancellationToken)
         {
-            while (true)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                try
+                await Task.Delay(2000, cancellationToken);
+                if (_calculating)
                 {
-                    Thread.Sleep(2000);
-                    if (_calculating)
-                    {
-                        UciOut.SendInfo();
-                    }
-                }
-                catch (ThreadInterruptedException)
-                {
-                    // do nothing
+                    UciOut.SendInfo();
                 }
             }
-        }
-
-        static MainEngine()
-        {
-            SearchThread = new Thread(SearchWork);
-            MaxTimeThread = new Thread(MaxTimeWork);
-            InfoThread = new Thread(InfoWork);
-
-            SearchThread.Name = "Chess22kDotNet-search";
-            MaxTimeThread.Name = "Chess22kDotNet-max-timer";
-            InfoThread.Name = "Chess22kDotNet-info";
-
-            SearchThread.IsBackground = true;
-            MaxTimeThread.IsBackground = true;
-            InfoThread.IsBackground = true;
-
-            InfoThread.Priority = ThreadPriority.Lowest;
         }
 
         public static void Main()
@@ -129,10 +76,7 @@ namespace Chess22kDotNet.Engine
             Thread.CurrentThread.Name = "Chess22kDotNet-main";
             _cb = ChessBoardInstances.Get(0);
             _threadData = ThreadData.GetInstance(0);
-
-            SearchThread.Start();
-            MaxTimeThread.Start();
-            InfoThread.Start();
+            
             Start();
         }
 
@@ -344,10 +288,7 @@ namespace Chess22kDotNet.Engine
             TimeUtil.Start();
 
             _calculating = true;
-            lock (SynchronizedObject)
-            {
-                Monitor.PulseAll(SynchronizedObject);
-            }
+            Task.Run(SearchTask);
         }
 
         private static void DoMoves(IEnumerable<string> moveTokens)

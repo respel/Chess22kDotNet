@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using Chess22kDotNet.Eval;
 using Chess22kDotNet.Move;
@@ -9,7 +10,8 @@ namespace Chess22kDotNet.Engine
     public static class UciOut
     {
         public static bool NoOutput = false;
-
+        private static readonly Stopwatch Stopwatch = new Stopwatch();
+        
         public static void SendUci()
         {
             Console.WriteLine("id name Chess22kDotNet " + GetVersion());
@@ -51,6 +53,11 @@ namespace Chess22kDotNet.Engine
                 return;
             }
 
+            if (Stopwatch.IsRunning && Stopwatch.ElapsedMilliseconds < 2000)
+            {
+                return;
+            }
+
             var totalMoveCount = ChessBoardUtil.CalculateTotalMoveCount();
             Console.WriteLine("info nodes " + totalMoveCount + " nps " + CalculateNps(totalMoveCount) + " hashfull " +
                               TtUtil.GetUsagePercentage());
@@ -63,8 +70,7 @@ namespace Chess22kDotNet.Engine
                 return;
             }
 
-            // restart info thread
-            MainEngine.InfoThread.Interrupt();
+            Stopwatch.Restart();
 
             var totalMoveCount = ChessBoardUtil.CalculateTotalMoveCount();
 
