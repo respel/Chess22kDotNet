@@ -1,5 +1,4 @@
 using System.Numerics;
-using Chess22kDotNet.JavaWrappers;
 using static Chess22kDotNet.ChessConstants;
 
 namespace Chess22kDotNet.Eval
