@@ -79,10 +79,6 @@ namespace Chess22kDotNet.Texel
                 {
                     totalError += await task;
                 }
-                catch (ThreadInterruptedException e)
-                {
-                    Console.WriteLine(e);
-                }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
