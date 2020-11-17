@@ -1,4 +1,3 @@
-using Chess22kDotNet;
 using Chess22kDotNet.Move;
 
 namespace Chess22kDotNet

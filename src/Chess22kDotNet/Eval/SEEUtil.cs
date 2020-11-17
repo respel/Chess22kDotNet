@@ -1,7 +1,6 @@
 using System;
 using System.Numerics;
 using Chess22kDotNet.Engine;
-using Chess22kDotNet.JavaWrappers;
 using Chess22kDotNet.Move;
 using static Chess22kDotNet.ChessConstants;
 
