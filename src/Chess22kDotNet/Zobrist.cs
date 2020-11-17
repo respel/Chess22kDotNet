@@ -46,7 +46,7 @@ namespace Chess22kDotNet
             SideToMove = LongRandom(r);
         }
 
-        public static void SetKey(in ChessBoard cb)
+        public static void SetKey(ChessBoard cb)
         {
             cb.ZobristKey = 0;
 
@@ -72,7 +72,7 @@ namespace Chess22kDotNet
             cb.ZobristKey ^= EpIndex[cb.EpIndex];
         }
 
-        public static void SetPawnKey(in ChessBoard cb)
+        public static void SetPawnKey(ChessBoard cb)
         {
             cb.PawnZobristKey = 0;
 

@@ -55,7 +55,7 @@ namespace Chess22kDotNet.Eval
         private const int MaskPawns = 0xf000f;
         private static readonly int[] MaskSlidingPieces = {0xff80, -8388608};
 
-        public static void SetKey(in ChessBoard cb)
+        public static void SetKey(ChessBoard cb)
         {
             cb.MaterialKey = 0;
             for (var color = White; color <= Black; color++)
@@ -68,33 +68,33 @@ namespace Chess22kDotNet.Eval
             }
         }
 
-        public static bool ContainsMajorPieces(in int material)
+        public static bool ContainsMajorPieces(int material)
         {
             return (material & MaskMinorMajorAll) != 0;
         }
 
-        public static bool HasNonPawnPieces(in int material, in int color)
+        public static bool HasNonPawnPieces(int material, int color)
         {
             return (material & MaskMinorMajor[color]) != 0;
         }
 
-        public static bool HasWhiteNonPawnPieces(in int material)
+        public static bool HasWhiteNonPawnPieces(int material)
         {
             return (material & MaskMinorMajorWhite) != 0;
         }
 
-        public static bool HasBlackNonPawnPieces(in int material)
+        public static bool HasBlackNonPawnPieces(int material)
         {
             return (material & MaskMinorMajorBlack) != 0;
         }
 
-        public static bool OppositeBishops(in int material)
+        public static bool OppositeBishops(int material)
         {
             return BitOperations.PopCount((ulong) (material & MaskMinorMajorAll)) == 2 &&
                    BitOperations.PopCount((ulong) (material & MaskSingleBishops)) == 2;
         }
 
-        public static bool onlyWhitePawnsOrOneNightOrBishop(in int material)
+        public static bool onlyWhitePawnsOrOneNightOrBishop(int material)
         {
             return BitOperations.PopCount((ulong) (material & MaskMinorMajorWhite)) switch
             {
@@ -104,7 +104,7 @@ namespace Chess22kDotNet.Eval
             };
         }
 
-        public static bool onlyBlackPawnsOrOneNightOrBishop(in int material)
+        public static bool onlyBlackPawnsOrOneNightOrBishop(int material)
         {
             return BitOperations.PopCount((ulong) (material & MaskMinorMajorBlack)) switch
             {
@@ -114,82 +114,82 @@ namespace Chess22kDotNet.Eval
             };
         }
 
-        public static bool HasPawns(in int material)
+        public static bool HasPawns(int material)
         {
             return (material & MaskPawns) != 0;
         }
 
-        public static bool HasPawnsOrQueens(in int material, in int color)
+        public static bool HasPawnsOrQueens(int material, int color)
         {
             return (material & MaskPawnsQueens[color]) != 0;
         }
 
-        public static bool hasOnlyNights(in int material, in int color)
+        public static bool hasOnlyNights(int material, int color)
         {
             return (material & MaskNonNights[color]) == 0;
         }
 
-        public static int GetMajorPieces(in int material, in int color)
+        public static int GetMajorPieces(int material, int color)
         {
             return Util.RightTripleShift(material & MaskMinorMajor[color], Shift[color]);
         }
 
-        public static bool HasSlidingPieces(in int material, in int color)
+        public static bool HasSlidingPieces(int material, int color)
         {
             return (material & MaskSlidingPieces[color]) != 0;
         }
 
-        public static bool IsKpk(in int material)
+        public static bool IsKpk(int material)
         {
             return material == KPK || material == KPK_;
         }
 
-        public static bool IsKbpk(in int material)
+        public static bool IsKbpk(int material)
         {
             return material == KBPK || material == KBPK_;
         }
 
-        public static bool IsKbpkp(in int material)
+        public static bool IsKbpkp(int material)
         {
             return material == KBPKP || material == KBPKP_;
         }
 
-        public static bool IsKbnk(in int material)
+        public static bool IsKbnk(int material)
         {
             return material == KBNK || material == KBNK_;
         }
 
-        public static bool IsKrkn(in int material)
+        public static bool IsKrkn(int material)
         {
             return material == KRKN || material == KRKN_;
         }
 
-        public static bool IsKrkb(in int material)
+        public static bool IsKrkb(int material)
         {
             return material == KRKB || material == KRKB_;
         }
 
-        public static bool IsKrbkb(in int material)
+        public static bool IsKrbkb(int material)
         {
             return material == KRBKB || material == KRBKB_;
         }
 
-        public static bool IsKrbkr(in int material)
+        public static bool IsKrbkr(int material)
         {
             return material == KRBKR || material == KRBKR_;
         }
 
-        public static bool IsKqkp(in int material)
+        public static bool IsKqkp(int material)
         {
             return material == KQKP || material == KQKP_;
         }
 
-        public static bool IsKrkp(in int material)
+        public static bool IsKrkp(int material)
         {
             return material == KRKP || material == KRKP_;
         }
 
-        public static bool IsDrawByMaterial(in ChessBoard cb)
+        public static bool IsDrawByMaterial(ChessBoard cb)
         {
             switch (cb.MaterialKey)
             {
@@ -219,7 +219,7 @@ namespace Chess22kDotNet.Eval
             return false;
         }
 
-        public static int CalculateEndgameScore(in ChessBoard cb)
+        public static int CalculateEndgameScore(ChessBoard cb)
         {
             switch (cb.MaterialKey)
             {

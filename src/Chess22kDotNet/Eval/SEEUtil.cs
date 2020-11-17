@@ -9,8 +9,8 @@ namespace Chess22kDotNet.Eval
 {
     public static class SeeUtil
     {
-        private static int GetSmallestAttackSeeMove(in long[] pieces, in int colorToMove, in int toIndex,
-            in long allPieces, in long slidingMask)
+        private static int GetSmallestAttackSeeMove(long[] pieces, int colorToMove, int toIndex,
+            long allPieces, long slidingMask)
         {
             // TODO stop when bad-capture
 
@@ -70,7 +70,7 @@ namespace Chess22kDotNet.Eval
             return -1;
         }
 
-        private static int GetSeeScore(in ChessBoard cb, in int colorToMove, in int toIndex, in int attackedPieceIndex,
+        private static int GetSeeScore(ChessBoard cb, int colorToMove, int toIndex, int attackedPieceIndex,
             long allPieces,
             long slidingMask)
         {
@@ -102,7 +102,7 @@ namespace Chess22kDotNet.Eval
                     cb.PieceIndexes[fromIndex], allPieces, slidingMask));
         }
 
-        public static int GetSeeCaptureScore(in ChessBoard cb, in int move)
+        public static int GetSeeCaptureScore(ChessBoard cb, int move)
         {
             if (EngineConstants.Assert)
             {

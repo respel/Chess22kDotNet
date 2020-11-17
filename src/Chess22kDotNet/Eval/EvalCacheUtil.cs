@@ -28,7 +28,7 @@ namespace Chess22kDotNet.Eval
             return ChessConstants.CacheMiss;
         }
 
-        public static void AddValue(in long key, in int score, int[] evalCache)
+        public static void AddValue(long key, int score, int[] evalCache)
         {
             if (!EngineConstants.EnableEvalCache)
             {
@@ -46,7 +46,7 @@ namespace Chess22kDotNet.Eval
             evalCache[index + 1] = score;
         }
 
-        private static int GetIndex(in long key)
+        private static int GetIndex(long key)
         {
             return (int) Util.RightTripleShift(key, Power2TableShifts) << 1;
         }

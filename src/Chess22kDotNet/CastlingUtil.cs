@@ -8,7 +8,7 @@ namespace Chess22kDotNet
     public static class CastlingUtil
     {
         // 4 bits: white-king,white-queen,black-king,black-queen
-        public static long GetCastlingIndexes(in ChessBoard cb)
+        public static long GetCastlingIndexes(ChessBoard cb)
         {
             if (cb.CastlingRights == 0)
             {
@@ -71,7 +71,7 @@ namespace Chess22kDotNet
             throw new ArgumentException("Unknown castling-right: " + cb.CastlingRights);
         }
 
-        public static int GetRookMovedOrAttackedCastlingRights(in int castlingRights, in int rookIndex)
+        public static int GetRookMovedOrAttackedCastlingRights(int castlingRights, int rookIndex)
         {
             return rookIndex switch
             {
@@ -87,7 +87,7 @@ namespace Chess22kDotNet
             };
         }
 
-        public static int GetKingMovedCastlingRights(in int castlingRights, in int kingIndex)
+        public static int GetKingMovedCastlingRights(int castlingRights, int kingIndex)
         {
             return kingIndex switch
             {
@@ -99,7 +99,7 @@ namespace Chess22kDotNet
             };
         }
 
-        private static long GetRookInBetweenIndex(in int castlingIndex)
+        private static long GetRookInBetweenIndex(int castlingIndex)
         {
             return castlingIndex switch
             {
@@ -111,7 +111,7 @@ namespace Chess22kDotNet
             };
         }
 
-        public static void UncastleRookUpdatePsqt(in ChessBoard cb, in int kingToIndex)
+        public static void UncastleRookUpdatePsqt(ChessBoard cb, int kingToIndex)
         {
             switch (kingToIndex)
             {
@@ -136,7 +136,7 @@ namespace Chess22kDotNet
             throw new ArgumentException("Incorrect king castling to-index: " + kingToIndex);
         }
 
-        public static void CastleRookUpdateKeyAndPsqt(in ChessBoard cb, in int kingToIndex)
+        public static void CastleRookUpdateKeyAndPsqt(ChessBoard cb, int kingToIndex)
         {
             switch (kingToIndex)
             {
@@ -165,7 +165,7 @@ namespace Chess22kDotNet
             throw new ArgumentException("Incorrect king castling to-index: " + kingToIndex);
         }
 
-        private static void CastleRookUpdatePsqt(in ChessBoard cb, in int fromIndex, in int toIndex, in int color)
+        private static void CastleRookUpdatePsqt(ChessBoard cb, int fromIndex, int toIndex, int color)
         {
             cb.Pieces[color][All] ^= Util.PowerLookup[fromIndex] | Util.PowerLookup[toIndex];
             cb.Pieces[color][Rook] ^= Util.PowerLookup[fromIndex] | Util.PowerLookup[toIndex];
@@ -174,7 +174,7 @@ namespace Chess22kDotNet
             cb.PsqtScore += EvalConstants.Psqt[Rook][color][toIndex] - EvalConstants.Psqt[Rook][color][fromIndex];
         }
 
-        public static bool IsValidCastlingMove(in ChessBoard cb, in int fromIndex, in int toIndex)
+        public static bool IsValidCastlingMove(ChessBoard cb, int fromIndex, int toIndex)
         {
             if (cb.CheckingPieces != 0)
             {

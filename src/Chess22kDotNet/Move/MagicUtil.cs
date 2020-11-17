@@ -56,21 +56,21 @@ namespace Chess22kDotNet.Move
         private static readonly Magic[] RookMagics = new Magic[0x40];
         private static readonly Magic[] BishopMagics = new Magic[0x40];
 
-        public static long GetRookMoves(in int fromIndex, in long allPieces)
+        public static long GetRookMoves(int fromIndex, long allPieces)
         {
             var magic = RookMagics[fromIndex];
             return magic.MagicMoves[
                 (int) Util.RightTripleShift((allPieces & magic.MovementMask) * magic.MagicNumber, magic.Shift)];
         }
 
-        public static long GetBishopMoves(in int fromIndex, in long allPieces)
+        public static long GetBishopMoves(int fromIndex, long allPieces)
         {
             var magic = BishopMagics[fromIndex];
             return magic.MagicMoves[
                 (int) Util.RightTripleShift((allPieces & magic.MovementMask) * magic.MagicNumber, magic.Shift)];
         }
 
-        public static long GetQueenMoves(in int fromIndex, in long allPieces)
+        public static long GetQueenMoves(int fromIndex, long allPieces)
         {
             var rookMagic = RookMagics[fromIndex];
             var bishopMagic = BishopMagics[fromIndex];
@@ -82,17 +82,17 @@ namespace Chess22kDotNet.Move
                            bishopMagic.Shift)];
         }
 
-        public static long GetRookMovesEmptyBoard(in int fromIndex)
+        public static long GetRookMovesEmptyBoard(int fromIndex)
         {
             return RookMagics[fromIndex].MagicMoves[0x0];
         }
 
-        public static long GetBishopMovesEmptyBoard(in int fromIndex)
+        public static long GetBishopMovesEmptyBoard(int fromIndex)
         {
             return BishopMagics[fromIndex].MagicMoves[0x0];
         }
 
-        public static long GetQueenMovesEmptyBoard(in int fromIndex)
+        public static long GetQueenMovesEmptyBoard(int fromIndex)
         {
             return BishopMagics[fromIndex].MagicMoves[0x0] | RookMagics[fromIndex].MagicMoves[0x0];
         }

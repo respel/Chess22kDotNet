@@ -34,9 +34,9 @@ namespace Chess22kDotNet.Search
 
         public static bool IsRunning = false;
 
-        public static int CalculateBestMove(in ChessBoard cb, in ThreadData threadData, in int ply, int depth,
+        public static int CalculateBestMove(ChessBoard cb, ThreadData threadData, int ply, int depth,
             int alpha, int beta,
-            in int nullMoveCounter)
+            int nullMoveCounter)
         {
             if (!IsRunning)
             {
@@ -475,7 +475,7 @@ namespace Chess22kDotNet.Search
             return bestScore;
         }
 
-        private static int Extensions(in ChessBoard cb)
+        private static int Extensions(ChessBoard cb)
         {
             /* check-extension */
             // TODO extend discovered checks?

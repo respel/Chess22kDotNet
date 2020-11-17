@@ -7,7 +7,7 @@ namespace Chess22kDotNet.Eval
 {
     public static class PassedPawnEval
     {
-        public static int CalculateScores(in ChessBoard cb)
+        public static int CalculateScores(ChessBoard cb)
         {
             var score = 0;
 
@@ -60,7 +60,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        private static int GetPassedPawnScore(in ChessBoard cb, in int index, in int color)
+        private static int GetPassedPawnScore(ChessBoard cb, int index, int color)
         {
             var nextIndex = index + ColorFactor8[color];
             var square = Util.PowerLookup[index];
@@ -131,7 +131,7 @@ namespace Chess22kDotNet.Eval
             return (int) (EvalConstants.PassedScoreEg[scoreIndex] * multiplier);
         }
 
-        private static int GetBlackPromotionDistance(in ChessBoard cb, in int index)
+        private static int GetBlackPromotionDistance(ChessBoard cb, int index)
         {
             // check if it cannot be stopped
             var promotionDistance = Util.RightTripleShift(index, 3);
@@ -196,7 +196,7 @@ namespace Chess22kDotNet.Eval
             return Util.ShortMax;
         }
 
-        private static int GetWhitePromotionDistance(in ChessBoard cb, in int index)
+        private static int GetWhitePromotionDistance(ChessBoard cb, int index)
         {
             // check if it cannot be stopped
             var promotionDistance = 7 - index / 8;

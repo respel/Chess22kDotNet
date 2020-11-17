@@ -9,7 +9,7 @@ namespace Chess22kDotNet.Search
     {
         private const int FutilityMargin = 150;
 
-        public static int CalculateBestMove(in ChessBoard cb, in ThreadData threadData, int alpha, in int beta)
+        public static int CalculateBestMove(ChessBoard cb, ThreadData threadData, int alpha, in int beta)
         {
             if (Statistics.Enabled)
             {

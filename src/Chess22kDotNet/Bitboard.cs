@@ -184,17 +184,17 @@ namespace Chess22kDotNet
             FileB
         };
 
-        public static long GetWhitePawnAttacks(in long pawns)
+        public static long GetWhitePawnAttacks(long pawns)
         {
             return pawns << 9 & NotFileH | pawns << 7 & NotFileA;
         }
 
-        public static long GetBlackPawnAttacks(in long pawns)
+        public static long GetBlackPawnAttacks(long pawns)
         {
             return Util.RightTripleShift(pawns, 9) & NotFileA | Util.RightTripleShift(pawns, 7) & NotFileH;
         }
 
-        public static long GetPawnNeighbours(in long pawns)
+        public static long GetPawnNeighbours(long pawns)
         {
             return pawns << 1 & NotFileH | Util.RightTripleShift(pawns, 1) & NotFileA;
         }
@@ -211,7 +211,7 @@ namespace Chess22kDotNet
             return (file + rank) & 7;
         }
 
-        public static long GetWhitePassedPawnMask(in int index)
+        public static long GetWhitePassedPawnMask(int index)
         {
             if (index > 55)
             {
@@ -221,7 +221,7 @@ namespace Chess22kDotNet
             return (Files[index & 7] | FilesAdjacent[index & 7]) << ((Util.RightTripleShift(index, 3) << 3) + 8);
         }
 
-        public static long GetBlackPassedPawnMask(in int index)
+        public static long GetBlackPassedPawnMask(int index)
         {
             return index < 8
                 ? 0
@@ -229,22 +229,22 @@ namespace Chess22kDotNet
                     Util.RightTripleShift(71 - index, 3) << 3);
         }
 
-        public static long GetWhiteAdjacentMask(in int index)
+        public static long GetWhiteAdjacentMask(int index)
         {
             return GetWhitePassedPawnMask(index) & ~Files[index & 7];
         }
 
-        public static long GetBlackAdjacentMask(in int index)
+        public static long GetBlackAdjacentMask(int index)
         {
             return GetBlackPassedPawnMask(index) & ~Files[index & 7];
         }
 
-        public static long GetFile(in long square)
+        public static long GetFile(long square)
         {
             return Files[BitOperations.TrailingZeroCount(square) & 7];
         }
 
-        public static long GetRank(in long square)
+        public static long GetRank(long square)
         {
             return Ranks[BitOperations.TrailingZeroCount(square) / 8];
         }

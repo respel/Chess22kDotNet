@@ -13,7 +13,7 @@ namespace Chess22kDotNet.Eval
                                                 4 * EvalConstants.Phase[Rook]
                                                 + 2 * EvalConstants.Phase[Queen];
 
-        public static int GetScore(in ChessBoard cb, in ThreadData threadData)
+        public static int GetScore(ChessBoard cb, ThreadData threadData)
         {
             if (Statistics.Enabled)
             {
@@ -32,7 +32,7 @@ namespace Chess22kDotNet.Eval
             return CalculateScore(cb, threadData);
         }
 
-        public static int CalculateScore(in ChessBoard cb, in ThreadData threadData)
+        public static int CalculateScore(ChessBoard cb, ThreadData threadData)
         {
             var score = MaterialUtil.ScoreUnknown;
             if (BitOperations.PopCount((ulong) cb.AllPieces) <= 5)
@@ -78,7 +78,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        private static int AdjustEndgame(in ChessBoard cb, in int score, in int color, int[] materialCache)
+        private static int AdjustEndgame(ChessBoard cb, int score, int color, int[] materialCache)
         {
             if (BitOperations.PopCount((ulong) cb.Pieces[color][All]) > 3)
             {
@@ -120,7 +120,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        private static int TaperedEval(in ChessBoard cb, in ThreadData threadData)
+        private static int TaperedEval(ChessBoard cb, ThreadData threadData)
         {
             var pawnScore = GetPawnScores(cb, threadData.PawnCache);
             var mgEgScore = CalculateMobilityScoresAndSetAttacks(cb) + CalculateThreats(cb) +
@@ -137,22 +137,22 @@ namespace Chess22kDotNet.Eval
             return (scoreMg * (PhaseTotal - cb.Phase) + scoreEg * cb.Phase) / PhaseTotal / CalculateScaleFactor(cb);
         }
 
-        public static int Score(in int mgScore, in int egScore)
+        public static int Score(int mgScore, int egScore)
         {
             return (mgScore << 16) + egScore;
         }
 
-        public static int GetMgScore(in int score)
+        public static int GetMgScore(int score)
         {
             return (score + 0x8000) >> 16;
         }
 
-        public static int GetEgScore(in int score)
+        public static int GetEgScore(int score)
         {
             return (short) (score & 0xffff);
         }
 
-        private static int CalculateScaleFactor(in ChessBoard cb)
+        private static int CalculateScaleFactor(ChessBoard cb)
         {
             // opposite bishops endgame?
             if (!MaterialUtil.OppositeBishops(cb.MaterialKey)) return 1;
@@ -162,7 +162,7 @@ namespace Chess22kDotNet.Eval
             // TODO rook and pawns without passed pawns
         }
 
-        public static int CalculateSpace(in ChessBoard cb)
+        public static int CalculateSpace(ChessBoard cb)
         {
             if (!MaterialUtil.HasPawns(cb.MaterialKey))
             {
@@ -195,7 +195,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        public static int GetPawnScores(in ChessBoard cb, in long[] pawnCache)
+        public static int GetPawnScores(ChessBoard cb, long[] pawnCache)
         {
             if (!EngineConstants.TestEvalCaches)
             {
@@ -211,7 +211,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        private static int CalculatePawnScores(in ChessBoard cb)
+        private static int CalculatePawnScores(ChessBoard cb)
         {
             var score = 0;
 
@@ -399,7 +399,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        public static int GetImbalances(in ChessBoard cb, int[] materialCache)
+        public static int GetImbalances(ChessBoard cb, int[] materialCache)
         {
             if (!EngineConstants.TestEvalCaches)
             {
@@ -415,7 +415,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        private static int CalculateImbalances(in ChessBoard cb)
+        private static int CalculateImbalances(ChessBoard cb)
         {
             var score = 0;
 
@@ -472,7 +472,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        public static int CalculateThreats(in ChessBoard cb)
+        public static int CalculateThreats(ChessBoard cb)
         {
             var score = 0;
             var whites = cb.Pieces[White][All];
@@ -582,7 +582,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        public static int CalculateOthers(in ChessBoard cb)
+        public static int CalculateOthers(ChessBoard cb)
         {
             var score = 0;
             long piece;
@@ -881,18 +881,16 @@ namespace Chess22kDotNet.Eval
                 }
             }
 
-            if (cb.CastlingRights != 0)
-            {
-                score += BitOperations.PopCount((ulong) (cb.CastlingRights & 12)) *
-                         EvalConstants.OtherScores[EvalConstants.IxCastling];
-                score -= BitOperations.PopCount((ulong) (cb.CastlingRights & 3)) *
-                         EvalConstants.OtherScores[EvalConstants.IxCastling];
-            }
+            if (cb.CastlingRights == 0) return score;
+            score += BitOperations.PopCount((ulong) (cb.CastlingRights & 12)) *
+                     EvalConstants.OtherScores[EvalConstants.IxCastling];
+            score -= BitOperations.PopCount((ulong) (cb.CastlingRights & 3)) *
+                     EvalConstants.OtherScores[EvalConstants.IxCastling];
 
             return score;
         }
 
-        public static int CalculatePawnShieldBonus(in ChessBoard cb)
+        public static int CalculatePawnShieldBonus(ChessBoard cb)
         {
             if (!MaterialUtil.HasPawns(cb.MaterialKey))
             {
@@ -936,7 +934,7 @@ namespace Chess22kDotNet.Eval
             return whiteScore - blackScore;
         }
 
-        public static int CalculateMobilityScoresAndSetAttacks(in ChessBoard cb)
+        public static int CalculateMobilityScoresAndSetAttacks(ChessBoard cb)
         {
             cb.ClearEvalAttacks();
 
@@ -1037,7 +1035,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        public static int CalculatePositionScores(in ChessBoard cb)
+        public static int CalculatePositionScores(ChessBoard cb)
         {
             var score = 0;
             for (var color = White; color <= Black; color++)
@@ -1056,7 +1054,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        public static int CalculateMaterialScore(in ChessBoard cb)
+        public static int CalculateMaterialScore(ChessBoard cb)
         {
             return (BitOperations.PopCount((ulong) cb.Pieces[White][Pawn]) -
                     BitOperations.PopCount((ulong) cb.Pieces[Black][Pawn])) *

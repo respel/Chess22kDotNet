@@ -108,12 +108,12 @@ namespace Chess22kDotNet
             return ReverseBytes(bitboard);
         }
 
-        public static int GetDistance(in int index1, in int index2)
+        public static int GetDistance(int index1, int index2)
         {
             return Distance[index1][index2];
         }
 
-        public static int GetDistance(in long sq1, in long sq2)
+        public static int GetDistance(long sq1, long sq2)
         {
             return GetDistance(BitOperations.TrailingZeroCount(sq1), BitOperations.TrailingZeroCount(sq2));
         }
@@ -149,7 +149,7 @@ namespace Chess22kDotNet
         /**
 	    * returns the black corresponding square
 	    */
-        public static int GetRelativeSquare(in int color, in int index)
+        public static int GetRelativeSquare(int color, int index)
         {
             return index ^ (56 * color);
         }

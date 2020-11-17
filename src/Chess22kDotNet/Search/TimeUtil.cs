@@ -100,7 +100,7 @@ namespace Chess22kDotNet.Search
             _maxTimeMs = moveTimeMs;
         }
 
-        public static void SetSimpleTimeWindow(in long thinkingTimeMs)
+        public static void SetSimpleTimeWindow(long thinkingTimeMs)
         {
             // if we have more than 50% of the time left, continue with next ply
             _timeWindowNs = 1_000_000 * thinkingTimeMs / 2;

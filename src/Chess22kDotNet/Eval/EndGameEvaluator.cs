@@ -6,12 +6,12 @@ namespace Chess22kDotNet.Eval
 {
     public static class EndGameEvaluator
     {
-        public static int CalculateKingCorneredScore(in ChessBoard cb, in int leadingColor)
+        public static int CalculateKingCorneredScore(ChessBoard cb, int leadingColor)
         {
             return Bitboard.ManhattanCenterDistance(cb.KingIndex[1 - leadingColor]) * ColorFactor[leadingColor];
         }
 
-        public static int CalculateKbnkScore(in ChessBoard cb)
+        public static int CalculateKbnkScore(ChessBoard cb)
         {
             if (BitOperations.PopCount((ulong) cb.Pieces[White][All]) > 1)
             {
@@ -21,7 +21,7 @@ namespace Chess22kDotNet.Eval
             return -1000 - CalculateKbnkScore(cb, Black);
         }
 
-        private static int CalculateKbnkScore(in ChessBoard cb, in int color)
+        private static int CalculateKbnkScore(ChessBoard cb, int color)
         {
             if ((cb.Pieces[color][Bishop] & Bitboard.WhiteSquares) != 0)
             {
@@ -33,7 +33,7 @@ namespace Chess22kDotNet.Eval
                    ((Bitboard.BlackCorners & cb.Pieces[1 - color][King]) != 0 ? 4 : 0);
         }
 
-        public static int CalculateKrknScore(in ChessBoard cb)
+        public static int CalculateKrknScore(ChessBoard cb)
         {
             if (cb.Pieces[White][Rook] != 0)
             {
@@ -45,7 +45,7 @@ namespace Chess22kDotNet.Eval
                    Util.GetDistance(cb.Pieces[White][King], cb.Pieces[White][Knight]) * 10;
         }
 
-        public static int CalculateKrkbScore(in ChessBoard cb)
+        public static int CalculateKrkbScore(ChessBoard cb)
         {
             if (cb.Pieces[White][Rook] != 0)
             {
@@ -55,7 +55,7 @@ namespace Chess22kDotNet.Eval
             return -Bitboard.ManhattanCenterDistance(cb.KingIndex[White]) * 2 - (cb.PinnedPieces == 0 ? 0 : 10);
         }
 
-        public static bool IsKrkpDrawish(in ChessBoard cb)
+        public static bool IsKrkpDrawish(ChessBoard cb)
         {
             var leadingColor = cb.Pieces[White][Rook] != 0 ? White : Black;
             var rook = cb.Pieces[leadingColor][Rook];
@@ -103,7 +103,7 @@ namespace Chess22kDotNet.Eval
             return false;
         }
 
-        public static bool IsKqkpDrawish(in ChessBoard cb)
+        public static bool IsKqkpDrawish(ChessBoard cb)
         {
             var leadingColor = cb.Pieces[White][Queen] != 0 ? White : Black;
             var pawn = cb.Pieces[1 - leadingColor][Pawn];
@@ -140,7 +140,7 @@ namespace Chess22kDotNet.Eval
             return Util.GetDistance(cb.KingIndex[leadingColor], BitOperations.TrailingZeroCount(pawn)) >= 4;
         }
 
-        public static bool IsKbpkDraw(in long[][] pieces)
+        public static bool IsKbpkDraw(long[][] pieces)
         {
             if (pieces[White][Bishop] != 0)
             {
@@ -172,7 +172,7 @@ namespace Chess22kDotNet.Eval
             return false;
         }
 
-        public static bool IsKbpkpDraw(in long[][] pieces)
+        public static bool IsKbpkpDraw(long[][] pieces)
         {
             if (pieces[White][Bishop] != 0)
             {

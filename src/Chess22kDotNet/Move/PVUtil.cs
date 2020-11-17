@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Chess22kDotNet.Search;
 
@@ -6,7 +7,7 @@ namespace Chess22kDotNet.Move
 {
     public static class PvUtil
     {
-        public static void Set(in ChessBoard cb, in int[] moves, in int bestMove)
+        public static void Set(ChessBoard cb, int[] moves, int bestMove)
         {
             Array.Fill(moves, 0);
             moves[0] = bestMove;
@@ -41,7 +42,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        public static string AsString(in int[] moves)
+        public static string AsString(IEnumerable<int> moves)
         {
             var sb = new StringBuilder();
             foreach (var move in moves)

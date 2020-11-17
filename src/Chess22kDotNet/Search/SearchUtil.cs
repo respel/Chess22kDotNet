@@ -7,7 +7,7 @@ namespace Chess22kDotNet.Search
 {
     public static class SearchUtil
     {
-        public static void Start(in ChessBoard cb)
+        public static void Start(ChessBoard cb)
         {
             NegamaxUtil.IsRunning = true;
             cb.MoveCount = 0;

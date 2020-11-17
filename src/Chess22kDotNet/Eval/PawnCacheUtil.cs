@@ -6,7 +6,7 @@ namespace Chess22kDotNet.Eval
     {
         private const int Power2TableShifts = 64 - EngineConstants.Power2PawnEvalEntries;
 
-        public static int UpdateBoardAndGetScore(in ChessBoard cb, in long[] pawnCache)
+        public static int UpdateBoardAndGetScore(ChessBoard cb, long[] pawnCache)
         {
             if (!EngineConstants.EnablePawnEvalCache)
             {
@@ -37,7 +37,7 @@ namespace Chess22kDotNet.Eval
             return ChessConstants.CacheMiss;
         }
 
-        public static void AddValue(in long key, in int score, in long passedPawnsAndOutpostsValue, in long[] pawnCache)
+        public static void AddValue(long key, int score, long passedPawnsAndOutpostsValue, long[] pawnCache)
         {
             if (!EngineConstants.EnablePawnEvalCache)
             {
@@ -56,7 +56,7 @@ namespace Chess22kDotNet.Eval
             pawnCache[index + 2] = score;
         }
 
-        private static int GetIndex(in long key)
+        private static int GetIndex(long key)
         {
             return (int) Util.RightTripleShift(key, Power2TableShifts) * 3;
         }

@@ -79,8 +79,7 @@ namespace Chess22kDotNet.Move
             ToFile = moveString[2];
             ToRank = int.Parse(moveString.Substring(3, 1));
             ToIndex = (ToRank - 1) * 8 + 104 - ToFile;
-
-            //@formatter:off
+            
             PieceIndex =
                 (cb.Pieces[cb.ColorToMove][ChessConstants.Pawn] & Util.PowerLookup[FromIndex]) != 0
                     ? ChessConstants.Pawn
@@ -117,7 +116,6 @@ namespace Chess22kDotNet.Move
                                        Util.PowerLookup[ToIndex]) != 0
                                         ? ChessConstants.Rook
                                         : 0;
-            //@formatter:on
 
             if (PieceIndexAttacked == 0)
             {

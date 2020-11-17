@@ -5,7 +5,7 @@ namespace Chess22kDotNet
 {
     public static class CheckUtil
     {
-        public static bool IsInCheck(in int kingIndex, in int colorToMove, in long[] enemyPieces, in long allPieces)
+        public static bool IsInCheck(int kingIndex, int colorToMove, long[] enemyPieces, long allPieces)
         {
             // put 'super-piece' in kings position
             return (enemyPieces[Knight] & StaticMoves.KnightMoves[kingIndex]
@@ -15,8 +15,8 @@ namespace Chess22kDotNet
                 ) != 0;
         }
 
-        public static bool IsInCheckIncludingKing(in int kingIndex, in int colorToMove, in long[] enemyPieces,
-            in long allPieces)
+        public static bool IsInCheckIncludingKing(int kingIndex, int colorToMove, long[] enemyPieces,
+            long allPieces)
         {
             // put 'super-piece' in kings position
             return (enemyPieces[Knight] & StaticMoves.KnightMoves[kingIndex]

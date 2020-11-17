@@ -1615,14 +1615,14 @@ namespace Chess22kDotNet.Eval
         // bit 12: side to move 1 WHITE
         // bit 13-14: white pawn file (from FILE_H to FILE_E)
         // bit 15-17: white pawn RANK_7 - rank (from RANK_7 - RANK_7 to RANK_7 - RANK_2)
-        private static int GetIndex(in bool whiteToMove, in int blackKingIndex, in int whiteKingIndex, in int pawnIndex)
+        private static int GetIndex(bool whiteToMove, int blackKingIndex, int whiteKingIndex, int pawnIndex)
         {
             return whiteKingIndex + (blackKingIndex << 6) + //
                    ((whiteToMove ? 1 : 0) << 12) + //
                    ((7 - pawnIndex & 7) << 13) + ((6 - pawnIndex / 8) << 15);
         }
 
-        public static bool IsDraw(in ChessBoard cb)
+        public static bool IsDraw(ChessBoard cb)
         {
             var whiteKingIndex = cb.KingIndex[White];
             var blackKingIndex = cb.KingIndex[Black];

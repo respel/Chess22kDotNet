@@ -22,7 +22,7 @@ namespace Chess22kDotNet.Engine
             Console.WriteLine("uciok");
         }
 
-        public static void SendBestMove(in ThreadData threadData)
+        public static void SendBestMove(ThreadData threadData)
         {
             if (NoOutput)
             {
@@ -63,7 +63,7 @@ namespace Chess22kDotNet.Engine
                               TtUtil.GetUsagePercentage());
         }
 
-        public static void SendPlyInfo(in ThreadData threadData)
+        public static void SendPlyInfo(ThreadData threadData)
         {
             if (NoOutput)
             {
@@ -83,7 +83,7 @@ namespace Chess22kDotNet.Engine
                               + PvUtil.AsString(threadData.Pv));
         }
 
-        public static void Eval(in ChessBoard cb, in ThreadData threadData)
+        public static void Eval(ChessBoard cb, ThreadData threadData)
         {
             var mobilityScore = EvalUtil.CalculateMobilityScoresAndSetAttacks(cb);
             Console.WriteLine(" Material imbalance: " + EvalUtil.GetImbalances(cb, threadData.MaterialCache));

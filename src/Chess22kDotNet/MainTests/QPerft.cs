@@ -29,7 +29,7 @@ namespace Chess22kDotNet.MainTests
             // testPerft8();
         }
 
-        private static long Qperft(in ChessBoard chessBoard, in int depth)
+        private static long Qperft(ChessBoard chessBoard, int depth)
         {
             ThreadData.StartPly();
             MoveGenerator.GenerateMoves(ThreadData, chessBoard);
@@ -67,7 +67,7 @@ namespace Chess22kDotNet.MainTests
             return counter;
         }
 
-        public static long Qdivide(in ChessBoard chessBoard, in int depth)
+        public static long Qdivide(ChessBoard chessBoard, int depth)
         {
             ThreadData.StartPly();
             MoveGenerator.GenerateMoves(ThreadData, chessBoard);

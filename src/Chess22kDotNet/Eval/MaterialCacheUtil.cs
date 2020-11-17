@@ -6,7 +6,7 @@ namespace Chess22kDotNet.Eval
     {
         private const int Power2TableShifts = 64 - EngineConstants.Power2MaterialEntries;
 
-        public static int GetScore(in int key, in int[] materialCache)
+        public static int GetScore(int key, int[] materialCache)
         {
             if (!EngineConstants.EnableMaterialCache)
             {
@@ -33,7 +33,7 @@ namespace Chess22kDotNet.Eval
             return ChessConstants.CacheMiss;
         }
 
-        public static void AddValue(in int key, in int score, in int[] materialCache)
+        public static void AddValue(int key, int score, int[] materialCache)
         {
             if (!EngineConstants.EnableMaterialCache)
             {
@@ -51,7 +51,7 @@ namespace Chess22kDotNet.Eval
             materialCache[index + 1] = score;
         }
 
-        private static int GetIndex(in int materialKey)
+        private static int GetIndex(int materialKey)
         {
             return Util.RightTripleShift(materialKey * 836519301, Power2TableShifts) << 1;
         }

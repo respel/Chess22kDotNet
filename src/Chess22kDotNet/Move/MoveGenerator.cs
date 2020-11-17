@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Numerics;
 using Chess22kDotNet.Engine;
 using Chess22kDotNet.Search;
@@ -7,7 +8,7 @@ namespace Chess22kDotNet.Move
 {
     public static class MoveGenerator
     {
-        public static void GenerateMoves(in ThreadData threadData, in ChessBoard cb)
+        public static void GenerateMoves(ThreadData threadData, ChessBoard cb)
         {
             if (cb.CheckingPieces == 0)
             {
@@ -24,7 +25,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        public static void GenerateAttacks(in ThreadData threadData, in ChessBoard cb)
+        public static void GenerateAttacks(ThreadData threadData, ChessBoard cb)
         {
             if (cb.CheckingPieces == 0)
             {
@@ -41,7 +42,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void GenerateNotInCheckMoves(in ThreadData threadData, in ChessBoard cb)
+        private static void GenerateNotInCheckMoves(ThreadData threadData, ChessBoard cb)
         {
             // non pinned pieces
             var nonPinned = ~cb.PinnedPieces;
@@ -85,7 +86,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void GenerateOutOfCheckMoves(in ThreadData threadData, in ChessBoard cb)
+        private static void GenerateOutOfCheckMoves(ThreadData threadData, ChessBoard cb)
         {
             var inBetween = InBetween[cb.KingIndex[cb.ColorToMove]][BitOperations.TrailingZeroCount(cb.CheckingPieces)];
             if (inBetween != 0)
@@ -102,7 +103,7 @@ namespace Chess22kDotNet.Move
             AddKingMoves(threadData, cb);
         }
 
-        private static void GenerateNotInCheckAttacks(in ThreadData threadData, in ChessBoard cb)
+        private static void GenerateNotInCheckAttacks(ThreadData threadData, ChessBoard cb)
         {
             // non pinned pieces
             AddEpAttacks(threadData, cb);
@@ -148,7 +149,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void GenerateOutOfCheckAttacks(in ThreadData threadData, in ChessBoard cb)
+        private static void GenerateOutOfCheckAttacks(ThreadData threadData, ChessBoard cb)
         {
             // attack attacker
             var nonPinned = ~cb.PinnedPieces;
@@ -163,7 +164,7 @@ namespace Chess22kDotNet.Move
             AddKingAttacks(threadData, cb);
         }
 
-        private static void AddPawnAttacksAndPromotions(in ThreadData threadData, in long pawns, in ChessBoard cb,
+        private static void AddPawnAttacksAndPromotions(ThreadData threadData, long pawns, ChessBoard cb,
             in long enemies,
             in long emptySpaces)
         {
@@ -250,8 +251,8 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddBishopAttacks(in ThreadData threadData, long piece, in ChessBoard cb,
-            in long possiblePositions)
+        private static void AddBishopAttacks(ThreadData threadData, long piece, ChessBoard cb,
+            long possiblePositions)
         {
             while (piece != 0)
             {
@@ -268,8 +269,8 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddRookAttacks(in ThreadData threadData, long piece, in ChessBoard cb,
-            in long possiblePositions)
+        private static void AddRookAttacks(ThreadData threadData, long piece, ChessBoard cb,
+            long possiblePositions)
         {
             while (piece != 0)
             {
@@ -286,8 +287,8 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddQueenAttacks(in ThreadData threadData, long piece, in ChessBoard cb,
-            in long possiblePositions)
+        private static void AddQueenAttacks(ThreadData threadData, long piece, ChessBoard cb,
+            long possiblePositions)
         {
             while (piece != 0)
             {
@@ -304,8 +305,8 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddBishopMoves(in ThreadData threadData, long piece, in long allPieces,
-            in long possiblePositions)
+        private static void AddBishopMoves(ThreadData threadData, long piece, long allPieces,
+            long possiblePositions)
         {
             while (piece != 0)
             {
@@ -321,8 +322,8 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddQueenMoves(in ThreadData threadData, long piece, in long allPieces,
-            in long possiblePositions)
+        private static void AddQueenMoves(ThreadData threadData, long piece, long allPieces,
+            long possiblePositions)
         {
             while (piece != 0)
             {
@@ -338,8 +339,8 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddRookMoves(in ThreadData threadData, long piece, in long allPieces,
-            in long possiblePositions)
+        private static void AddRookMoves(ThreadData threadData, long piece, long allPieces,
+            long possiblePositions)
         {
             while (piece != 0)
             {
@@ -355,7 +356,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddNightMoves(in ThreadData threadData, long piece, in long possiblePositions)
+        private static void AddNightMoves(ThreadData threadData, long piece, long possiblePositions)
         {
             while (piece != 0)
             {
@@ -371,8 +372,8 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddPawnMoves(in ThreadData threadData, in long pawns, in ChessBoard cb,
-            in long possiblePositions)
+        private static void AddPawnMoves(ThreadData threadData, long pawns, ChessBoard cb,
+            long possiblePositions)
         {
             if (pawns == 0)
             {
@@ -425,7 +426,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddKingMoves(in ThreadData threadData, in ChessBoard cb)
+        private static void AddKingMoves(ThreadData threadData, ChessBoard cb)
         {
             var fromIndex = cb.KingIndex[cb.ColorToMove];
             var moves = StaticMoves.KingMoves[fromIndex] & cb.EmptySpaces;
@@ -451,7 +452,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddKingAttacks(in ThreadData threadData, in ChessBoard cb)
+        private static void AddKingAttacks(ThreadData threadData, ChessBoard cb)
         {
             var fromIndex = cb.KingIndex[cb.ColorToMove];
             var moves = StaticMoves.KingMoves[fromIndex] & cb.Pieces[cb.ColorToMoveInverse][All] & ~cb.DiscoveredPieces;
@@ -463,8 +464,8 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddKnightAttacks(in ThreadData threadData, long piece, in int[] pieceIndexes,
-            in long possiblePositions)
+        private static void AddKnightAttacks(ThreadData threadData, long piece, IReadOnlyList<int> pieceIndexes,
+            long possiblePositions)
         {
             while (piece != 0)
             {
@@ -481,7 +482,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddEpAttacks(in ThreadData threadData, in ChessBoard cb)
+        private static void AddEpAttacks(ThreadData threadData, ChessBoard cb)
         {
             if (cb.EpIndex == 0)
             {
@@ -500,7 +501,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddPromotionMove(in ThreadData threadData, in int fromIndex, in int toIndex)
+        private static void AddPromotionMove(ThreadData threadData, int fromIndex, int toIndex)
         {
             threadData.AddMove(MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionQ, fromIndex, toIndex));
             threadData.AddMove(MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionN, fromIndex, toIndex));
@@ -509,8 +510,8 @@ namespace Chess22kDotNet.Move
             threadData.AddMove(MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionR, fromIndex, toIndex));
         }
 
-        private static void AddPromotionAttacks(in ThreadData threadData, long moves, in int fromIndex,
-            in int[] pieceIndexes)
+        private static void AddPromotionAttacks(ThreadData threadData, long moves, int fromIndex,
+            IReadOnlyList<int> pieceIndexes)
         {
             while (moves != 0)
             {

@@ -7,7 +7,7 @@ namespace Chess22kDotNet.Eval
 {
     public static class KingSafetyEval
     {
-        public static int CalculateScores(in ChessBoard cb)
+        public static int CalculateScores(ChessBoard cb)
         {
             var score = 0;
 
@@ -68,7 +68,7 @@ namespace Chess22kDotNet.Eval
             return score;
         }
 
-        private static int Checks(in ChessBoard cb, in int kingColor)
+        private static int Checks(ChessBoard cb, int kingColor)
         {
             var kingIndex = cb.KingIndex[kingColor];
             var enemyColor = 1 - kingColor;
@@ -118,7 +118,7 @@ namespace Chess22kDotNet.Eval
             return counter;
         }
 
-        private static int CheckRook(in ChessBoard cb, in int kingColor, in long rookMoves, in long safeSquares)
+        private static int CheckRook(ChessBoard cb, int kingColor, long rookMoves, long safeSquares)
         {
             if (rookMoves == 0)
             {
@@ -140,7 +140,7 @@ namespace Chess22kDotNet.Eval
             return counter;
         }
 
-        private static int CheckMinor(in long safeSquares, in long bishopMoves)
+        private static int CheckMinor(long safeSquares, long bishopMoves)
         {
             if (bishopMoves == 0)
             {
@@ -150,7 +150,7 @@ namespace Chess22kDotNet.Eval
             return (bishopMoves & safeSquares) == 0 ? EvalConstants.KsOther[3] : EvalConstants.KsOther[2];
         }
 
-        private static bool KingBlockedAtLastRank(in long safeKingMoves)
+        private static bool KingBlockedAtLastRank(long safeKingMoves)
         {
             return (Bitboard.Rank234567 & safeKingMoves) == 0;
         }

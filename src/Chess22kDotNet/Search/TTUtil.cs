@@ -27,7 +27,7 @@ namespace Chess22kDotNet.Search
 
         private static bool _isInitialized;
 
-        public static void Init(in bool force)
+        public static void Init(bool force)
         {
             if (!force && _isInitialized) return;
             _keyShifts = 64 - EngineConstants.Power2TtEntries;
@@ -43,7 +43,7 @@ namespace Chess22kDotNet.Search
             Array.Fill(_keys, 0);
         }
 
-        public static long GetValue(in long key)
+        public static long GetValue(long key)
         {
             var index = GetIndex(key);
 
@@ -68,12 +68,12 @@ namespace Chess22kDotNet.Search
             return 0;
         }
 
-        private static int GetIndex(in long key)
+        private static int GetIndex(long key)
         {
             return (int) Util.RightTripleShift(key, _keyShifts) << 1;
         }
 
-        public static void AddValue(in long key, int score, in int ply, in int depth, in int flag, in int move)
+        public static void AddValue(long key, int score, int ply, int depth, int flag, int move)
         {
             if (EngineConstants.Assert)
             {
@@ -134,7 +134,7 @@ namespace Chess22kDotNet.Search
             _keys[replaceIndex + 1] = value;
         }
 
-        public static int GetScore(in long value, in int ply)
+        public static int GetScore(long value, int ply)
         {
             var score = (int) (value >> Score);
 
@@ -156,23 +156,23 @@ namespace Chess22kDotNet.Search
             return score;
         }
 
-        public static int GetDepth(in long value)
+        public static int GetDepth(long value)
         {
             return (int) ((value & 0x3ff) - HalfMoveCounter);
         }
 
-        public static int GetFlag(in long value)
+        public static int GetFlag(long value)
         {
             return (int) (Util.RightTripleShift(value, Flag) & 3);
         }
 
-        public static int GetMove(in long value)
+        public static int GetMove(long value)
         {
             return (int) (Util.RightTripleShift(value, Move) & 0x3fffff);
         }
 
         // SCORE,HALF_MOVE_COUNTER,MOVE,FLAG,DEPTH
-        private static long CreateValue(in long score, in long move, in long flag, in long depth)
+        private static long CreateValue(long score, long move, long flag, long depth)
         {
             if (!EngineConstants.Assert)
                 return score << Score | move << Move | flag << Flag | (depth + HalfMoveCounter);
@@ -235,7 +235,7 @@ namespace Chess22kDotNet.Search
             return usage;
         }
 
-        public static bool CanRefineEval(in long ttValue, in int eval, in int score)
+        public static bool CanRefineEval(long ttValue, int eval, int score)
         {
             if (ttValue == 0) return false;
             return GetFlag(ttValue) == FlagExact || GetFlag(ttValue) == FlagUpper && score < eval ||

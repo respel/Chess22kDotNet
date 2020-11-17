@@ -1,6 +1,5 @@
 using System;
 using System.Numerics;
-using Chess22kDotNet.JavaWrappers;
 
 namespace Chess22kDotNet.Texel
 {

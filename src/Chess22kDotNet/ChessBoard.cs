@@ -46,7 +46,7 @@ namespace Chess22kDotNet
             ColorToMoveInverse = 1 - ColorToMove;
         }
 
-        public bool IsDiscoveredMove(in int fromIndex)
+        public bool IsDiscoveredMove(int fromIndex)
         {
             if (DiscoveredPieces == 0)
             {
@@ -109,7 +109,7 @@ namespace Chess22kDotNet
             }
         }
 
-        public void DoMove(in int move)
+        public void DoMove(int move)
         {
             MoveCount++;
 
@@ -298,7 +298,7 @@ namespace Chess22kDotNet
             }
         }
 
-        public void UndoMove(in int move)
+        public void UndoMove(int move)
         {
             var fromIndex = MoveUtil.GetFromIndex(move);
             var toIndex = MoveUtil.GetToIndex(move);
@@ -386,25 +386,25 @@ namespace Chess22kDotNet
             }
         }
 
-        public bool IsLegal(in int move)
+        public bool IsLegal(int move)
         {
             return MoveUtil.GetSourcePieceIndex(move) != King || IsLegalKingMove(move);
         }
 
-        private bool IsLegalKingMove(in int move)
+        private bool IsLegalKingMove(int move)
         {
             return !CheckUtil.IsInCheckIncludingKing(MoveUtil.GetToIndex(move), ColorToMove, Pieces[ColorToMoveInverse],
                 AllPieces ^ Util.PowerLookup[MoveUtil.GetFromIndex(move)]);
         }
 
-        private bool IsLegalNonKingMove(in int move)
+        private bool IsLegalNonKingMove(int move)
         {
             return !CheckUtil.IsInCheck(KingIndex[ColorToMove], ColorToMove, Pieces[ColorToMoveInverse],
                 AllPieces ^ Util.PowerLookup[MoveUtil.GetFromIndex(move)] ^
                 Util.PowerLookup[MoveUtil.GetToIndex(move)]);
         }
 
-        public bool IsLegalEpMove(in int fromIndex)
+        public bool IsLegalEpMove(int fromIndex)
         {
             if (EpIndex == 0)
             {
@@ -426,7 +426,7 @@ namespace Chess22kDotNet
             return !isInCheck;
         }
 
-        public bool IsValidMove(in int move)
+        public bool IsValidMove(int move)
         {
             // check piece at from square
             var fromIndex = MoveUtil.GetFromIndex(move);
@@ -545,7 +545,7 @@ namespace Chess22kDotNet
             return (toSquare & CheckingPieces) != 0;
         }
 
-        public bool IsRepetition(in int move)
+        public bool IsRepetition(int move)
         {
             if (!EngineConstants.EnableRepetitionTable)
             {
@@ -593,7 +593,7 @@ namespace Chess22kDotNet
             DoubleAttacks[Black] = 0;
         }
 
-        public void UpdateAttacks(in long moves, in int piece, in int color, in long kingArea)
+        public void UpdateAttacks(long moves, int piece, int color, long kingArea)
         {
             if ((moves & kingArea) != 0)
             {
@@ -605,13 +605,13 @@ namespace Chess22kDotNet
             Attacks[color][piece] |= moves;
         }
 
-        public void UpdatePawnAttacks(in long moves, in int color)
+        public void UpdatePawnAttacks(long moves, int color)
         {
             DoubleAttacks[color] |= Attacks[color][Pawn] & moves;
             Attacks[color][Pawn] |= moves;
         }
 
-        public void UpdatePawnAttacks(in int color, in long kingArea)
+        public void UpdatePawnAttacks(int color, long kingArea)
         {
             Attacks[color][All] = Attacks[color][Pawn];
             if ((Attacks[color][Pawn] & kingArea) != 0)

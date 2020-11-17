@@ -11,12 +11,12 @@ namespace Chess22kDotNet
             Init(EngineConstants.TestEvalValues ? 2 : UciOptions.ThreadCount);
         }
 
-        public static ChessBoard Get(in int instanceNumber)
+        public static ChessBoard Get(int instanceNumber)
         {
             return _instances[instanceNumber];
         }
 
-        public static void Init(in int numberOfInstances)
+        public static void Init(int numberOfInstances)
         {
             _instances = new ChessBoard[numberOfInstances];
             for (var i = 0; i < numberOfInstances; i++)

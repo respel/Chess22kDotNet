@@ -35,7 +35,7 @@ namespace Chess22kDotNet.MainTests
             }
         }
 
-        private static int Perft(in ChessBoard cb, in ThreadData threadData, in int depth)
+        private static int Perft(ChessBoard cb, ThreadData threadData, int depth)
         {
             threadData.StartPly();
             MoveGenerator.GenerateMoves(threadData, cb);

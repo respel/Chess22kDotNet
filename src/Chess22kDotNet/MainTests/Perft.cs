@@ -66,7 +66,7 @@ namespace Chess22kDotNet.MainTests
             Console.WriteLine("Done");
         }
 
-        private static int perft(in ChessBoard cb, in ThreadData threadData, in int depth)
+        private static int perft(ChessBoard cb, ThreadData threadData, int depth)
         {
             threadData.StartPly();
             MoveGenerator.GenerateMoves(threadData, cb);
@@ -96,7 +96,7 @@ namespace Chess22kDotNet.MainTests
             return counter;
         }
 
-        public static int Divide(in ChessBoard cb, in ThreadData threadData, in int depth)
+        public static int Divide(ChessBoard cb, ThreadData threadData, int depth)
         {
             threadData.StartPly();
             MoveGenerator.GenerateMoves(threadData, cb);

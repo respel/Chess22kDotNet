@@ -104,7 +104,7 @@ namespace Chess22kDotNet
         }
 
         // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
-        private static void SetPieces(in ChessBoard cb, in string fenPieces)
+        private static void SetPieces(ChessBoard cb, string fenPieces)
         {
             // clear pieces
             for (var color = 0; color < 2; color++)
@@ -172,7 +172,7 @@ namespace Chess22kDotNet
             }
         }
 
-        public static void Copy(in ChessBoard source, in ChessBoard target)
+        public static void Copy(ChessBoard source, ChessBoard target)
         {
             // primitives
             target.CastlingRights = source.CastlingRights;

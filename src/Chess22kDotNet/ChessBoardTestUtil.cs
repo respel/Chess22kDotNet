@@ -7,7 +7,7 @@ namespace Chess22kDotNet
 {
     public static class ChessBoardTestUtil
     {
-        public static void CompareScores(in ChessBoard cb)
+        public static void CompareScores(ChessBoard cb)
         {
             var testCb = GetHorizontalMirroredCb(cb);
             CompareScores(cb, testCb, 1);
@@ -16,7 +16,7 @@ namespace Chess22kDotNet
             CompareScores(cb, testCb, -1);
         }
 
-        private static void CompareScores(in ChessBoard cb1, in ChessBoard cb2, in int factor)
+        private static void CompareScores(ChessBoard cb1, ChessBoard cb2, int factor)
         {
             EvalUtil.CalculateMobilityScoresAndSetAttacks(cb1);
             EvalUtil.CalculateMobilityScoresAndSetAttacks(cb2);

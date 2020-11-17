@@ -69,8 +69,8 @@ namespace Chess22kDotNet.Search
             }
         }
 
-        public void SetBestMove(in ChessBoard cb, in int bestMove, in int alpha, in int beta, in int bestScore,
-            in int depth)
+        public void SetBestMove(ChessBoard cb, int bestMove, int alpha, int beta, int bestScore,
+            int depth)
         {
             if (_threadNumber != 0)
             {
@@ -95,7 +95,7 @@ namespace Chess22kDotNet.Search
             PvUtil.Set(cb, Pv, bestMove);
         }
 
-        public void InitPv(in ChessBoard cb)
+        public void InitPv(ChessBoard cb)
         {
             var ttValue = TtUtil.GetValue(cb.ZobristKey);
             if (ttValue == 0 || TtUtil.GetMove(ttValue) == 0)
@@ -134,7 +134,7 @@ namespace Chess22kDotNet.Search
             Array.Fill(_bfMoves[Black], 1);
         }
 
-        public void AddHhValue(in int color, in int move, in int depth)
+        public void AddHhValue(int color, int move, int depth)
         {
             _hhMoves[color][MoveUtil.GetFromToIndex(move)] += depth * depth;
             if (EngineConstants.Assert)
@@ -143,7 +143,7 @@ namespace Chess22kDotNet.Search
             }
         }
 
-        public void AddBfValue(in int color, in int move, in int depth)
+        public void AddBfValue(int color, int move, int depth)
         {
             _bfMoves[color][MoveUtil.GetFromToIndex(move)] += depth * depth;
             if (EngineConstants.Assert)
@@ -152,7 +152,7 @@ namespace Chess22kDotNet.Search
             }
         }
 
-        private int GetHhScore(in int color, in int fromToIndex)
+        private int GetHhScore(int color, int fromToIndex)
         {
             if (!EngineConstants.EnableHistoryHeuristic)
             {
@@ -162,7 +162,7 @@ namespace Chess22kDotNet.Search
             return 100 * _hhMoves[color][fromToIndex] / _bfMoves[color][fromToIndex];
         }
 
-        public void AddKillerMove(in int move, in int ply)
+        public void AddKillerMove(int move, int ply)
         {
             if (!EngineConstants.EnableKillerMoves) return;
             if (_killerMove1[ply] == move) return;
@@ -170,7 +170,7 @@ namespace Chess22kDotNet.Search
             _killerMove1[ply] = move;
         }
 
-        public void AddCounterMove(in int color, in int parentMove, in int counterMove)
+        public void AddCounterMove(int color, int parentMove, int counterMove)
         {
             if (EngineConstants.EnableCounterMoves)
             {
@@ -179,17 +179,17 @@ namespace Chess22kDotNet.Search
             }
         }
 
-        public int GetCounter(in int color, in int parentMove)
+        public int GetCounter(int color, int parentMove)
         {
             return _counterMoves[color][MoveUtil.GetSourcePieceIndex(parentMove)][MoveUtil.GetToIndex(parentMove)];
         }
 
-        public int GetKiller1(in int ply)
+        public int GetKiller1(int ply)
         {
             return _killerMove1[ply];
         }
 
-        public int GetKiller2(in int ply)
+        public int GetKiller2(int ply)
         {
             return _killerMove2[ply];
         }
@@ -226,7 +226,7 @@ namespace Chess22kDotNet.Search
             return _nextToGenerate[_ply] != _nextToMove[_ply];
         }
 
-        public void AddMove(in int move)
+        public void AddMove(int move)
         {
             _moves[_nextToGenerate[_ply]++] = move;
         }
@@ -244,7 +244,7 @@ namespace Chess22kDotNet.Search
             }
         }
 
-        public void SetHhScores(in int colorToMove)
+        public void SetHhScores(int colorToMove)
         {
             for (var j = _nextToMove[_ply]; j < _nextToGenerate[_ply]; j++)
             {
