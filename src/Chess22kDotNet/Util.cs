@@ -6,7 +6,7 @@ namespace Chess22kDotNet
 {
     public static class Util
     {
-        public const int ShortMin = -32767;
+        public const int ShortMin = -32768;
         public const int ShortMax = 32767;
 
         private static readonly byte[][] Distance = CreateJaggedArray<byte[][]>(64, 64);
