@@ -2,5 +2,6 @@ bin/
 obj/
 .vs
 .idea
+.vscode
 *.DotSettings.user
 .DS_Store
