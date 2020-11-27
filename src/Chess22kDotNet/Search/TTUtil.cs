@@ -94,7 +94,7 @@ namespace Chess22kDotNet.Search
 
                 var currentEntry = _entries[i];
 
-                var currentDepth = GetDepth(currentEntry);
+                var currentDepth = currentEntry.Depth;
                 if (_entries[i].Key == key)
                 {
                     if (currentDepth > depth && flag != FlagExact)
@@ -134,7 +134,7 @@ namespace Chess22kDotNet.Search
                 Score = (short) score,
                 Move = move,
                 Flag = (byte) flag,
-                Depth = (short) (depth + HalfMoveCounter)
+                Depth = (short) depth
             };
         }
 
@@ -160,26 +160,11 @@ namespace Chess22kDotNet.Search
             return score;
         }
 
-        public static int GetDepth(TtEntry entry)
-        {
-            return (int) (entry.Depth - HalfMoveCounter);
-        }
-
-        public static int GetFlag(TtEntry entry)
-        {
-            return entry.Flag;
-        }
-
-        public static int GetMove(TtEntry entry)
-        {
-            return entry.Move;
-        }
-
         public static string ToString(TtEntry ttEntry)
         {
-            return "score=" + GetScore(ttEntry, 0) + " " + new MoveWrapper(GetMove(ttEntry)) + " depth=" +
-                   GetDepth(ttEntry) + " flag="
-                   + GetFlag(ttEntry);
+            return "score=" + GetScore(ttEntry, 0) + " " + new MoveWrapper(ttEntry.Move) + " depth=" +
+                   ttEntry.Depth + " flag="
+                   + ttEntry.Flag;
         }
 
         public static void SetSizeMb(int value)
@@ -232,8 +217,8 @@ namespace Chess22kDotNet.Search
         public static bool CanRefineEval(TtEntry ttEntry, int eval, int score)
         {
             if (ttEntry.Key == 0) return false;
-            return GetFlag(ttEntry) == FlagExact || GetFlag(ttEntry) == FlagUpper && score < eval ||
-                   GetFlag(ttEntry) == FlagLower && score > eval;
+            return ttEntry.Flag == FlagExact || ttEntry.Flag == FlagUpper && score < eval ||
+                   ttEntry.Flag == FlagLower && score > eval;
         }
     }
 }

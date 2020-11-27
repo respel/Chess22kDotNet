@@ -197,11 +197,11 @@ namespace Chess22kDotNet
 
             if (bestMove == ttMove)
             {
-                if (TtUtil.GetFlag(ttEntry) == TtUtil.FlagLower)
+                if (ttEntry.Flag == TtUtil.FlagLower)
                 {
                     _bestMoveTtLower++;
                 }
-                else if (TtUtil.GetFlag(ttEntry) == TtUtil.FlagUpper)
+                else if (ttEntry.Flag == TtUtil.FlagUpper)
                 {
                     _bestMoveTtUpper++;
                 }

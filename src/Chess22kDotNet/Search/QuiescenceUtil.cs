@@ -23,7 +23,7 @@ namespace Chess22kDotNet.Search
             {
                 if (!EngineConstants.TestTtValues)
                 {
-                    switch (TtUtil.GetFlag(ttEntry))
+                    switch (ttEntry.Flag)
                     {
                         case TtUtil.FlagExact:
                             return score;

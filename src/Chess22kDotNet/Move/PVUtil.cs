@@ -21,7 +21,7 @@ namespace Chess22kDotNet.Move
                     break;
                 }
 
-                var move = TtUtil.GetMove(ttEntry);
+                var move = ttEntry.Move;
                 if (move == 0)
                 {
                     break;

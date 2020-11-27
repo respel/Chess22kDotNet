@@ -224,7 +224,7 @@ namespace Chess22kDotNet.Engine
 
             TtUtil.Init(false);
             var ttEntry = TtUtil.GetEntry(_cb.ZobristKey);
-            if (ttEntry.Key != 0 && TtUtil.GetFlag(ttEntry) == TtUtil.FlagExact)
+            if (ttEntry.Key != 0 && ttEntry.Flag == TtUtil.FlagExact)
             {
                 TimeUtil.SetTtHit();
             }

@@ -79,9 +79,9 @@ namespace Chess22kDotNet.Search
             {
                 if (!EngineConstants.TestTtValues)
                 {
-                    if (TtUtil.GetDepth(ttEntry) >= depth)
+                    if (ttEntry.Depth >= depth)
                     {
-                        switch (TtUtil.GetFlag(ttEntry))
+                        switch (ttEntry.Flag)
                         {
                             case TtUtil.FlagExact:
                                 return score;
@@ -208,7 +208,7 @@ namespace Chess22kDotNet.Search
                     case PhaseTt:
                         if (ttEntry.Key != 0)
                         {
-                            ttMove = TtUtil.GetMove(ttEntry);
+                            ttMove = ttEntry.Move;
                             if (cb.IsValidMove(ttMove))
                             {
                                 threadData.AddMove(ttMove);

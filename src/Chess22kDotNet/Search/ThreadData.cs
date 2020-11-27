@@ -98,14 +98,14 @@ namespace Chess22kDotNet.Search
         public void InitPv(ChessBoard cb)
         {
             var ttEntry = TtUtil.GetEntry(cb.ZobristKey);
-            if (ttEntry.Key == 0 || TtUtil.GetMove(ttEntry) == 0)
+            if (ttEntry.Key == 0 || ttEntry.Move == 0)
             {
                 Array.Fill(Pv, 0);
             }
             else
             {
-                SetBestMove(cb, TtUtil.GetMove(ttEntry), Util.ShortMin, Util.ShortMax, TtUtil.GetScore(ttEntry, 0),
-                    TtUtil.GetDepth(ttEntry));
+                SetBestMove(cb, ttEntry.Move, Util.ShortMin, Util.ShortMax, TtUtil.GetScore(ttEntry, 0),
+                    ttEntry.Depth);
             }
         }
 
