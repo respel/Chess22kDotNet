@@ -8,9 +8,8 @@ namespace Chess22kDotNet.Search
     public static class TtUtil
     {
         private static int _keyShifts;
-
-        // key, value
-        private static long[] _keys;
+        
+        private static TtEntry[] _entries;
 
         public const int FlagExact = 0;
         public const int FlagUpper = 1;
@@ -20,44 +19,44 @@ namespace Chess22kDotNet.Search
 
         private const int BucketSize = 4;
 
-        // ///////////////////// DEPTH //10 bits
-        private const int Flag = 10; // 2
-        private const int Move = 12; // 22
-        private const int Score = 48; // 16
-
         private static bool _isInitialized;
 
         public static void Init(bool force)
         {
             if (!force && _isInitialized) return;
             _keyShifts = 64 - EngineConstants.Power2TtEntries;
-            var maxEntries = (int) (Util.PowerLookup[EngineConstants.Power2TtEntries] + BucketSize - 1) * 2;
-
-            _keys = new long[maxEntries];
+            var maxEntries = (int) (Util.PowerLookup[EngineConstants.Power2TtEntries] + BucketSize - 1);
+            
+            _entries = new TtEntry[maxEntries];
 
             _isInitialized = true;
         }
 
         public static void ClearValues()
         {
-            Array.Fill(_keys, 0);
+            for(var i = 0; i < _entries.Length; i++)
+            {
+                _entries[i].Key = 0;
+                _entries[i].Move = 0;
+                _entries[i].Score = 0;
+                _entries[i].Flag = 0;
+                _entries[i].Depth = 0;
+            }
         }
 
-        public static long GetValue(long key)
+        public static TtEntry GetEntry(long key)
         {
             var index = GetIndex(key);
 
-            for (var i = index; i < index + BucketSize * 2; i += 2)
+            for (var i = index; i < index + BucketSize; i++)
             {
-                var xorKey = _keys[i];
-                var value = _keys[i + 1];
-                if ((xorKey ^ value) != key) continue;
+                if (_entries[i].Key != key) continue;
                 if (Statistics.Enabled)
                 {
                     Statistics.TtHits++;
                 }
 
-                return value;
+                return _entries[i];
             }
 
             if (Statistics.Enabled)
@@ -65,7 +64,7 @@ namespace Chess22kDotNet.Search
                 Statistics.TtMisses++;
             }
 
-            return 0;
+            return new TtEntry();
         }
 
         private static int GetIndex(long key)
@@ -85,19 +84,18 @@ namespace Chess22kDotNet.Search
             var index = GetIndex(key);
             long replacedDepth = int.MaxValue;
             var replaceIndex = index;
-            for (var i = index; i < index + BucketSize * 2; i += 2)
+            for (var i = index; i < index + BucketSize; i++)
             {
-                var xorKey = _keys[i];
-                if (xorKey == 0)
+                if (_entries[i].Key == 0)
                 {
                     replaceIndex = i;
                     break;
                 }
 
-                var currentValue = _keys[i + 1];
+                var currentEntry = _entries[i];
 
-                var currentDepth = GetDepth(currentValue);
-                if ((xorKey ^ currentValue) == key)
+                var currentDepth = GetDepth(currentEntry);
+                if (_entries[i].Key == key)
                 {
                     if (currentDepth > depth && flag != FlagExact)
                     {
@@ -127,16 +125,22 @@ namespace Chess22kDotNet.Search
             if (EngineConstants.Assert)
             {
                 Assert.IsTrue(score >= Util.ShortMin && score <= Util.ShortMax);
+                Assert.IsTrue(depth <= 255);
             }
-
-            var value = CreateValue(score, move, flag, depth);
-            _keys[replaceIndex] = key ^ value;
-            _keys[replaceIndex + 1] = value;
+            
+            _entries[replaceIndex] = new TtEntry
+            {
+                Key = key,
+                Score = (short) score,
+                Move = move,
+                Flag = (byte) flag,
+                Depth = (short) (depth + HalfMoveCounter)
+            };
         }
 
-        public static int GetScore(long value, int ply)
+        public static int GetScore(TtEntry entry, int ply)
         {
-            var score = (int) (value >> Score);
+            var score = (int) entry.Score;
 
             // correct mate-score
             if (score > EvalConstants.ScoreMateBound)
@@ -156,36 +160,26 @@ namespace Chess22kDotNet.Search
             return score;
         }
 
-        public static int GetDepth(long value)
+        public static int GetDepth(TtEntry entry)
         {
-            return (int) ((value & 0x3ff) - HalfMoveCounter);
+            return (int) (entry.Depth - HalfMoveCounter);
         }
 
-        public static int GetFlag(long value)
+        public static int GetFlag(TtEntry entry)
         {
-            return (int) (Util.RightTripleShift(value, Flag) & 3);
+            return entry.Flag;
         }
 
-        public static int GetMove(long value)
+        public static int GetMove(TtEntry entry)
         {
-            return (int) (Util.RightTripleShift(value, Move) & 0x3fffff);
+            return entry.Move;
         }
 
-        // SCORE,HALF_MOVE_COUNTER,MOVE,FLAG,DEPTH
-        private static long CreateValue(long score, long move, long flag, long depth)
+        public static string ToString(TtEntry ttEntry)
         {
-            if (!EngineConstants.Assert)
-                return score << Score | move << Move | flag << Flag | (depth + HalfMoveCounter);
-            Assert.IsTrue(score >= Util.ShortMin && score <= Util.ShortMax);
-            Assert.IsTrue(depth <= 255);
-            return score << Score | move << Move | flag << Flag | (depth + HalfMoveCounter);
-        }
-
-        public static string ToString(long ttValue)
-        {
-            return "score=" + GetScore(ttValue, 0) + " " + new MoveWrapper(GetMove(ttValue)) + " depth=" +
-                   GetDepth(ttValue) + " flag="
-                   + GetFlag(ttValue);
+            return "score=" + GetScore(ttEntry, 0) + " " + new MoveWrapper(GetMove(ttEntry)) + " depth=" +
+                   GetDepth(ttEntry) + " flag="
+                   + GetFlag(ttEntry);
         }
 
         public static void SetSizeMb(int value)
@@ -224,9 +218,9 @@ namespace Chess22kDotNet.Search
         public static long GetUsagePercentage()
         {
             var usage = 0;
-            for (var i = 0; i < 1000; i++)
+            for (var i = 0; i < 500; i++)
             {
-                if (_keys[i] != 0)
+                if (_entries[i].Key != 0)
                 {
                     usage++;
                 }
@@ -235,11 +229,11 @@ namespace Chess22kDotNet.Search
             return usage;
         }
 
-        public static bool CanRefineEval(long ttValue, int eval, int score)
+        public static bool CanRefineEval(TtEntry ttEntry, int eval, int score)
         {
-            if (ttValue == 0) return false;
-            return GetFlag(ttValue) == FlagExact || GetFlag(ttValue) == FlagUpper && score < eval ||
-                   GetFlag(ttValue) == FlagLower && score > eval;
+            if (ttEntry.Key == 0) return false;
+            return GetFlag(ttEntry) == FlagExact || GetFlag(ttEntry) == FlagUpper && score < eval ||
+                   GetFlag(ttEntry) == FlagLower && score > eval;
         }
     }
 }

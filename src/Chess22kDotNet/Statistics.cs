@@ -174,7 +174,7 @@ namespace Chess22kDotNet
             }
         }
 
-        public static void SetBestMove(ChessBoard cb, int bestMove, int ttMove, long ttValue, int flag, int counterMove,
+        public static void SetBestMove(ChessBoard cb, int bestMove, int ttMove, TtEntry ttEntry, int flag, int counterMove,
             int killer1Move, int killer2Move)
         {
             if (!Enabled)
@@ -197,11 +197,11 @@ namespace Chess22kDotNet
 
             if (bestMove == ttMove)
             {
-                if (TtUtil.GetFlag(ttValue) == TtUtil.FlagLower)
+                if (TtUtil.GetFlag(ttEntry) == TtUtil.FlagLower)
                 {
                     _bestMoveTtLower++;
                 }
-                else if (TtUtil.GetFlag(ttValue) == TtUtil.FlagUpper)
+                else if (TtUtil.GetFlag(ttEntry) == TtUtil.FlagUpper)
                 {
                     _bestMoveTtUpper++;
                 }

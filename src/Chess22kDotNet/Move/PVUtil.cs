@@ -15,13 +15,13 @@ namespace Chess22kDotNet.Move
 
             for (var i = 1; i < moves.Length; i++)
             {
-                var ttValue = TtUtil.GetValue(cb.ZobristKey);
-                if (ttValue == 0)
+                var ttEntry = TtUtil.GetEntry(cb.ZobristKey);
+                if (ttEntry.Key == 0)
                 {
                     break;
                 }
 
-                var move = TtUtil.GetMove(ttValue);
+                var move = TtUtil.GetMove(ttEntry);
                 if (move == 0)
                 {
                     break;

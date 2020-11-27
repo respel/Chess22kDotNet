@@ -73,15 +73,15 @@ namespace Chess22kDotNet.Search
             }
 
             /* transposition-table */
-            var ttValue = TtUtil.GetValue(cb.ZobristKey);
-            var score = TtUtil.GetScore(ttValue, ply);
-            if (ttValue != 0)
+            var ttEntry = TtUtil.GetEntry(cb.ZobristKey);
+            var score = TtUtil.GetScore(ttEntry, ply);
+            if (ttEntry.Key != 0)
             {
                 if (!EngineConstants.TestTtValues)
                 {
-                    if (TtUtil.GetDepth(ttValue) >= depth)
+                    if (TtUtil.GetDepth(ttEntry) >= depth)
                     {
-                        switch (TtUtil.GetFlag(ttValue))
+                        switch (TtUtil.GetFlag(ttEntry))
                         {
                             case TtUtil.FlagExact:
                                 return score;
@@ -118,7 +118,7 @@ namespace Chess22kDotNet.Search
                 /* use tt value as eval */
                 if (EngineConstants.UseTtScoreAsEval)
                 {
-                    if (TtUtil.CanRefineEval(ttValue, eval, score))
+                    if (TtUtil.CanRefineEval(ttEntry, eval, score))
                     {
                         eval = score;
                     }
@@ -206,9 +206,9 @@ namespace Chess22kDotNet.Search
                 switch (phase)
                 {
                     case PhaseTt:
-                        if (ttValue != 0)
+                        if (ttEntry.Key != 0)
                         {
-                            ttMove = TtUtil.GetMove(ttValue);
+                            ttMove = TtUtil.GetMove(ttEntry);
                             if (cb.IsValidMove(ttMove))
                             {
                                 threadData.AddMove(ttMove);
@@ -465,11 +465,11 @@ namespace Chess22kDotNet.Search
                 TtUtil.AddValue(cb.ZobristKey, bestScore, ply, depth, flag, bestMove);
             }
 
-            Statistics.SetBestMove(cb, bestMove, ttMove, ttValue, flag, counterMove, killer1Move, killer2Move);
+            Statistics.SetBestMove(cb, bestMove, ttMove, ttEntry, flag, counterMove, killer1Move, killer2Move);
 
             if (EngineConstants.TestTtValues)
             {
-                SearchTestUtil.TestTtValues(score, bestScore, depth, bestMove, flag, ttValue, ply);
+                SearchTestUtil.TestTtValues(score, bestScore, depth, bestMove, flag, ttEntry, ply);
             }
 
             return bestScore;

@@ -17,13 +17,13 @@ namespace Chess22kDotNet.Search
             }
 
             /* transposition-table */
-            var ttValue = TtUtil.GetValue(cb.ZobristKey);
-            var score = TtUtil.GetScore(ttValue, 64);
-            if (ttValue != 0)
+            var ttEntry = TtUtil.GetEntry(cb.ZobristKey);
+            var score = TtUtil.GetScore(ttEntry, 64);
+            if (ttEntry.Key != 0)
             {
                 if (!EngineConstants.TestTtValues)
                 {
-                    switch (TtUtil.GetFlag(ttValue))
+                    switch (TtUtil.GetFlag(ttEntry))
                     {
                         case TtUtil.FlagExact:
                             return score;
@@ -55,7 +55,7 @@ namespace Chess22kDotNet.Search
             /* use tt value as eval */
             if (EngineConstants.UseTtScoreAsEval)
             {
-                if (TtUtil.CanRefineEval(ttValue, eval, score))
+                if (TtUtil.CanRefineEval(ttEntry, eval, score))
                 {
                     eval = score;
                 }

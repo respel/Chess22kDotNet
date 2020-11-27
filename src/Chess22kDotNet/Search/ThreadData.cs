@@ -97,15 +97,15 @@ namespace Chess22kDotNet.Search
 
         public void InitPv(ChessBoard cb)
         {
-            var ttValue = TtUtil.GetValue(cb.ZobristKey);
-            if (ttValue == 0 || TtUtil.GetMove(ttValue) == 0)
+            var ttEntry = TtUtil.GetEntry(cb.ZobristKey);
+            if (ttEntry.Key == 0 || TtUtil.GetMove(ttEntry) == 0)
             {
                 Array.Fill(Pv, 0);
             }
             else
             {
-                SetBestMove(cb, TtUtil.GetMove(ttValue), Util.ShortMin, Util.ShortMax, TtUtil.GetScore(ttValue, 0),
-                    TtUtil.GetDepth(ttValue));
+                SetBestMove(cb, TtUtil.GetMove(ttEntry), Util.ShortMin, Util.ShortMax, TtUtil.GetScore(ttEntry, 0),
+                    TtUtil.GetDepth(ttEntry));
             }
         }
 

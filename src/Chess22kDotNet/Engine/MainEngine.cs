@@ -223,8 +223,8 @@ namespace Chess22kDotNet.Engine
             Pondering = false;
 
             TtUtil.Init(false);
-            var ttValue = TtUtil.GetValue(_cb.ZobristKey);
-            if (ttValue != 0 && TtUtil.GetFlag(ttValue) == TtUtil.FlagExact)
+            var ttEntry = TtUtil.GetEntry(_cb.ZobristKey);
+            if (ttEntry.Key != 0 && TtUtil.GetFlag(ttEntry) == TtUtil.FlagExact)
             {
                 TimeUtil.SetTtHit();
             }
