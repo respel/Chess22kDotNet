@@ -7,9 +7,20 @@ namespace Chess22kDotNet.Search
     {
         private short _depth;
         private short _score;
+        private int _moveAndFlag;
         public long Key { get; set; }
-        public int Move { get; set; }
-        public byte Flag { get; set; }
+
+        public int Move
+        {
+            get => _moveAndFlag >> 2;
+            set => _moveAndFlag = (_moveAndFlag & 3) | (value << 2);
+        }
+
+        public byte Flag
+        {
+            get => (byte)(_moveAndFlag & 3);
+            set => _moveAndFlag = (_moveAndFlag & ~3) | value;
+        }
 
         public short Depth
         {
