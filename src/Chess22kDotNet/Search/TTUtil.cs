@@ -37,10 +37,6 @@ namespace Chess22kDotNet.Search
             for(var i = 0; i < _entries.Length; i++)
             {
                 _entries[i].Key = 0;
-                _entries[i].Move = 0;
-                _entries[i].Score = 0;
-                _entries[i].Flag = 0;
-                _entries[i].Depth = 0;
             }
         }
 
@@ -112,57 +108,19 @@ namespace Chess22kDotNet.Search
                 replacedDepth = currentDepth;
             }
 
-            // correct mate-score
-            if (score > EvalConstants.ScoreMateBound)
-            {
-                score += ply;
-            }
-            else if (score < -EvalConstants.ScoreMateBound)
-            {
-                score -= ply;
-            }
-
-            if (EngineConstants.Assert)
-            {
-                Assert.IsTrue(score >= Util.ShortMin && score <= Util.ShortMax);
-                Assert.IsTrue(depth <= 255);
-            }
-            
             _entries[replaceIndex] = new TtEntry
             {
                 Key = key,
-                Score = (short) score,
                 Move = move,
                 Flag = (byte) flag,
                 Depth = (short) depth
             };
-        }
-
-        public static int GetScore(TtEntry entry, int ply)
-        {
-            var score = (int) entry.Score;
-
-            // correct mate-score
-            if (score > EvalConstants.ScoreMateBound)
-            {
-                score -= ply;
-            }
-            else if (score < -EvalConstants.ScoreMateBound)
-            {
-                score += ply;
-            }
-
-            if (EngineConstants.Assert)
-            {
-                Assert.IsTrue(score >= Util.ShortMin && score <= Util.ShortMax);
-            }
-
-            return score;
+            _entries[replaceIndex].SetScore(score, ply);
         }
 
         public static string ToString(TtEntry ttEntry)
         {
-            return "score=" + GetScore(ttEntry, 0) + " " + new MoveWrapper(ttEntry.Move) + " depth=" +
+            return "score=" + ttEntry.GetScore(0) + " " + new MoveWrapper(ttEntry.Move) + " depth=" +
                    ttEntry.Depth + " flag="
                    + ttEntry.Flag;
         }

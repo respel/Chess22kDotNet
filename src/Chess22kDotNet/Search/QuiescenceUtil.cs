@@ -18,7 +18,7 @@ namespace Chess22kDotNet.Search
 
             /* transposition-table */
             var ttEntry = TtUtil.GetEntry(cb.ZobristKey);
-            var score = TtUtil.GetScore(ttEntry, 64);
+            var score = ttEntry.GetScore(64);
             if (ttEntry.Key != 0)
             {
                 if (!EngineConstants.TestTtValues)

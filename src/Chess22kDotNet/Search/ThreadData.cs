@@ -104,7 +104,7 @@ namespace Chess22kDotNet.Search
             }
             else
             {
-                SetBestMove(cb, ttEntry.Move, Util.ShortMin, Util.ShortMax, TtUtil.GetScore(ttEntry, 0),
+                SetBestMove(cb, ttEntry.Move, Util.ShortMin, Util.ShortMax, ttEntry.GetScore(0),
                     ttEntry.Depth);
             }
         }

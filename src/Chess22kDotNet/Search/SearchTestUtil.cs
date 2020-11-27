@@ -11,7 +11,7 @@ namespace Chess22kDotNet.Search
             int ply)
         {
             if (ttEntry.Key == 0 || ttEntry.Depth != depth) return;
-            score = TtUtil.GetScore(ttEntry, ply);
+            score = ttEntry.GetScore(ply);
             if (ttEntry.Flag == TtUtil.FlagExact && flag == TtUtil.FlagExact)
             {
                 if (score != bestScore)
