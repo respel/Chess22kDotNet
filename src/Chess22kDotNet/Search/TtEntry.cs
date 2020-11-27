@@ -7,7 +7,7 @@ namespace Chess22kDotNet.Search
     {
         private short _depth;
         private short _score;
-        private int _moveAndFlag;
+        private int _moveAndFlag; // move(30 bits), flag(2 bits)
         public long Key { get; set; }
 
         public int Move
@@ -34,10 +34,10 @@ namespace Chess22kDotNet.Search
             }
             get => (short)(_depth - TtUtil.HalfMoveCounter);
         }
-        
+
         public int GetScore(int ply)
         {
-            var score = (int) _score;
+            var score = (int)_score;
 
             // correct mate-score
             if (score > EvalConstants.ScoreMateBound)
@@ -68,13 +68,13 @@ namespace Chess22kDotNet.Search
             {
                 score -= ply;
             }
-            
+
             if (EngineConstants.Assert)
             {
                 Assert.IsTrue(score >= Util.ShortMin && score <= Util.ShortMax);
             }
 
-            _score = (short) score;
+            _score = (short)score;
         }
     }
 }
