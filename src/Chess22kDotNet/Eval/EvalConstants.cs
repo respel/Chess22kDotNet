@@ -403,9 +403,9 @@ namespace Chess22kDotNet.Eval
                 InitMgEg(Psqt[piece][color], PsqtMg[piece][color], PsqtEg[piece][color]);
         }
 
-        private static void InitMgEg(IList<int> array, IReadOnlyList<int> arrayMg, IReadOnlyList<int> arrayEg)
+        private static void InitMgEg(int[] array, int[] arrayMg, int[] arrayEg)
         {
-            for (var i = 0; i < array.Count; i++) array[i] = EvalUtil.Score(arrayMg[i], arrayEg[i]);
+            for (var i = 0; i < array.Length; i++) array[i] = EvalUtil.Score(arrayMg[i], arrayEg[i]);
         }
 
         public static void Main()

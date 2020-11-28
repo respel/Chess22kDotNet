@@ -33,7 +33,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        public static string AsString(IEnumerable<int> moves)
+        public static string AsString(int[] moves)
         {
             var sb = new StringBuilder();
             foreach (var move in moves)

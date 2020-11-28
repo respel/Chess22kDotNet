@@ -123,7 +123,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static long[][] CalculateVariations(IReadOnlyList<Magic> magics)
+        private static long[][] CalculateVariations(Magic[] magics)
         {
             var occupancyVariations = new long[0x40][];
             for (var index = 0x0; index < 0x40; index++)
@@ -192,7 +192,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void GenerateRookMoveDatabase(IReadOnlyList<long[]> rookOccupancyVariations)
+        private static void GenerateRookMoveDatabase(long[][] rookOccupancyVariations)
         {
             for (var index = 0x0; index < 0x40; index++)
             {
@@ -233,7 +233,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void GenerateBishopMoveDatabase(IReadOnlyList<long[]> bishopOccupancyVariations)
+        private static void GenerateBishopMoveDatabase(long[][] bishopOccupancyVariations)
         {
             for (var index = 0x0; index < 0x40; index++)
             {

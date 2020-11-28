@@ -195,7 +195,7 @@ namespace Chess22kDotNet.Engine
             }
         }
 
-        private static void Go(IReadOnlyList<string> goCommandTokens)
+        private static void Go(string[] goCommandTokens)
         {
             // go movestogo 30 wtime 3600000 btime 3600000
             // go wtime 40847 btime 48019 winc 0 binc 0 movestogo 20
@@ -213,8 +213,8 @@ namespace Chess22kDotNet.Engine
             // go
             // go infinite
             // go ponder
-            if (goCommandTokens.Count != 1)
-                for (var i = 1; i < goCommandTokens.Count; i++)
+            if (goCommandTokens.Length != 1)
+                for (var i = 1; i < goCommandTokens.Length; i++)
                     if (goCommandTokens[i].Equals("infinite"))
                     {
                         // TODO are we clearing the values again?
@@ -262,7 +262,7 @@ namespace Chess22kDotNet.Engine
             Task.Run(SearchTask);
         }
 
-        private static void DoMoves(IEnumerable<string> moveTokens)
+        private static void DoMoves(string[] moveTokens)
         {
             // apply moves
             foreach (var moveToken in moveTokens)

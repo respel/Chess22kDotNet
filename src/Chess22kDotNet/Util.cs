@@ -47,7 +47,7 @@ namespace Chess22kDotNet
             return (T) InitializeJaggedArray(typeof(T).GetElementType(), 0, lengths);
         }
 
-        private static object InitializeJaggedArray(Type type, int index, IReadOnlyList<int> lengths)
+        private static object InitializeJaggedArray(Type type, int index, int[] lengths)
         {
             var array = Array.CreateInstance(type, lengths[index]);
             var elementType = type.GetElementType();

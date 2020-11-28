@@ -436,7 +436,7 @@ namespace Chess22kDotNet.Move
             }
         }
 
-        private static void AddKnightAttacks(ThreadData threadData, long piece, IReadOnlyList<int> pieceIndexes,
+        private static void AddKnightAttacks(ThreadData threadData, long piece, int[] pieceIndexes,
             long possiblePositions)
         {
             while (piece != 0)
@@ -478,7 +478,7 @@ namespace Chess22kDotNet.Move
         }
 
         private static void AddPromotionAttacks(ThreadData threadData, long moves, int fromIndex,
-            IReadOnlyList<int> pieceIndexes)
+            int[] pieceIndexes)
         {
             while (moves != 0)
             {

@@ -146,11 +146,11 @@ namespace Chess22kDotNet
             PrintDepthTotals("LMP           ", Lmped, false);
         }
 
-        private static void PrintDepthTotals(string message, IReadOnlyList<int> values, bool printDetails)
+        private static void PrintDepthTotals(string message, int[] values, bool printDetails)
         {
             Console.WriteLine(message + values.Sum());
             if (!printDetails) return;
-            for (var i = 0; i < values.Count; i++)
+            for (var i = 0; i < values.Length; i++)
                 if (values[i] != 0)
                     Console.WriteLine(i + " " + values[i]);
         }
