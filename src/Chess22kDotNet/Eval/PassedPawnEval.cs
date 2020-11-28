@@ -113,7 +113,7 @@ namespace Chess22kDotNet.Eval
                 if ((Util.PowerLookup[index - 8] & (cb.Attacks[White][All] | cb.AllPieces)) != 0) return Util.ShortMax;
                 if ((Util.PowerLookup[index] & cb.Attacks[White][All]) == 0) return 1;
             }
-            else if (MaterialUtil.onlyWhitePawnsOrOneNightOrBishop(cb.MaterialKey))
+            else if (MaterialUtil.OnlyWhitePawnsOrOneNightOrBishop(cb.MaterialKey))
             {
                 // check if it is my turn
                 if (cb.ColorToMove == White) promotionDistance++;
@@ -160,7 +160,7 @@ namespace Chess22kDotNet.Eval
                 if ((Util.PowerLookup[index + 8] & (cb.Attacks[Black][All] | cb.AllPieces)) != 0) return Util.ShortMax;
                 if ((Util.PowerLookup[index] & cb.Attacks[Black][All]) == 0) return 1;
             }
-            else if (MaterialUtil.onlyBlackPawnsOrOneNightOrBishop(cb.MaterialKey))
+            else if (MaterialUtil.OnlyBlackPawnsOrOneNightOrBishop(cb.MaterialKey))
             {
                 // check if it is my turn
                 if (cb.ColorToMove == Black) promotionDistance++;

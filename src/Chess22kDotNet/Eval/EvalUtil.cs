@@ -74,7 +74,7 @@ namespace Chess22kDotNet.Eval
                     goto case 3;
                 // fall-through
                 case 3:
-                    if (MaterialUtil.hasOnlyNights(cb.MaterialKey, color)) return EvalConstants.ScoreDraw;
+                    if (MaterialUtil.HasOnlyNights(cb.MaterialKey, color)) return EvalConstants.ScoreDraw;
 
                     if (GetImbalances(cb, materialCache) * ColorFactor[color] <
                         EvalConstants.OtherScores[EvalConstants.IxDrawish])
