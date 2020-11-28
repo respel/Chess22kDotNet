@@ -48,49 +48,49 @@ namespace Chess22kDotNet
         {
             // fill from->to where to > from
             for (var from = 0; from < 64; from++)
-            for (var to = @from + 1; to < 64; to++)
+            for (var to = from + 1; to < 64; to++)
             {
                 // horizontal
                 int i;
-                if (@from / 8 == to / 8)
+                if (from / 8 == to / 8)
                 {
                     i = to - 1;
-                    while (i > @from)
+                    while (i > from)
                     {
-                        InBetween[@from][to] |= Util.PowerLookup[i];
+                        InBetween[from][to] |= Util.PowerLookup[i];
                         i--;
                     }
                 }
 
                 // vertical
-                if (@from % 8 == to % 8)
+                if (from % 8 == to % 8)
                 {
                     i = to - 8;
-                    while (i > @from)
+                    while (i > from)
                     {
-                        InBetween[@from][to] |= Util.PowerLookup[i];
+                        InBetween[from][to] |= Util.PowerLookup[i];
                         i -= 8;
                     }
                 }
 
                 // diagonal \
-                if ((to - @from) % 9 == 0 && to % 8 > @from % 8)
+                if ((to - from) % 9 == 0 && to % 8 > from % 8)
                 {
                     i = to - 9;
-                    while (i > @from)
+                    while (i > from)
                     {
-                        InBetween[@from][to] |= Util.PowerLookup[i];
+                        InBetween[from][to] |= Util.PowerLookup[i];
                         i -= 9;
                     }
                 }
 
                 // diagonal /
-                if ((to - @from) % 7 == 0 && to % 8 < @from % 8)
+                if ((to - from) % 7 == 0 && to % 8 < from % 8)
                 {
                     i = to - 7;
-                    while (i > @from)
+                    while (i > from)
                     {
-                        InBetween[@from][to] |= Util.PowerLookup[i];
+                        InBetween[from][to] |= Util.PowerLookup[i];
                         i -= 7;
                     }
                 }
@@ -98,8 +98,8 @@ namespace Chess22kDotNet
 
             // fill from->to where to < from
             for (var from = 0; from < 64; from++)
-            for (var to = 0; to < @from; to++)
-                InBetween[@from][to] = InBetween[to][@from];
+            for (var to = 0; to < from; to++)
+                InBetween[from][to] = InBetween[to][from];
 
             int[] directions = {-1, -7, -8, -9, 1, 7, 8, 9};
             // PINNED MOVEMENT, x-ray from the king to the pinned-piece and beyond

@@ -68,7 +68,7 @@ namespace Chess22kDotNet.Search
             {
                 1 => Math.Max(50, _totalTimeLeftMs - 200),
                 2 or 3 or 4 => _totalTimeLeftMs / _movesToGo,
-                _ => _timeWindowNs / 1_000_000 * 4,
+                _ => _timeWindowNs / 1_000_000 * 4
             };
         }
 

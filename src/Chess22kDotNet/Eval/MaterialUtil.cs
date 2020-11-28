@@ -187,32 +187,25 @@ namespace Chess22kDotNet.Eval
 
         public static bool IsDrawByMaterial(ChessBoard cb)
         {
-            switch (cb.MaterialKey)
+            return cb.MaterialKey switch
             {
-                case 0x0: // KK
-                case 0x10: // KNK
-                case 0x20: // KNNK
-                case 0x80: // KBK
-                case 0x100000: // KKN
-                case 0x100010: // KNKN
-                case 0x100080: // KNKB
-                case 0x200000: // KKNN
-                case 0x800000: // KKB
-                case 0x800010: // KBKN
-                case 0x800080: // KBKB
-                    return true;
-                case KPK: // KPK
-                case KPK_: // KPK
-                    return KpkBitbase.IsDraw(cb);
-                case KBPK: // KBPK
-                case KBPK_: // KBPK
-                    return EndGameEvaluator.IsKbpkDraw(cb.Pieces);
-                case KBPKP: // KBPKP
-                case KBPKP_: // KBPKP
-                    return EndGameEvaluator.IsKbpkpDraw(cb.Pieces);
-            }
-
-            return false;
+                0x0 // KK
+                    or 0x10 // KNK
+                    or 0x20 // KNNK
+                    or 0x80 // KBK
+                    or 0x100000 // KKN
+                    or 0x100010 // KNKN
+                    or 0x100080 // KNKB
+                    or 0x200000 // KKNN
+                    or 0x800000 // KKB
+                    or 0x800010 // KBKN
+                    or 0x800080 // KBKB
+                    => true,
+                KPK or KPK_ => KpkBitbase.IsDraw(cb),
+                KBPK or KBPK_ => EndGameEvaluator.IsKbpkDraw(cb.Pieces),
+                KBPKP or KBPKP_ => EndGameEvaluator.IsKbpkpDraw(cb.Pieces),
+                _ => false
+            };
         }
 
         public static int CalculateEndgameScore(ChessBoard cb)
