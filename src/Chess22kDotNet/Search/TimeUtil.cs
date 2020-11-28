@@ -64,20 +64,12 @@ namespace Chess22kDotNet.Search
 
             if (!_isTtHit) _timeWindowNs *= 2;
 
-            switch (_movesToGo)
+            _maxTimeMs = _movesToGo switch
             {
-                case 1:
-                    _maxTimeMs = Math.Max(50, _totalTimeLeftMs - 200);
-                    break;
-                case 2:
-                case 3:
-                case 4:
-                    _maxTimeMs = _totalTimeLeftMs / _movesToGo;
-                    break;
-                default:
-                    _maxTimeMs = _timeWindowNs / 1_000_000 * 4;
-                    break;
-            }
+                1 => Math.Max(50, _totalTimeLeftMs - 200),
+                2 or 3 or 4 => _totalTimeLeftMs / _movesToGo,
+                _ => _timeWindowNs / 1_000_000 * 4,
+            };
         }
 
         public static long GetMaxTimeMs()
