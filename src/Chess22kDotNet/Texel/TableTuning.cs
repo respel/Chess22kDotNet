@@ -5,8 +5,8 @@ namespace Chess22kDotNet.Texel
 {
     public class TableTuning : Tuning
     {
-        private readonly int[][] _values;
         private readonly int[][] _orgValues;
+        private readonly int[][] _values;
 
         public TableTuning(int[][] values, int step, string name) : base(null, step, name)
         {
@@ -28,16 +28,10 @@ namespace Chess22kDotNet.Texel
         {
             Console.WriteLine(Name + ":");
             for (var i = 0; i < _values.Length; i++)
-            {
                 if (i == _values.Length - 1)
-                {
                     Console.WriteLine(Arrays.ToString(_values[i]).Replace("[", "{").Replace("]", "}"));
-                }
                 else
-                {
                     Console.WriteLine(Arrays.ToString(_values[i]).Replace("[", "{").Replace("]", "}") + ",");
-                }
-            }
         }
 
         public override int GetNumberOfTunedValues()
@@ -63,15 +57,9 @@ namespace Chess22kDotNet.Texel
         public override bool IsUpdated()
         {
             for (var i = 0; i < _orgValues.Length; i++)
-            {
-                for (var j = 0; j < _orgValues[0].Length; j++)
-                {
-                    if (_orgValues[i][j] != _values[i][j])
-                    {
-                        return true;
-                    }
-                }
-            }
+            for (var j = 0; j < _orgValues[0].Length; j++)
+                if (_orgValues[i][j] != _values[i][j])
+                    return true;
 
             return false;
         }
@@ -79,23 +67,15 @@ namespace Chess22kDotNet.Texel
         public override void ClearValues()
         {
             foreach (var t in _values)
-            {
                 for (var j = 0; j < _orgValues[0].Length; j++)
-                {
                     t[j] = 0;
-                }
-            }
         }
 
         public override void RestoreValues()
         {
             for (var i = 0; i < _values.Length; i++)
-            {
-                for (var j = 0; j < _orgValues[0].Length; j++)
-                {
-                    _values[i][j] = _orgValues[i][j];
-                }
-            }
+            for (var j = 0; j < _orgValues[0].Length; j++)
+                _values[i][j] = _orgValues[i][j];
         }
     }
 }

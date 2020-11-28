@@ -56,6 +56,23 @@ namespace Chess22kDotNet.Move
         private static readonly Magic[] RookMagics = new Magic[0x40];
         private static readonly Magic[] BishopMagics = new Magic[0x40];
 
+        static MagicUtil()
+        {
+            for (var i = 0x0; i < 0x40; i++)
+            {
+                RookMagics[i] = new Magic(RookMagicNumbers[i]);
+                BishopMagics[i] = new Magic(BishopMagicNumbers[i]);
+            }
+
+            CalculateBishopMovementMasks();
+            CalculateRookMovementMasks();
+            GenerateShiftArrays();
+            var bishopOccupancyVariations = CalculateVariations(BishopMagics);
+            var rookOccupancyVariations = CalculateVariations(RookMagics);
+            GenerateBishopMoveDatabase(bishopOccupancyVariations);
+            GenerateRookMoveDatabase(rookOccupancyVariations);
+        }
+
         public static long GetRookMoves(int fromIndex, long allPieces)
         {
             var magic = RookMagics[fromIndex];
@@ -97,23 +114,6 @@ namespace Chess22kDotNet.Move
             return BishopMagics[fromIndex].MagicMoves[0x0] | RookMagics[fromIndex].MagicMoves[0x0];
         }
 
-        static MagicUtil()
-        {
-            for (var i = 0x0; i < 0x40; i++)
-            {
-                RookMagics[i] = new Magic(RookMagicNumbers[i]);
-                BishopMagics[i] = new Magic(BishopMagicNumbers[i]);
-            }
-
-            CalculateBishopMovementMasks();
-            CalculateRookMovementMasks();
-            GenerateShiftArrays();
-            var bishopOccupancyVariations = CalculateVariations(BishopMagics);
-            var rookOccupancyVariations = CalculateVariations(RookMagics);
-            GenerateBishopMoveDatabase(bishopOccupancyVariations);
-            GenerateRookMoveDatabase(rookOccupancyVariations);
-        }
-
         private static void GenerateShiftArrays()
         {
             for (var i = 0x0; i < 0x40; i++)
@@ -138,9 +138,7 @@ namespace Chess22kDotNet.Move
                     for (var i = 0x0; i < 0x20 - BitOperations.LeadingZeroCount((uint) variationIndex); i++)
                     {
                         if ((Util.PowerLookup[i] & variationIndex) != 0x0)
-                        {
                             occupancyVariations[index][variationIndex] |= currentMask & -currentMask;
-                        }
 
                         currentMask &= currentMask - 0x1;
                     }
@@ -156,27 +154,19 @@ namespace Chess22kDotNet.Move
             {
                 // up
                 for (var j = index + 0x8; j < 0x40 - 0x8; j += 0x8)
-                {
                     RookMagics[index].MovementMask |= Util.PowerLookup[j];
-                }
 
                 // down
                 for (var j = index - 0x8; j >= 0x0 + 0x8; j -= 0x8)
-                {
                     RookMagics[index].MovementMask |= Util.PowerLookup[j];
-                }
 
                 // left
                 for (var j = index + 0x1; j % 0x8 != 0x0 && j % 0x8 != 0x7; j++)
-                {
                     RookMagics[index].MovementMask |= Util.PowerLookup[j];
-                }
 
                 // right
                 for (var j = index - 0x1; j % 0x8 != 0x7 && j % 0x8 != 0x0 && j > 0x0; j--)
-                {
                     RookMagics[index].MovementMask |= Util.PowerLookup[j];
-                }
             }
         }
 
@@ -186,27 +176,19 @@ namespace Chess22kDotNet.Move
             {
                 // up-right
                 for (var j = index + 0x7; j < 0x40 - 0x7 && j % 0x8 != 0x7 && j % 0x8 != 0x0; j += 0x7)
-                {
                     BishopMagics[index].MovementMask |= Util.PowerLookup[j];
-                }
 
                 // up-left
                 for (var j = index + 0x9; j < 0x40 - 0x9 && j % 0x8 != 0x7 && j % 0x8 != 0x0; j += 0x9)
-                {
                     BishopMagics[index].MovementMask |= Util.PowerLookup[j];
-                }
 
                 // down-right
                 for (var j = index - 0x9; j >= 0x0 + 0x9 && j % 0x8 != 0x7 && j % 0x8 != 0x0; j -= 0x9)
-                {
                     BishopMagics[index].MovementMask |= Util.PowerLookup[j];
-                }
 
                 // down-left
                 for (var j = index - 0x7; j >= 0x0 + 0x7 && j % 0x8 != 0x7 && j % 0x8 != 0x0; j -= 0x7)
-                {
                     BishopMagics[index].MovementMask |= Util.PowerLookup[j];
-                }
             }
         }
 
@@ -225,37 +207,25 @@ namespace Chess22kDotNet.Move
                     for (var j = index + 0x8; j < 0x40; j += 0x8)
                     {
                         validMoves |= Util.PowerLookup[j];
-                        if ((rookOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0)
-                        {
-                            break;
-                        }
+                        if ((rookOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0) break;
                     }
 
                     for (var j = index - 0x8; j >= 0x0; j -= 0x8)
                     {
                         validMoves |= Util.PowerLookup[j];
-                        if ((rookOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0)
-                        {
-                            break;
-                        }
+                        if ((rookOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0) break;
                     }
 
                     for (var j = index + 0x1; j % 0x8 != 0x0; j++)
                     {
                         validMoves |= Util.PowerLookup[j];
-                        if ((rookOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0)
-                        {
-                            break;
-                        }
+                        if ((rookOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0) break;
                     }
 
                     for (var j = index - 0x1; j % 0x8 != 0x7 && j >= 0x0; j--)
                     {
                         validMoves |= Util.PowerLookup[j];
-                        if ((rookOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0)
-                        {
-                            break;
-                        }
+                        if ((rookOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0) break;
                     }
 
                     RookMagics[index].MagicMoves[magicIndex] = validMoves;
@@ -281,40 +251,28 @@ namespace Chess22kDotNet.Move
                     for (var j = index + 0x7; j % 0x8 != 0x7 && j < 0x40; j += 0x7)
                     {
                         validMoves |= Util.PowerLookup[j];
-                        if ((bishopOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0)
-                        {
-                            break;
-                        }
+                        if ((bishopOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0) break;
                     }
 
                     // up-left
                     for (var j = index + 0x9; j % 0x8 != 0x0 && j < 0x40; j += 0x9)
                     {
                         validMoves |= Util.PowerLookup[j];
-                        if ((bishopOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0)
-                        {
-                            break;
-                        }
+                        if ((bishopOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0) break;
                     }
 
                     // down-right
                     for (var j = index - 0x9; j % 0x8 != 0x7 && j >= 0x0; j -= 0x9)
                     {
                         validMoves |= Util.PowerLookup[j];
-                        if ((bishopOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0)
-                        {
-                            break;
-                        }
+                        if ((bishopOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0) break;
                     }
 
                     // down-left
                     for (var j = index - 0x7; j % 0x8 != 0x0 && j >= 0x0; j -= 0x7)
                     {
                         validMoves |= Util.PowerLookup[j];
-                        if ((bishopOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0)
-                        {
-                            break;
-                        }
+                        if ((bishopOccupancyVariations[index][variationIndex] & Util.PowerLookup[j]) != 0x0) break;
                     }
 
                     BishopMagics[index].MagicMoves[magicIndex] = validMoves;

@@ -11,16 +11,15 @@ namespace Chess22kDotNet.Texel
 {
     public static class Tuner
     {
+        private const int NumberOfThreads = 16;
+
+        private const int Step = 4;
         private static readonly ChessBoard Cb = ChessBoardInstances.Get(0);
         private static readonly ThreadData ThreadData = new ThreadData(0);
-
-        private const int NumberOfThreads = 16;
         private static readonly ErrorCalculator[] Workers = new ErrorCalculator[NumberOfThreads];
 
         private static double _orgError;
         private static double _bestError;
-
-        private const int Step = 4;
 
         public static List<Tuning> GetTuningObjects()
         {
@@ -107,9 +106,7 @@ namespace Chess22kDotNet.Texel
             ChessBoardInstances.Init(NumberOfThreads);
             ThreadData.InitInstances(NumberOfThreads);
             for (var i = 0; i < NumberOfThreads; i++)
-            {
                 Workers[i] = new ErrorCalculator(ChessBoardInstances.Get(i), ThreadData.GetInstance(i));
-            }
 
             // add fens to workers
             var workerIndex = 0;
@@ -131,16 +128,10 @@ namespace Chess22kDotNet.Texel
         private static void PrintAll(IEnumerable<Tuning> tuningObjects)
         {
             foreach (var tuningObject in tuningObjects)
-            {
                 if (tuningObject.IsUpdated())
-                {
                     tuningObject.PrintNewValues();
-                }
                 else
-                {
                     Console.WriteLine(tuningObject.Name + ": unchanged");
-                }
-            }
         }
 
         public static Dictionary<string, double> LoadFens(string fileName, bool containsResult, bool includingCheck)
@@ -163,21 +154,13 @@ namespace Chess22kDotNet.Texel
                         var scoreString = GetScoreStringFromLine(line);
                         fenString = GetFenStringFromLine(line);
                         if (scoreString.Equals("\"1/2-1/2\";"))
-                        {
                             score = 0.5;
-                        }
                         else if (scoreString.Equals("\"1-0\";"))
-                        {
                             score = 1;
-                        }
                         else if (scoreString.Equals("\"0-1\";"))
-                        {
                             score = 0;
-                        }
                         else
-                        {
                             throw new Exception("Unknown result: " + scoreString);
-                        }
                     }
                     else
                     {
@@ -192,13 +175,9 @@ namespace Chess22kDotNet.Texel
                         MoveGenerator.GenerateAttacks(ThreadData, Cb);
                         MoveGenerator.GenerateMoves(ThreadData, Cb);
                         if (ThreadData.HasNext())
-                        {
                             fens.Add(fenString, score);
-                        }
                         else
-                        {
                             stalemate++;
-                        }
 
                         ThreadData.EndPly();
                     }
@@ -210,13 +189,9 @@ namespace Chess22kDotNet.Texel
                         MoveGenerator.GenerateAttacks(ThreadData, Cb);
                         MoveGenerator.GenerateMoves(ThreadData, Cb);
                         if (ThreadData.HasNext())
-                        {
                             fens.Add(fenString, score);
-                        }
                         else
-                        {
                             checkmate++;
-                        }
 
                         ThreadData.EndPly();
                     }
@@ -259,13 +234,9 @@ namespace Chess22kDotNet.Texel
             foreach (var tuningObject in tuningObjects)
             {
                 if (tuningObject.ShowAverage)
-                {
                     Console.WriteLine(tuningObject.Name + " " + tuningObject.GetAverage());
-                }
                 else
-                {
                     Console.WriteLine(tuningObject.Name);
-                }
 
                 totalValues += tuningObject.GetNumberOfTunedValues();
             }
@@ -286,13 +257,9 @@ namespace Chess22kDotNet.Texel
                 Console.WriteLine("Run " + run++);
                 improved = false;
                 foreach (var tuningObject in tuningObjects)
-                {
                     for (var i = 0; i < tuningObject.NumberOfParameters(); i++)
                     {
-                        if (tuningObject.Skip(i))
-                        {
-                            continue;
-                        }
+                        if (tuningObject.Skip(i)) continue;
 
                         tuningObject.AddStep(i);
                         EvalConstants.InitMgEg();
@@ -323,7 +290,6 @@ namespace Chess22kDotNet.Texel
                             }
                         }
                     }
-                }
 
                 PrintAll(tuningObjects);
             }
@@ -344,7 +310,6 @@ namespace Chess22kDotNet.Texel
             double totalError = 0;
             // now retrieve the result
             foreach (var task in list)
-            {
                 try
                 {
                     totalError += await task;
@@ -357,7 +322,6 @@ namespace Chess22kDotNet.Texel
                 {
                     Console.WriteLine(e);
                 }
-            }
 
             return totalError / NumberOfThreads;
         }

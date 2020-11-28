@@ -11,35 +11,23 @@ namespace Chess22kDotNet.Move
         public static void GenerateMoves(ThreadData threadData, ChessBoard cb)
         {
             if (cb.CheckingPieces == 0)
-            {
                 GenerateNotInCheckMoves(threadData, cb);
-            }
             else if (BitOperations.PopCount((ulong) cb.CheckingPieces) == 1)
-            {
                 GenerateOutOfCheckMoves(threadData, cb);
-            }
             else
-            {
                 // double check, only the king can move
                 AddKingMoves(threadData, cb);
-            }
         }
 
         public static void GenerateAttacks(ThreadData threadData, ChessBoard cb)
         {
             if (cb.CheckingPieces == 0)
-            {
                 GenerateNotInCheckAttacks(threadData, cb);
-            }
             else if (BitOperations.PopCount((ulong) cb.CheckingPieces) == 1)
-            {
                 GenerateOutOfCheckAttacks(threadData, cb);
-            }
             else
-            {
                 // double check, only the king can attack
                 AddKingAttacks(threadData, cb);
-            }
         }
 
         private static void GenerateNotInCheckMoves(ThreadData threadData, ChessBoard cb)
@@ -168,10 +156,7 @@ namespace Chess22kDotNet.Move
             in long enemies,
             in long emptySpaces)
         {
-            if (pawns == 0)
-            {
-                return;
-            }
+            if (pawns == 0) return;
 
             if (cb.ColorToMove == White)
             {
@@ -199,10 +184,8 @@ namespace Chess22kDotNet.Move
                     var fromIndex = BitOperations.TrailingZeroCount(piece);
 
                     // promotion move
-                    if (((piece & -piece) << 8 & emptySpaces) != 0)
-                    {
+                    if ((((piece & -piece) << 8) & emptySpaces) != 0)
                         AddPromotionMove(threadData, fromIndex, fromIndex + 8);
-                    }
 
                     // promotion attacks
                     AddPromotionAttacks(threadData, StaticMoves.PawnAttacks[White][fromIndex] & enemies, fromIndex,
@@ -238,9 +221,7 @@ namespace Chess22kDotNet.Move
 
                     // promotion move
                     if ((Util.RightTripleShift(piece & -piece, 8) & emptySpaces) != 0)
-                    {
                         AddPromotionMove(threadData, fromIndex, fromIndex - 8);
-                    }
 
                     // promotion attacks
                     AddPromotionAttacks(threadData, StaticMoves.PawnAttacks[Black][fromIndex] & enemies, fromIndex,
@@ -375,10 +356,7 @@ namespace Chess22kDotNet.Move
         private static void AddPawnMoves(ThreadData threadData, long pawns, ChessBoard cb,
             long possiblePositions)
         {
-            if (pawns == 0)
-            {
-                return;
-            }
+            if (pawns == 0) return;
 
             if (cb.ColorToMove == White)
             {
@@ -395,9 +373,7 @@ namespace Chess22kDotNet.Move
                 while (piece != 0)
                 {
                     if ((cb.EmptySpaces & ((piece & -piece) << 8)) != 0)
-                    {
                         threadData.AddMove(MoveUtil.CreateWhitePawn2Move(BitOperations.TrailingZeroCount(piece)));
-                    }
 
                     piece &= piece - 1;
                 }
@@ -417,9 +393,7 @@ namespace Chess22kDotNet.Move
                 while (piece != 0)
                 {
                     if ((cb.EmptySpaces & Util.RightTripleShift(piece & -piece, 8)) != 0)
-                    {
                         threadData.AddMove(MoveUtil.CreateBlackPawn2Move(BitOperations.TrailingZeroCount(piece)));
-                    }
 
                     piece &= piece - 1;
                 }
@@ -444,9 +418,7 @@ namespace Chess22kDotNet.Move
                 var castlingIndex = BitOperations.TrailingZeroCount(castlingIndexes);
                 // no piece in between?
                 if (CastlingUtil.IsValidCastlingMove(cb, fromIndex, castlingIndex))
-                {
                     threadData.AddMove(MoveUtil.CreateCastlingMove(fromIndex, castlingIndex));
-                }
 
                 castlingIndexes &= castlingIndexes - 1;
             }
@@ -484,18 +456,13 @@ namespace Chess22kDotNet.Move
 
         private static void AddEpAttacks(ThreadData threadData, ChessBoard cb)
         {
-            if (cb.EpIndex == 0)
-            {
-                return;
-            }
+            if (cb.EpIndex == 0) return;
 
             var piece = cb.Pieces[cb.ColorToMove][Pawn] & StaticMoves.PawnAttacks[cb.ColorToMoveInverse][cb.EpIndex];
             while (piece != 0)
             {
                 if (cb.IsLegalEpMove(BitOperations.TrailingZeroCount(piece)))
-                {
                     threadData.AddMove(MoveUtil.CreateEpMove(BitOperations.TrailingZeroCount(piece), cb.EpIndex));
-                }
 
                 piece &= piece - 1;
             }

@@ -23,9 +23,7 @@ namespace Chess22kDotNet.Eval
                 score += GetPassedPawnScore(cb, index, White);
 
                 if (whitePromotionDistance == Util.ShortMax)
-                {
                     whitePromotionDistance = GetWhitePromotionDistance(cb, index);
-                }
 
                 // skip all passed pawns at same file
                 passedPawns &= ~Bitboard.Files[index & 7];
@@ -40,22 +38,15 @@ namespace Chess22kDotNet.Eval
                 score -= GetPassedPawnScore(cb, index, Black);
 
                 if (blackPromotionDistance == Util.ShortMax)
-                {
                     blackPromotionDistance = GetBlackPromotionDistance(cb, index);
-                }
 
                 // skip all passed pawns at same file
                 passedPawns &= ~Bitboard.Files[index & 7];
             }
 
             if (whitePromotionDistance < blackPromotionDistance - 1)
-            {
                 score += 350;
-            }
-            else if (whitePromotionDistance > blackPromotionDistance + 1)
-            {
-                score -= 350;
-            }
+            else if (whitePromotionDistance > blackPromotionDistance + 1) score -= 350;
 
             return score;
         }
@@ -71,57 +62,39 @@ namespace Chess22kDotNet.Eval
             float multiplier = 1;
 
             // is piece blocked?
-            if ((cb.AllPieces & maskNextSquare) != 0)
-            {
-                multiplier *= EvalConstants.PassedMultipliers[0];
-            }
+            if ((cb.AllPieces & maskNextSquare) != 0) multiplier *= EvalConstants.PassedMultipliers[0];
 
             // is next squared attacked?
             if ((cb.Attacks[enemyColor][All] & maskNextSquare) == 0)
             {
                 // complete path free of enemy attacks?
                 if ((PinnedMovement[nextIndex][index] & cb.Attacks[enemyColor][All]) == 0)
-                {
                     multiplier *= EvalConstants.PassedMultipliers[7];
-                }
                 else
-                {
                     multiplier *= EvalConstants.PassedMultipliers[1];
-                }
             }
 
             // is next squared defended?
-            if ((cb.Attacks[color][All] & maskNextSquare) != 0)
-            {
-                multiplier *= EvalConstants.PassedMultipliers[3];
-            }
+            if ((cb.Attacks[color][All] & maskNextSquare) != 0) multiplier *= EvalConstants.PassedMultipliers[3];
 
             // is enemy king in front?
             if ((PinnedMovement[nextIndex][index] & cb.Pieces[enemyColor][King]) != 0)
-            {
                 multiplier *= EvalConstants.PassedMultipliers[2];
-            }
 
             // under attack?
             if (cb.ColorToMove != color && (cb.Attacks[enemyColor][All] & square) != 0)
-            {
                 multiplier *= EvalConstants.PassedMultipliers[4];
-            }
 
             // defended by rook from behind?
             if ((maskFile & cb.Pieces[color][Rook]) != 0 && (cb.Attacks[color][Rook] & square) != 0 &&
                 (cb.Attacks[color][Rook] & maskPreviousSquare) != 0)
-            {
                 multiplier *= EvalConstants.PassedMultipliers[5];
-            }
 
             // attacked by rook from behind?
             else if ((maskFile & cb.Pieces[enemyColor][Rook]) != 0 && (cb.Attacks[enemyColor][Rook] & square) != 0
                                                                    && (cb.Attacks[enemyColor][Rook] &
                                                                        maskPreviousSquare) != 0)
-            {
                 multiplier *= EvalConstants.PassedMultipliers[6];
-            }
 
             // king tropism
             multiplier *= EvalConstants.PassedKingMulti[Util.GetDistance(cb.KingIndex[color], index)];
@@ -138,47 +111,32 @@ namespace Chess22kDotNet.Eval
             if (promotionDistance == 1 && cb.ColorToMove == Black)
             {
                 if ((Util.PowerLookup[index - 8] & (cb.Attacks[White][All] | cb.AllPieces)) != 0) return Util.ShortMax;
-                if ((Util.PowerLookup[index] & cb.Attacks[White][All]) == 0)
-                {
-                    return 1;
-                }
+                if ((Util.PowerLookup[index] & cb.Attacks[White][All]) == 0) return 1;
             }
             else if (MaterialUtil.onlyWhitePawnsOrOneNightOrBishop(cb.MaterialKey))
             {
                 // check if it is my turn
-                if (cb.ColorToMove == White)
-                {
-                    promotionDistance++;
-                }
+                if (cb.ColorToMove == White) promotionDistance++;
 
                 // check if own pieces are blocking the path
                 if (BitOperations.TrailingZeroCount(cb.Pieces[Black][All] & Bitboard.Files[index & 7]) < index)
-                {
                     promotionDistance++;
-                }
 
                 // check if own king is defending the promotion square (including square just below)
                 if ((StaticMoves.KingMoves[cb.KingIndex[Black]] & KingArea[index] & Bitboard.Rank12) != 0)
-                {
                     promotionDistance--;
-                }
 
                 // check distance of enemy king to promotion square
                 if (promotionDistance >= Math.Max(Util.RightTripleShift(cb.KingIndex[White], 3),
                     Math.Abs((index & 7) - (cb.KingIndex[White] & 7)))) return Util.ShortMax;
-                if (!MaterialUtil.HasWhiteNonPawnPieces(cb.MaterialKey))
-                {
-                    return promotionDistance;
-                }
+                if (!MaterialUtil.HasWhiteNonPawnPieces(cb.MaterialKey)) return promotionDistance;
 
                 if (cb.Pieces[White][Knight] != 0)
                 {
                     // check distance of enemy night
                     if (promotionDistance <
                         Util.GetDistance(BitOperations.TrailingZeroCount(cb.Pieces[White][Knight]), index))
-                    {
                         return promotionDistance;
-                    }
                 }
                 else
                 {
@@ -186,10 +144,7 @@ namespace Chess22kDotNet.Eval
                     if (Util.RightTripleShift(index, 3) != 1) return Util.ShortMax;
                     if ((Util.PowerLookup[index] & Bitboard.WhiteSquares) == 0 !=
                         ((cb.Pieces[White][Bishop] & Bitboard.WhiteSquares) == 0)) return Util.ShortMax;
-                    if ((cb.Attacks[White][All] & Util.PowerLookup[index]) == 0)
-                    {
-                        return promotionDistance;
-                    }
+                    if ((cb.Attacks[White][All] & Util.PowerLookup[index]) == 0) return promotionDistance;
                 }
             }
 
@@ -203,49 +158,34 @@ namespace Chess22kDotNet.Eval
             if (promotionDistance == 1 && cb.ColorToMove == White)
             {
                 if ((Util.PowerLookup[index + 8] & (cb.Attacks[Black][All] | cb.AllPieces)) != 0) return Util.ShortMax;
-                if ((Util.PowerLookup[index] & cb.Attacks[Black][All]) == 0)
-                {
-                    return 1;
-                }
+                if ((Util.PowerLookup[index] & cb.Attacks[Black][All]) == 0) return 1;
             }
             else if (MaterialUtil.onlyBlackPawnsOrOneNightOrBishop(cb.MaterialKey))
             {
                 // check if it is my turn
-                if (cb.ColorToMove == Black)
-                {
-                    promotionDistance++;
-                }
+                if (cb.ColorToMove == Black) promotionDistance++;
 
                 // check if own pieces are blocking the path
                 if (63 - BitOperations.LeadingZeroCount((ulong) (cb.Pieces[White][All] & Bitboard.Files[index & 7])) >
                     index)
-                {
                     promotionDistance++;
-                }
 
                 // TODO maybe the enemy king can capture the pawn!!
                 // check if own king is defending the promotion square (including square just below)
                 if ((StaticMoves.KingMoves[cb.KingIndex[White]] & KingArea[index] & Bitboard.Rank78) != 0)
-                {
                     promotionDistance--;
-                }
 
                 // check distance of enemy king to promotion square
                 if (promotionDistance >= Math.Max(7 - cb.KingIndex[Black] / 8,
                     Math.Abs((index & 7) - (cb.KingIndex[Black] & 7)))) return Util.ShortMax;
-                if (!MaterialUtil.HasBlackNonPawnPieces(cb.MaterialKey))
-                {
-                    return promotionDistance;
-                }
+                if (!MaterialUtil.HasBlackNonPawnPieces(cb.MaterialKey)) return promotionDistance;
 
                 if (cb.Pieces[Black][Knight] != 0)
                 {
                     // check distance of enemy night
                     if (promotionDistance <
                         Util.GetDistance(BitOperations.TrailingZeroCount(cb.Pieces[Black][Knight]), index))
-                    {
                         return promotionDistance;
-                    }
                 }
                 else
                 {
@@ -255,10 +195,7 @@ namespace Chess22kDotNet.Eval
                     if ((Util.PowerLookup[index] & Bitboard.WhiteSquares) == 0 !=
                         ((cb.Pieces[Black][Bishop] & Bitboard.WhiteSquares) == 0)) return Util.ShortMax;
                     // other color than promotion square
-                    if ((cb.Attacks[Black][All] & Util.PowerLookup[index]) == 0)
-                    {
-                        return promotionDistance;
-                    }
+                    if ((cb.Attacks[Black][All] & Util.PowerLookup[index]) == 0) return promotionDistance;
                 }
             }
 

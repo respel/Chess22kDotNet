@@ -13,9 +13,7 @@ namespace Chess22kDotNet.MainTests
         public static void Main()
         {
             if (!EngineConstants.GenerateBrPromotions)
-            {
                 throw new Exception("Generation of underpromotions must be enabled");
-            }
 
             TestPerft1();
             TestPerft2();
@@ -39,12 +37,8 @@ namespace Chess22kDotNet.MainTests
             if (depth == 1)
             {
                 while (ThreadData.HasNext())
-                {
                     if (chessBoard.IsLegal(ThreadData.Next()))
-                    {
                         counter++;
-                    }
-                }
 
                 ThreadData.EndPly();
                 return counter;
@@ -53,10 +47,7 @@ namespace Chess22kDotNet.MainTests
             while (ThreadData.HasNext())
             {
                 var move = ThreadData.Next();
-                if (!chessBoard.IsLegal(move))
-                {
-                    continue;
-                }
+                if (!chessBoard.IsLegal(move)) continue;
 
                 chessBoard.DoMove(move);
                 counter += Qperft(chessBoard, depth - 1);

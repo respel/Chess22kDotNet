@@ -4,29 +4,35 @@ namespace Chess22kDotNet.Move
 {
     public class MoveWrapper
     {
-        public readonly int FromRank;
         public readonly char FromFile;
 
-        /** 1 to 8 */
-        public readonly int ToRank;
-
-        /** a to h */
-        public readonly char ToFile;
-
         public readonly int FromIndex;
-        public readonly int ToIndex;
+        public readonly int FromRank;
+        public readonly bool IsBishopPromotion;
+
+        public readonly bool IsKnightPromotion;
+        public readonly bool IsQueenPromotion;
+        public readonly bool IsRookPromotion;
         public readonly int Move;
 
         public readonly int PieceIndex;
         public readonly int PieceIndexAttacked;
 
-        public readonly bool IsKnightPromotion;
-        public readonly bool IsQueenPromotion;
-        public readonly bool IsRookPromotion;
-        public readonly bool IsBishopPromotion;
+        /**
+         * a to h
+         */
+        public readonly char ToFile;
 
-        public bool IsEp = false;
-        public bool IsCastling = false;
+        public readonly int ToIndex;
+
+        /**
+         * 1 to 8
+         */
+        public readonly int ToRank;
+
+        public bool IsCastling;
+
+        public bool IsEp;
 
         public MoveWrapper(int move)
         {
@@ -79,7 +85,7 @@ namespace Chess22kDotNet.Move
             ToFile = moveString[2];
             ToRank = int.Parse(moveString.Substring(3, 1));
             ToIndex = (ToRank - 1) * 8 + 104 - ToFile;
-            
+
             PieceIndex =
                 (cb.Pieces[cb.ColorToMove][ChessConstants.Pawn] & Util.PowerLookup[FromIndex]) != 0
                     ? ChessConstants.Pawn
@@ -95,10 +101,7 @@ namespace Chess22kDotNet.Move
                                       0
                                         ? ChessConstants.Rook
                                         : -1;
-            if (PieceIndex == -1)
-            {
-                throw new ArgumentException("Source piece not found at index " + FromIndex);
-            }
+            if (PieceIndex == -1) throw new ArgumentException("Source piece not found at index " + FromIndex);
 
             PieceIndexAttacked =
                 (cb.Pieces[cb.ColorToMoveInverse][ChessConstants.Pawn] & Util.PowerLookup[ToIndex]) != 0
@@ -213,25 +216,13 @@ namespace Chess22kDotNet.Move
         public override string ToString()
         {
             var moveString = "" + FromFile + FromRank + ToFile + ToRank;
-            if (IsQueenPromotion)
-            {
-                return moveString + "q";
-            }
+            if (IsQueenPromotion) return moveString + "q";
 
-            if (IsKnightPromotion)
-            {
-                return moveString + "n";
-            }
+            if (IsKnightPromotion) return moveString + "n";
 
-            if (IsRookPromotion)
-            {
-                return moveString + "r";
-            }
+            if (IsRookPromotion) return moveString + "r";
 
-            if (IsBishopPromotion)
-            {
-                return moveString + "b";
-            }
+            if (IsBishopPromotion) return moveString + "b";
 
             return moveString;
         }

@@ -60,58 +60,61 @@ namespace Chess22kDotNet.Move
 
         public static int CreateMove(int fromIndex, int toIndex, int sourcePieceIndex)
         {
-            return sourcePieceIndex << ShiftSource | toIndex << ShiftTo | fromIndex;
+            return (sourcePieceIndex << ShiftSource) | (toIndex << ShiftTo) | fromIndex;
         }
 
         public static int CreateWhitePawnMove(int fromIndex)
         {
-            return ChessConstants.Pawn << ShiftSource | (fromIndex + 8) << ShiftTo | fromIndex;
+            return (ChessConstants.Pawn << ShiftSource) | ((fromIndex + 8) << ShiftTo) | fromIndex;
         }
 
         public static int CreateBlackPawnMove(int fromIndex)
         {
-            return ChessConstants.Pawn << ShiftSource | (fromIndex - 8) << ShiftTo | fromIndex;
+            return (ChessConstants.Pawn << ShiftSource) | ((fromIndex - 8) << ShiftTo) | fromIndex;
         }
 
         public static int CreateWhitePawn2Move(int fromIndex)
         {
-            return ChessConstants.Pawn << ShiftSource | (fromIndex + 16) << ShiftTo | fromIndex;
+            return (ChessConstants.Pawn << ShiftSource) | ((fromIndex + 16) << ShiftTo) | fromIndex;
         }
 
         public static int CreateBlackPawn2Move(int fromIndex)
         {
-            return ChessConstants.Pawn << ShiftSource | (fromIndex - 16) << ShiftTo | fromIndex;
+            return (ChessConstants.Pawn << ShiftSource) | ((fromIndex - 16) << ShiftTo) | fromIndex;
         }
 
         public static int CreatePromotionMove(int promotionPiece, int fromIndex, int toIndex)
         {
-            return 1 << ShiftPromotion | promotionPiece << ShiftMoveType | ChessConstants.Pawn << ShiftSource |
-                   toIndex << ShiftTo | fromIndex;
+            return (1 << ShiftPromotion) | (promotionPiece << ShiftMoveType) | (ChessConstants.Pawn << ShiftSource) |
+                   (toIndex << ShiftTo) | fromIndex;
         }
 
         public static int CreateAttackMove(int fromIndex, int toIndex, int sourcePieceIndex,
             int attackedPieceIndex)
         {
-            return attackedPieceIndex << ShiftAttack | sourcePieceIndex << ShiftSource | toIndex << ShiftTo | fromIndex;
+            return (attackedPieceIndex << ShiftAttack) | (sourcePieceIndex << ShiftSource) | (toIndex << ShiftTo) |
+                   fromIndex;
         }
 
         public static int CreatePromotionAttack(int promotionPiece, int fromIndex, int toIndex,
             int attackedPieceIndex)
         {
-            return 1 << ShiftPromotion | promotionPiece << ShiftMoveType | attackedPieceIndex << ShiftAttack |
-                   ChessConstants.Pawn << ShiftSource
-                   | toIndex << ShiftTo | fromIndex;
+            return (1 << ShiftPromotion) | (promotionPiece << ShiftMoveType) | (attackedPieceIndex << ShiftAttack) |
+                   (ChessConstants.Pawn << ShiftSource)
+                   | (toIndex << ShiftTo) | fromIndex;
         }
 
         public static int CreateEpMove(int fromIndex, int toIndex)
         {
-            return TypeEp << ShiftMoveType | ChessConstants.Pawn << ShiftAttack | ChessConstants.Pawn << ShiftSource |
-                   toIndex << ShiftTo | fromIndex;
+            return (TypeEp << ShiftMoveType) | (ChessConstants.Pawn << ShiftAttack) |
+                   (ChessConstants.Pawn << ShiftSource) |
+                   (toIndex << ShiftTo) | fromIndex;
         }
 
         public static int CreateCastlingMove(int fromIndex, int toIndex)
         {
-            return TypeCastling << ShiftMoveType | ChessConstants.King << ShiftSource | toIndex << ShiftTo | fromIndex;
+            return (TypeCastling << ShiftMoveType) | (ChessConstants.King << ShiftSource) | (toIndex << ShiftTo) |
+                   fromIndex;
         }
 
         public static bool IsPromotion(int move)

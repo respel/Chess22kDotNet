@@ -36,10 +36,7 @@ namespace Chess22kDotNet.Texel
 
         public override void RestoreValues()
         {
-            for (var i = 0; i < Values.Length; i++)
-            {
-                _floatValues[i] = (float) OrgValues[i] / 10;
-            }
+            for (var i = 0; i < Values.Length; i++) _floatValues[i] = (float) OrgValues[i] / 10;
         }
 
         public override void ClearValues()

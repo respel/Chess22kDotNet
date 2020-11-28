@@ -145,9 +145,6 @@ namespace Chess22kDotNet
         public const long Rank23456 = Rank2 | Rank3 | Rank4 | Rank5 | Rank6;
         public const long Rank234567 = Rank2 | Rank3 | Rank4 | Rank5 | Rank6 | Rank7;
         public const long Rank34567 = Rank3 | Rank4 | Rank5 | Rank6 | Rank7;
-        public static long[] RankPromotion = {Rank7, Rank2};
-        public static long[] RankNonPromotion = {~RankPromotion[0], ~RankPromotion[1]};
-        public static long[] RankFirst = {Rank1, Rank8};
 
         // files
         public const long FileA = A1 | A2 | A3 | A4 | A5 | A6 | A7 | A8;
@@ -167,6 +164,9 @@ namespace Chess22kDotNet
         // special
         public const long WhiteCorners = -0x70F1F3E7CF8F0E1L;
         public const long BlackCorners = 0x1f0f0783c1e0f0f8L;
+        public static long[] RankPromotion = {Rank7, Rank2};
+        public static long[] RankNonPromotion = {~RankPromotion[0], ~RankPromotion[1]};
+        public static long[] RankFirst = {Rank1, Rank8};
 
         public static readonly long[] Ranks = {Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8};
         public static readonly long[] Files = {FileH, FileG, FileF, FileE, FileD, FileC, FileB, FileA};
@@ -186,17 +186,17 @@ namespace Chess22kDotNet
 
         public static long GetWhitePawnAttacks(long pawns)
         {
-            return pawns << 9 & NotFileH | pawns << 7 & NotFileA;
+            return ((pawns << 9) & NotFileH) | ((pawns << 7) & NotFileA);
         }
 
         public static long GetBlackPawnAttacks(long pawns)
         {
-            return Util.RightTripleShift(pawns, 9) & NotFileA | Util.RightTripleShift(pawns, 7) & NotFileH;
+            return (Util.RightTripleShift(pawns, 9) & NotFileA) | (Util.RightTripleShift(pawns, 7) & NotFileH);
         }
 
         public static long GetPawnNeighbours(long pawns)
         {
-            return pawns << 1 & NotFileH | Util.RightTripleShift(pawns, 1) & NotFileA;
+            return ((pawns << 1) & NotFileH) | (Util.RightTripleShift(pawns, 1) & NotFileA);
         }
 
         /**
@@ -213,10 +213,7 @@ namespace Chess22kDotNet
 
         public static long GetWhitePassedPawnMask(int index)
         {
-            if (index > 55)
-            {
-                return 0;
-            }
+            if (index > 55) return 0;
 
             return (Files[index & 7] | FilesAdjacent[index & 7]) << ((Util.RightTripleShift(index, 3) << 3) + 8);
         }

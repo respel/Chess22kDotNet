@@ -1,23 +1,21 @@
 using System;
 using Chess22kDotNet.Engine;
-using Chess22kDotNet.Eval;
 using Chess22kDotNet.Move;
 
 namespace Chess22kDotNet.Search
 {
     public static class TtUtil
     {
-        private static int _keyShifts;
-        
-        private static TtEntry[] _entries;
-
         public const int FlagExact = 0;
         public const int FlagUpper = 1;
         public const int FlagLower = 2;
 
-        public static long HalfMoveCounter = 0;
-
         private const int BucketSize = 4;
+        private static int _keyShifts;
+
+        private static TtEntry[] _entries;
+
+        public static long HalfMoveCounter = 0;
 
         private static bool _isInitialized;
 
@@ -26,7 +24,7 @@ namespace Chess22kDotNet.Search
             if (!force && _isInitialized) return;
             _keyShifts = 64 - EngineConstants.Power2TtEntries;
             var maxEntries = (int) (Util.PowerLookup[EngineConstants.Power2TtEntries] + BucketSize - 1);
-            
+
             _entries = new TtEntry[maxEntries];
 
             _isInitialized = true;
@@ -34,10 +32,7 @@ namespace Chess22kDotNet.Search
 
         public static void ClearValues()
         {
-            for(var i = 0; i < _entries.Length; i++)
-            {
-                _entries[i].Key = 0;
-            }
+            for (var i = 0; i < _entries.Length; i++) _entries[i].Key = 0;
         }
 
         public static TtEntry GetEntry(long key)
@@ -47,18 +42,12 @@ namespace Chess22kDotNet.Search
             for (var i = index; i < index + BucketSize; i++)
             {
                 if (_entries[i].Key != key) continue;
-                if (Statistics.Enabled)
-                {
-                    Statistics.TtHits++;
-                }
+                if (Statistics.Enabled) Statistics.TtHits++;
 
                 return _entries[i];
             }
 
-            if (Statistics.Enabled)
-            {
-                Statistics.TtMisses++;
-            }
+            if (Statistics.Enabled) Statistics.TtMisses++;
 
             return new TtEntry();
         }
@@ -93,10 +82,7 @@ namespace Chess22kDotNet.Search
                 var currentDepth = currentEntry.Depth;
                 if (_entries[i].Key == key)
                 {
-                    if (currentDepth > depth && flag != FlagExact)
-                    {
-                        return;
-                    }
+                    if (currentDepth > depth && flag != FlagExact) return;
 
                     replaceIndex = i;
                     break;
@@ -162,12 +148,8 @@ namespace Chess22kDotNet.Search
         {
             var usage = 0;
             for (var i = 0; i < 500; i++)
-            {
                 if (_entries[i].Key != 0)
-                {
                     usage++;
-                }
-            }
 
             return usage;
         }

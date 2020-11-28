@@ -11,10 +11,7 @@ namespace Chess22kDotNet.MainTests
     {
         public static async Task Main()
         {
-            if (!EngineConstants.GenerateBrPromotions)
-            {
-                Console.WriteLine("Generation of underpromotions is disabled!");
-            }
+            if (!EngineConstants.GenerateBrPromotions) Console.WriteLine("Generation of underpromotions is disabled!");
 
             ChessBoardInstances.Init(8);
             ThreadData.InitInstances(8);
@@ -82,10 +79,7 @@ namespace Chess22kDotNet.MainTests
             while (threadData.HasNext())
             {
                 var move = threadData.Next();
-                if (!cb.IsLegal(move))
-                {
-                    continue;
-                }
+                if (!cb.IsLegal(move)) continue;
 
                 cb.DoMove(move);
                 counter += perft(cb, threadData, depth - 1);
@@ -117,8 +111,8 @@ namespace Chess22kDotNet.MainTests
 
         private class PerftWorker
         {
-            private readonly List<PerftPosition> _positions = new List<PerftPosition>();
             private readonly string _name;
+            private readonly List<PerftPosition> _positions = new List<PerftPosition>();
             private readonly int _threadNumber;
 
             public PerftWorker(string name, int threadNumber)
@@ -150,9 +144,9 @@ namespace Chess22kDotNet.MainTests
 
         private class PerftPosition
         {
+            public readonly int Depth;
             public readonly string Fen;
             public readonly int MoveCount;
-            public readonly int Depth;
 
             public PerftPosition(string fen, int moveCount, int depth)
             {

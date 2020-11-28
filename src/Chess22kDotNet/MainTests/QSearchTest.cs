@@ -34,10 +34,7 @@ namespace Chess22kDotNet.MainTests
             foreach (var entry in fens)
             {
                 ChessBoardUtil.SetFen(entry.Key, cb);
-                if (cb.CheckingPieces == 0)
-                {
-                    continue;
-                }
+                if (cb.CheckingPieces == 0) continue;
 
                 totalPositions++;
                 var searchScore = NegamaxUtil.CalculateBestMove(cb, ThreadData, 0, 1, Util.ShortMin, Util.ShortMax, 0);

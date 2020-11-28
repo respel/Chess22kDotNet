@@ -11,7 +11,7 @@ namespace Chess22kDotNet.Engine
     {
         public static bool NoOutput = false;
         private static readonly Stopwatch Stopwatch = new Stopwatch();
-        
+
         public static void SendUci()
         {
             Console.WriteLine("id name Chess22kDotNet " + GetVersion());
@@ -24,21 +24,14 @@ namespace Chess22kDotNet.Engine
 
         public static void SendBestMove(ThreadData threadData)
         {
-            if (NoOutput)
-            {
-                return;
-            }
+            if (NoOutput) return;
 
             Statistics.Print();
             if (UciOptions.Ponder && threadData.GetPonderMove() != 0)
-            {
                 Console.WriteLine("bestmove " + new MoveWrapper(threadData.GetBestMove()) + " ponder " +
                                   new MoveWrapper(threadData.GetPonderMove()));
-            }
             else
-            {
                 Console.WriteLine("bestmove " + new MoveWrapper(threadData.GetBestMove()));
-            }
         }
 
         private static long CalculateNps(long totalMoveCount)
@@ -48,15 +41,9 @@ namespace Chess22kDotNet.Engine
 
         public static void SendInfo()
         {
-            if (NoOutput)
-            {
-                return;
-            }
+            if (NoOutput) return;
 
-            if (Stopwatch.IsRunning && Stopwatch.ElapsedMilliseconds < 2000)
-            {
-                return;
-            }
+            if (Stopwatch.IsRunning && Stopwatch.ElapsedMilliseconds < 2000) return;
 
             var totalMoveCount = ChessBoardUtil.CalculateTotalMoveCount();
             Console.WriteLine("info nodes " + totalMoveCount + " nps " + CalculateNps(totalMoveCount) + " hashfull " +
@@ -65,10 +52,7 @@ namespace Chess22kDotNet.Engine
 
         public static void SendPlyInfo(ThreadData threadData)
         {
-            if (NoOutput)
-            {
-                return;
-            }
+            if (NoOutput) return;
 
             Stopwatch.Restart();
 

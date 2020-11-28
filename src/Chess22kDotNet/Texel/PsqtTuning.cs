@@ -35,10 +35,7 @@ namespace Chess22kDotNet.Texel
             if (ShowAverage)
             {
                 var sum = 0;
-                for (var i = 0; i < 64; i++)
-                {
-                    sum += _psqtValues[ChessConstants.White][i];
-                }
+                for (var i = 0; i < 64; i++) sum += _psqtValues[ChessConstants.White][i];
 
                 Console.WriteLine(Name + ": (" + sum / 64 + ")" +
                                   GetArrayFriendlyFormatted(_psqtValues[ChessConstants.White]));
@@ -53,10 +50,7 @@ namespace Chess22kDotNet.Texel
         {
             if (!ShowAverage) return Name + ": " + Arrays.ToString(_psqtValues[ChessConstants.White]);
             var sum = 0;
-            for (var i = 0; i < 64; i++)
-            {
-                sum += _psqtValues[ChessConstants.White][i];
-            }
+            for (var i = 0; i < 64; i++) sum += _psqtValues[ChessConstants.White][i];
 
             return Name + ": (" + sum / 64 + ")" + Arrays.ToString(_psqtValues[ChessConstants.White]);
         }
@@ -109,10 +103,7 @@ namespace Chess22kDotNet.Texel
             for (var i = 7; i >= 0; i--)
             {
                 sb.Append(" ");
-                for (var j = 7; j >= 0; j--)
-                {
-                    sb.Append($"{values[i * 8 + j],3}").Append(",");
-                }
+                for (var j = 7; j >= 0; j--) sb.Append($"{values[i * 8 + j],3}").Append(",");
 
                 sb.Append("\n");
             }
@@ -132,26 +123,17 @@ namespace Chess22kDotNet.Texel
 
         public override void RestoreValues()
         {
-            for (var i = 0; i < 64; i++)
-            {
-                _psqtValues[ChessConstants.White][i] = OrgValues[i];
-            }
+            for (var i = 0; i < 64; i++) _psqtValues[ChessConstants.White][i] = OrgValues[i];
 
             for (var i = 0; i < 64; i++)
-            {
                 _psqtValues[ChessConstants.Black][i] = -_psqtValues[ChessConstants.White][63 - i];
-            }
         }
 
         public override bool IsUpdated()
         {
             for (var i = 0; i < 64; i++)
-            {
                 if (OrgValues[i] != _psqtValues[ChessConstants.White][i])
-                {
                     return true;
-                }
-            }
 
             return false;
         }

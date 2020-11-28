@@ -7,12 +7,12 @@ namespace Chess22kDotNet.Texel
 {
     public class Tuning
     {
+        public readonly string Name;
+        public readonly bool ShowAverage;
+        protected readonly List<int> SkipValues;
+        protected readonly int Step;
         protected readonly int[] Values;
         protected int[] OrgValues;
-        protected readonly int Step;
-        public readonly string Name;
-        protected readonly List<int> SkipValues;
-        public readonly bool ShowAverage;
 
         public Tuning(int[] values, int step, string name, params int[] skipValues) : this(values, step, name, false,
             skipValues)
@@ -24,10 +24,7 @@ namespace Chess22kDotNet.Texel
             Values = values;
             Step = step;
             ShowAverage = showAverage;
-            while (name.Length < 20)
-            {
-                name += " ";
-            }
+            while (name.Length < 20) name += " ";
 
             Name = name;
             SkipValues = skipValues.ToList();
@@ -48,10 +45,7 @@ namespace Chess22kDotNet.Texel
 
         public override string ToString()
         {
-            if (ShowAverage)
-            {
-                return Name + ": " + Arrays.ToString(Values) + " (" + GetAverage() + ")";
-            }
+            if (ShowAverage) return Name + ": " + Arrays.ToString(Values) + " (" + GetAverage() + ")";
 
             return Name + ": " + Arrays.ToString(Values);
         }
@@ -89,18 +83,12 @@ namespace Chess22kDotNet.Texel
 
         public virtual void ClearValues()
         {
-            for (var i = 0; i < Values.Length; i++)
-            {
-                Values[i] = 0;
-            }
+            for (var i = 0; i < Values.Length; i++) Values[i] = 0;
         }
 
         public virtual void RestoreValues()
         {
-            for (var i = 0; i < Values.Length; i++)
-            {
-                Values[i] = OrgValues[i];
-            }
+            for (var i = 0; i < Values.Length; i++) Values[i] = OrgValues[i];
         }
     }
 }

@@ -15,17 +15,10 @@ namespace Chess22kDotNet
         static Util()
         {
             for (var i = 0; i < 64; i++)
-            {
-                for (var j = 0; j < 64; j++)
-                {
-                    Distance[i][j] = (byte) Math.Max(Math.Abs((i >> 3) - (j >> 3)), Math.Abs((i & 7) - (j & 7)));
-                }
-            }
+            for (var j = 0; j < 64; j++)
+                Distance[i][j] = (byte) Math.Max(Math.Abs((i >> 3) - (j >> 3)), Math.Abs((i & 7) - (j & 7)));
 
-            for (var i = 0; i < 64; i++)
-            {
-                PowerLookup[i] = 1L << i;
-            }
+            for (var i = 0; i < 64; i++) PowerLookup[i] = 1L << i;
         }
 
         public static string ToFriendlyName(this ChessConstants.ScoreType rating)
@@ -61,10 +54,8 @@ namespace Chess22kDotNet
 
             if (elementType == null) return array;
             for (var i = 0; i < lengths[index]; i++)
-            {
                 array.SetValue(
                     InitializeJaggedArray(elementType, index + 1, lengths), i);
-            }
 
             return array;
         }
@@ -72,7 +63,7 @@ namespace Chess22kDotNet
 
         private static long ReverseBytes(long i)
         {
-            i = (i & 0x00ff00ff00ff00ffL) << 8 | RightTripleShift(i, 8) & 0x00ff00ff00ff00ffL;
+            i = ((i & 0x00ff00ff00ff00ffL) << 8) | (RightTripleShift(i, 8) & 0x00ff00ff00ff00ffL);
             return (i << 48) | ((i & 0xffff0000L) << 16) |
                    (RightTripleShift(i, 16) & 0xffff0000L) | RightTripleShift(i, 48);
         }
@@ -122,12 +113,8 @@ namespace Chess22kDotNet
         {
             var usage = 0;
             for (var i = 0; i < 1000; i++)
-            {
                 if (keys[i] != 0)
-                {
                     usage++;
-                }
-            }
 
             return usage / 10;
         }
@@ -136,12 +123,8 @@ namespace Chess22kDotNet
         {
             var usage = 0;
             for (var i = 0; i < 1000; i++)
-            {
                 if (keys[i] != 0)
-                {
                     usage++;
-                }
-            }
 
             return usage / 10;
         }

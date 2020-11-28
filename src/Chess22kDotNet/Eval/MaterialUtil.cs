@@ -33,6 +33,14 @@ namespace Chess22kDotNet.Eval
 
         private const int KBPK_ = 0x00810000;
 
+        private const int MaskMinorMajorAll = -983056;
+        private const int MaskMinorMajorWhite = 0xfff0;
+        private const int MaskMinorMajorBlack = -1048576;
+        private const int MaskSingleBishops = 0x800080;
+        private const int MaskSingleBishopNightWhite = KBNK;
+        private const int MaskSingleBishopNightBlack = KBNK_;
+        private const int MaskPawns = 0xf000f;
+
         public static readonly int[][] Values =
         {
             // WHITE QQQRRRBBBNNNPPPP
@@ -42,30 +50,18 @@ namespace Chess22kDotNet.Eval
         };
 
         private static readonly int[] Shift = {0, 16};
-
-        private const int MaskMinorMajorAll = -983056;
-        private const int MaskMinorMajorWhite = 0xfff0;
-        private const int MaskMinorMajorBlack = -1048576;
         private static readonly int[] MaskMinorMajor = {MaskMinorMajorWhite, MaskMinorMajorBlack};
         private static readonly int[] MaskNonNights = {0xff8f, -7405568};
-        private const int MaskSingleBishops = 0x800080;
-        private const int MaskSingleBishopNightWhite = KBNK;
-        private const int MaskSingleBishopNightBlack = KBNK_;
         private static readonly int[] MaskPawnsQueens = {0xe00f, -535887872};
-        private const int MaskPawns = 0xf000f;
         private static readonly int[] MaskSlidingPieces = {0xff80, -8388608};
 
         public static void SetKey(ChessBoard cb)
         {
             cb.MaterialKey = 0;
             for (var color = White; color <= Black; color++)
-            {
-                for (var pieceType = Pawn; pieceType <= Queen; pieceType++)
-                {
-                    cb.MaterialKey += BitOperations.PopCount((ulong) cb.Pieces[color][pieceType]) *
-                                      Values[color][pieceType];
-                }
-            }
+            for (var pieceType = Pawn; pieceType <= Queen; pieceType++)
+                cb.MaterialKey += BitOperations.PopCount((ulong) cb.Pieces[color][pieceType]) *
+                                  Values[color][pieceType];
         }
 
         public static bool ContainsMajorPieces(int material)
@@ -234,18 +230,12 @@ namespace Chess22kDotNet.Eval
                     return EndGameEvaluator.CalculateKrknScore(cb);
                 case KQKP:
                 case KQKP_:
-                    if (EndGameEvaluator.IsKqkpDrawish(cb))
-                    {
-                        return cb.Pieces[White][Queen] == 0 ? -50 : 50;
-                    }
+                    if (EndGameEvaluator.IsKqkpDrawish(cb)) return cb.Pieces[White][Queen] == 0 ? -50 : 50;
 
                     return ScoreUnknown;
                 case KRKP:
                 case KRKP_:
-                    if (EndGameEvaluator.IsKrkpDrawish(cb))
-                    {
-                        return cb.Pieces[White][Rook] == 0 ? -50 : 50;
-                    }
+                    if (EndGameEvaluator.IsKrkpDrawish(cb)) return cb.Pieces[White][Rook] == 0 ? -50 : 50;
 
                     return ScoreUnknown;
 

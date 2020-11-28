@@ -42,10 +42,7 @@ namespace Chess22kDotNet.Engine
         private static async Task MaxTimeTask(CancellationToken cancellationToken)
         {
             await Task.Delay((int) TimeUtil.GetMaxTimeMs(), cancellationToken);
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return;
-            }
+            if (cancellationToken.IsCancellationRequested) return;
             if (Pondering)
             {
                 _maxTimeExceeded = true;
@@ -56,7 +53,7 @@ namespace Chess22kDotNet.Engine
                 NegamaxUtil.IsRunning = false;
             }
         }
-        
+
         private static async Task InfoTask(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
@@ -71,7 +68,7 @@ namespace Chess22kDotNet.Engine
             Thread.CurrentThread.Name = "Chess22kDotNet-main";
             _cb = ChessBoardInstances.Get(0);
             _threadData = ThreadData.GetInstance(0);
-            
+
             Start();
         }
 
@@ -80,10 +77,7 @@ namespace Chess22kDotNet.Engine
             try
             {
                 string line;
-                while ((line = Console.ReadLine()) != null)
-                {
-                    ReadLine(line);
-                }
+                while ((line = Console.ReadLine()) != null) ReadLine(line);
             }
             catch (Exception e)
             {
@@ -118,10 +112,7 @@ namespace Chess22kDotNet.Engine
             else if (tokens[0].Equals("ponderhit"))
             {
                 Pondering = false;
-                if (_maxTimeExceeded)
-                {
-                    NegamaxUtil.IsRunning = false;
-                }
+                if (_maxTimeExceeded) NegamaxUtil.IsRunning = false;
             }
             else if (tokens[0].Equals("eval"))
             {
@@ -129,10 +120,7 @@ namespace Chess22kDotNet.Engine
             }
             else if (tokens[0].Equals("setoption"))
             {
-                if (tokens.Length > 4)
-                {
-                    SetOption(tokens[2], tokens[4]);
-                }
+                if (tokens.Length > 4) SetOption(tokens[2], tokens[4]);
             }
             else if (tokens[0].Equals("quit"))
             {
@@ -172,15 +160,11 @@ namespace Chess22kDotNet.Engine
                 ChessBoardUtil.SetFen(fen, _cb);
 
                 if (tokens.Length == 6 || tokens.Length == 7 || tokens.Length == 8)
-                {
                     // position fen 4k3/8/8/8/8/3K4 b kq - 0 1
                     DoMoves(new string[] { });
-                }
                 else
-                {
                     // position fen 4k3/8/8/8/8/3K4 b kq - 0 1 moves f2f3 g1a3 ...
                     DoMoves(Arrays.CopyOfRange(tokens, 9, tokens.Length));
-                }
             }
 
             ErrorLogger.StartFen = _cb.ToString();
@@ -224,18 +208,13 @@ namespace Chess22kDotNet.Engine
 
             TtUtil.Init(false);
             var ttEntry = TtUtil.GetEntry(_cb.ZobristKey);
-            if (ttEntry.Key != 0 && ttEntry.Flag == TtUtil.FlagExact)
-            {
-                TimeUtil.SetTtHit();
-            }
+            if (ttEntry.Key != 0 && ttEntry.Flag == TtUtil.FlagExact) TimeUtil.SetTtHit();
 
             // go
             // go infinite
             // go ponder
             if (goCommandTokens.Count != 1)
-            {
                 for (var i = 1; i < goCommandTokens.Count; i++)
-                {
                     if (goCommandTokens[i].Equals("infinite"))
                     {
                         // TODO are we clearing the values again?
@@ -277,11 +256,9 @@ namespace Chess22kDotNet.Engine
                         var s = goCommandTokens[i + 1];
                         TimeUtil.SetIncrement(int.Parse(s));
                     }
-                }
-            }
 
             TimeUtil.Start();
-            
+
             Task.Run(SearchTask);
         }
 

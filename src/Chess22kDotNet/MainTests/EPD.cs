@@ -8,12 +8,10 @@ namespace Chess22kDotNet.MainTests
 {
     public class Epd
     {
-        /** bm or am */
-        public bool IsBestMove { get; }
-
-        private readonly List<string> _moveStrings = new List<string>();
         private readonly string _fen;
         private readonly string _id;
+
+        private readonly List<string> _moveStrings = new List<string>();
 
         // 3r1k2/4npp1/1ppr3p/p6P/P2PPPP1/1NR5/5K2/2R5 w - - bm d5; id \"BK.02\";
         // r1bqk1nr/pppnbppp/3p4/8/2BNP3/8/PPP2PPP/RNBQK2R w KQkq - bm Bxf7+; id \"CCR12\";
@@ -32,16 +30,10 @@ namespace Chess22kDotNet.MainTests
             {
                 // remove check indication
                 var moveString = fenToken[i];
-                if (moveString.EndsWith("+"))
-                {
-                    moveString = moveString.Replace("+", "");
-                }
+                if (moveString.EndsWith("+")) moveString = moveString.Replace("+", "");
 
                 // remove capture indication
-                if (moveString.Contains("x"))
-                {
-                    moveString = moveString.Replace("x", "");
-                }
+                if (moveString.Contains("x")) moveString = moveString.Replace("x", "");
 
                 _moveStrings.Add(moveString);
             }
@@ -50,6 +42,11 @@ namespace Chess22kDotNet.MainTests
             var idToken = tokens[1];
             _id = idToken.Split(" ")[2].Replace("\"", "");
         }
+
+        /**
+         * bm or am
+         */
+        public bool IsBestMove { get; }
 
         public bool MoveEquals(MoveWrapper bestMove)
         {
@@ -92,10 +89,7 @@ namespace Chess22kDotNet.MainTests
         public override string ToString()
         {
             var sb = new StringBuilder();
-            foreach (var moveString in _moveStrings)
-            {
-                sb.Append(moveString).Append(" ");
-            }
+            foreach (var moveString in _moveStrings) sb.Append(moveString).Append(" ");
 
             return sb.ToString();
         }

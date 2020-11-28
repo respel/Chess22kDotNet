@@ -21,10 +21,7 @@ namespace Chess22kDotNet.Search
                 var tasks = new List<Task>();
                 for (var i = 0; i < UciOptions.ThreadCount; i++)
                 {
-                    if (i > 0)
-                    {
-                        ChessBoardUtil.Copy(cb, ChessBoardInstances.Get(i));
-                    }
+                    if (i > 0) ChessBoardUtil.Copy(cb, ChessBoardInstances.Get(i));
 
                     var i1 = i;
                     var t = new Task(() => new SearchThread(i1).Call());

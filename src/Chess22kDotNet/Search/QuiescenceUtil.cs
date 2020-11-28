@@ -11,60 +11,37 @@ namespace Chess22kDotNet.Search
 
         public static int CalculateBestMove(ChessBoard cb, ThreadData threadData, int alpha, in int beta)
         {
-            if (Statistics.Enabled)
-            {
-                Statistics.QNodes++;
-            }
+            if (Statistics.Enabled) Statistics.QNodes++;
 
             /* transposition-table */
             var ttEntry = TtUtil.GetEntry(cb.ZobristKey);
             var score = ttEntry.GetScore(64);
             if (ttEntry.Key != 0)
-            {
                 if (!EngineConstants.TestTtValues)
-                {
                     switch (ttEntry.Flag)
                     {
                         case TtUtil.FlagExact:
                             return score;
                         case TtUtil.FlagLower:
-                            if (score >= beta)
-                            {
-                                return score;
-                            }
+                            if (score >= beta) return score;
 
                             break;
                         case TtUtil.FlagUpper:
-                            if (score <= alpha)
-                            {
-                                return score;
-                            }
+                            if (score <= alpha) return score;
 
                             break;
                     }
-                }
-            }
 
-            if (cb.CheckingPieces != 0)
-            {
-                return alpha;
-            }
+            if (cb.CheckingPieces != 0) return alpha;
 
             /* stand-pat check */
             var eval = EvalUtil.GetScore(cb, threadData);
             /* use tt value as eval */
             if (EngineConstants.UseTtScoreAsEval)
-            {
                 if (TtUtil.CanRefineEval(ttEntry, eval, score))
-                {
                     eval = score;
-                }
-            }
 
-            if (eval >= beta)
-            {
-                return eval;
-            }
+            if (eval >= beta) return eval;
 
             alpha = Math.Max(alpha, eval);
 
@@ -80,10 +57,7 @@ namespace Chess22kDotNet.Search
                 // skip under promotions
                 if (MoveUtil.IsPromotion(move))
                 {
-                    if (MoveUtil.GetMoveType(move) != MoveUtil.TypePromotionQ)
-                    {
-                        continue;
-                    }
+                    if (MoveUtil.GetMoveType(move) != MoveUtil.TypePromotionQ) continue;
                 }
                 else if (EngineConstants.EnableQFutilityPruning
                          && eval + FutilityMargin + EvalConstants.Material[MoveUtil.GetAttackedPieceIndex(move)] <
@@ -93,17 +67,12 @@ namespace Chess22kDotNet.Search
                     continue;
                 }
 
-                if (!cb.IsLegal(move))
-                {
-                    continue;
-                }
+                if (!cb.IsLegal(move)) continue;
 
                 // skip bad-captures
                 if (EngineConstants.EnableQPruneBadCaptures && !cb.IsDiscoveredMove(MoveUtil.GetFromIndex(move)) &&
                     SeeUtil.GetSeeCaptureScore(cb, move) <= 0)
-                {
                     continue;
-                }
 
                 cb.DoMove(move);
                 score = MaterialUtil.IsDrawByMaterial(cb)

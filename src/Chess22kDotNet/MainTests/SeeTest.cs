@@ -12,7 +12,7 @@ namespace Chess22kDotNet.MainTests
     */
     public class SeeTest
     {
-        private static ThreadData _threadData = new ThreadData(0);
+        private static readonly ThreadData _threadData = new ThreadData(0);
 
         public static void Main()
         {
@@ -33,20 +33,14 @@ namespace Chess22kDotNet.MainTests
                 while (_threadData.HasNext())
                 {
                     var move = _threadData.Next();
-                    if (!cb.IsLegal(move))
-                    {
-                        continue;
-                    }
+                    if (!cb.IsLegal(move)) continue;
 
                     totalAttacks++;
                     var seeScore = SeeUtil.GetSeeCaptureScore(cb, move);
                     var materialScore = EvalUtil.CalculateMaterialScore(cb);
                     var qScore = ChessConstants.ColorFactor[cb.ColorToMoveInverse] * materialScore -
                                  CalculateQScore(cb, move, true);
-                    if (seeScore == qScore)
-                    {
-                        sameScore++;
-                    }
+                    if (seeScore == qScore) sameScore++;
 
                     // else {
                     // seeScore = SEEUtil.getSeeCaptureScore(cb, move);
@@ -76,33 +70,21 @@ namespace Chess22kDotNet.MainTests
             {
                 // only attacks on the same square
                 var currentMove = _threadData.Next();
-                if (!cb.IsLegal(currentMove))
-                {
-                    continue;
-                }
+                if (!cb.IsLegal(currentMove)) continue;
 
-                if (MoveUtil.GetToIndex(currentMove) != MoveUtil.GetToIndex(move))
-                {
-                    continue;
-                }
+                if (MoveUtil.GetToIndex(currentMove) != MoveUtil.GetToIndex(move)) continue;
 
                 var score = -CalculateQScore(cb, currentMove, false);
                 score = Math.Max(score,
                     ChessConstants.ColorFactor[cb.ColorToMove] * EvalUtil.CalculateMaterialScore(cb));
 
                 movePerformed = true;
-                if (score > bestScore)
-                {
-                    bestScore = score;
-                }
+                if (score > bestScore) bestScore = score;
             }
 
             _threadData.EndPly();
 
-            if (!movePerformed)
-            {
-                bestScore = ChessConstants.ColorFactor[cb.ColorToMove] * EvalUtil.CalculateMaterialScore(cb);
-            }
+            if (!movePerformed) bestScore = ChessConstants.ColorFactor[cb.ColorToMove] * EvalUtil.CalculateMaterialScore(cb);
 
             cb.UndoMove(move);
             return bestScore;

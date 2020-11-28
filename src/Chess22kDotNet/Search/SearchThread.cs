@@ -9,10 +9,10 @@ namespace Chess22kDotNet.Search
         private static readonly int[] SmpSkipDepths = {1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4};
         private static readonly int[] SmpSkipAmount = {1, 2, 1, 2, 3, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6};
         private static readonly int SmpMaxCycles = SmpSkipAmount.Length;
-
-        private readonly int _threadNumber;
         private readonly ChessBoard _cb;
         private readonly ThreadData _threadData;
+
+        private readonly int _threadNumber;
 
         public SearchThread(in int threadNumber)
         {
@@ -53,10 +53,7 @@ namespace Chess22kDotNet.Search
 
             while (NegamaxUtil.IsRunning)
             {
-                if (depth == MainEngine.MaxDepth)
-                {
-                    return;
-                }
+                if (depth == MainEngine.MaxDepth) return;
 
                 depth++;
 
@@ -68,10 +65,7 @@ namespace Chess22kDotNet.Search
 
                 while (NegamaxUtil.IsRunning)
                 {
-                    if (!TimeUtil.IsTimeLeft() && depth != 1 && !failLow)
-                    {
-                        return;
-                    }
+                    if (!TimeUtil.IsTimeLeft() && depth != 1 && !failLow) return;
 
                     // System.out.println("start " + threadNumber + " " + depth);
                     score = NegamaxUtil.CalculateBestMove(_cb, _threadData, 0, depth, alpha, beta, 0);
@@ -112,10 +106,7 @@ namespace Chess22kDotNet.Search
                 if ((depth + cycleIndex) % SmpSkipDepths[cycleIndex] == 0)
                 {
                     depth += SmpSkipAmount[cycleIndex];
-                    if (depth > MainEngine.MaxDepth)
-                    {
-                        return;
-                    }
+                    if (depth > MainEngine.MaxDepth) return;
                 }
 
                 var delta = EngineConstants.EnableAspiration && depth > 5 && Math.Abs(score) < 1000

@@ -16,16 +16,10 @@ namespace Chess22kDotNet.Move
             for (var i = 1; i < moves.Length; i++)
             {
                 var ttEntry = TtUtil.GetEntry(cb.ZobristKey);
-                if (ttEntry.Key == 0)
-                {
-                    break;
-                }
+                if (ttEntry.Key == 0) break;
 
                 var move = ttEntry.Move;
-                if (move == 0)
-                {
-                    break;
-                }
+                if (move == 0) break;
 
                 moves[i] = move;
                 cb.DoMove(move);
@@ -33,10 +27,7 @@ namespace Chess22kDotNet.Move
 
             for (var i = moves.Length - 1; i >= 0; i--)
             {
-                if (moves[i] == 0)
-                {
-                    continue;
-                }
+                if (moves[i] == 0) continue;
 
                 cb.UndoMove(moves[i]);
             }
@@ -47,10 +38,7 @@ namespace Chess22kDotNet.Move
             var sb = new StringBuilder();
             foreach (var move in moves)
             {
-                if (move == 0)
-                {
-                    break;
-                }
+                if (move == 0) break;
 
                 sb.Append(new MoveWrapper(move)).Append(" ");
             }

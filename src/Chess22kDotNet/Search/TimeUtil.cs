@@ -37,10 +37,8 @@ namespace Chess22kDotNet.Search
         public static void Start()
         {
             if (_isExactMoveTime)
-            {
                 // we depend on the max-time thread
                 return;
-            }
 
             if (_totalTimeLeftMs == long.MaxValue)
             {
@@ -52,15 +50,11 @@ namespace Chess22kDotNet.Search
             {
                 var incrementWindow = _increment < _totalTimeLeftMs / 2 ? _increment / 2 : 0;
                 if (_moveCount <= 40)
-                {
                     // first 40 moves get 50% of the total time
                     _timeWindowNs = 1_000_000 * (_totalTimeLeftMs / (80 - _moveCount) + incrementWindow);
-                }
                 else
-                {
                     // every next move gets less and less time
                     _timeWindowNs = 1_000_000 * (_totalTimeLeftMs / 50 + incrementWindow / 2);
-                }
             }
             else
             {
@@ -68,10 +62,7 @@ namespace Chess22kDotNet.Search
                 _timeWindowNs = 1_000_000 * _totalTimeLeftMs / _movesToGo / 2;
             }
 
-            if (!_isTtHit)
-            {
-                _timeWindowNs *= 2;
-            }
+            if (!_isTtHit) _timeWindowNs *= 2;
 
             switch (_movesToGo)
             {
@@ -108,15 +99,9 @@ namespace Chess22kDotNet.Search
 
         public static bool IsTimeLeft()
         {
-            if (_isExactMoveTime)
-            {
-                return true;
-            }
+            if (_isExactMoveTime) return true;
 
-            if (MainEngine.Pondering)
-            {
-                return true;
-            }
+            if (MainEngine.Pondering) return true;
 
             return Stopwatch.Elapsed.TotalMilliseconds * 1000000 < _timeWindowNs;
         }

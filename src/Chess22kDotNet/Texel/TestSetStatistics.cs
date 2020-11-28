@@ -19,10 +19,7 @@ namespace Chess22kDotNet.Texel
                 PieceCounts[BitOperations.PopCount((ulong) cb.AllPieces)]++;
             }
 
-            for (var i = 0; i < 33; i++)
-            {
-                Console.WriteLine(i + " " + PieceCounts[i]);
-            }
+            for (var i = 0; i < 33; i++) Console.WriteLine(i + " " + PieceCounts[i]);
         }
     }
 }

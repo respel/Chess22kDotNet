@@ -15,10 +15,7 @@ namespace Chess22kDotNet.Eval
             {
                 var enemyColor = 1 - kingColor;
 
-                if ((cb.Pieces[enemyColor][Rook] | cb.Pieces[enemyColor][Queen]) == 0)
-                {
-                    continue;
-                }
+                if ((cb.Pieces[enemyColor][Rook] | cb.Pieces[enemyColor][Queen]) == 0) continue;
 
                 var kingIndex = cb.KingIndex[kingColor];
                 var counter = 0;
@@ -42,23 +39,17 @@ namespace Chess22kDotNet.Eval
                 counter += Checks(cb, kingColor);
 
                 // bonus for stm
-                counter += 1 - cb.ColorToMove ^ enemyColor;
+                counter += (1 - cb.ColorToMove) ^ enemyColor;
 
                 // bonus if there are discovered checks possible
                 if (cb.DiscoveredPieces != 0)
-                {
                     counter += BitOperations.PopCount((ulong) (cb.DiscoveredPieces & cb.Pieces[enemyColor][All])) * 2;
-                }
 
                 if (cb.Pieces[enemyColor][Queen] != 0)
-                {
                     // bonus for small king-queen distance
                     if ((cb.Attacks[kingColor][All] & cb.Pieces[enemyColor][Queen]) == 0)
-                    {
                         counter += EvalConstants.KsQueenTropism[
                             Util.GetDistance(kingIndex, BitOperations.TrailingZeroCount(cb.Pieces[enemyColor][Queen]))];
-                    }
-                }
 
                 counter += EvalConstants.KsAttackPattern[cb.KingAttackersFlag[enemyColor]];
                 score += ColorFactor[enemyColor] *
@@ -79,10 +70,8 @@ namespace Chess22kDotNet.Eval
 
             var counter = 0;
             if (cb.Pieces[enemyColor][Knight] != 0)
-            {
                 counter += CheckMinor(notDefended,
                     StaticMoves.KnightMoves[kingIndex] & unOccupied & cb.Attacks[enemyColor][Knight]);
-            }
 
             long moves;
             long queenMoves = 0;
@@ -105,47 +94,31 @@ namespace Chess22kDotNet.Eval
             if (queenMoves == 0) return counter;
             // safe check queen
             if ((queenMoves & notDefended) != 0)
-            {
                 counter += EvalConstants.KsCheckQueen[BitOperations.PopCount((ulong) cb.Pieces[kingColor][All])];
-            }
 
             // safe check queen touch
-            if ((queenMoves & unsafeKingMoves) != 0)
-            {
-                counter += EvalConstants.KsOther[0];
-            }
+            if ((queenMoves & unsafeKingMoves) != 0) counter += EvalConstants.KsOther[0];
 
             return counter;
         }
 
         private static int CheckRook(ChessBoard cb, int kingColor, long rookMoves, long safeSquares)
         {
-            if (rookMoves == 0)
-            {
-                return 0;
-            }
+            if (rookMoves == 0) return 0;
 
-            if ((rookMoves & safeSquares) == 0)
-            {
-                return EvalConstants.KsOther[3];
-            }
+            if ((rookMoves & safeSquares) == 0) return EvalConstants.KsOther[3];
 
             var counter = EvalConstants.KsOther[2];
             if (KingBlockedAtLastRank(StaticMoves.KingMoves[cb.KingIndex[kingColor]] & cb.EmptySpaces &
                                       ~cb.Attacks[1 - kingColor][All]))
-            {
                 counter += EvalConstants.KsOther[1];
-            }
 
             return counter;
         }
 
         private static int CheckMinor(long safeSquares, long bishopMoves)
         {
-            if (bishopMoves == 0)
-            {
-                return 0;
-            }
+            if (bishopMoves == 0) return 0;
 
             return (bishopMoves & safeSquares) == 0 ? EvalConstants.KsOther[3] : EvalConstants.KsOther[2];
         }

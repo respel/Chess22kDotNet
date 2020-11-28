@@ -20,26 +20,17 @@ namespace Chess22kDotNet.UnitTests
             {
                 var cb = ChessBoardInstances.Get(0);
                 ChessBoardUtil.SetFen(fen, cb);
-                if (BitOperations.PopCount((ulong) cb.AllPieces) > 3)
-                {
-                    continue;
-                }
+                if (BitOperations.PopCount((ulong) cb.AllPieces) > 3) continue;
 
                 if (cb.Pieces[ChessConstants.White][ChessConstants.Pawn] == 0 &&
                     cb.Pieces[ChessConstants.Black][ChessConstants.Pawn] == 0)
-                {
                     continue;
-                }
 
                 tested++;
                 if (KpkBitbase.IsDraw(cb) == (score == 0.5))
-                {
                     ok++;
-                }
                 else
-                {
                     nok++;
-                }
             }
 
             Console.WriteLine();

@@ -9,31 +9,30 @@ namespace Chess22kDotNet
 {
     public class ChessBoard
     {
+        private readonly int[] _castlingAndEpHistory = new int[EngineConstants.MaxMoves];
+        public readonly long[][] Attacks = Util.CreateJaggedArray<long[][]>(2, 7);
+
+        public readonly long[] DoubleAttacks = new long[2];
+        public readonly int[] KingAttackersFlag = new int[2];
+
+        public readonly int[] KingIndex = new int[2];
+        public readonly int[] PieceIndexes = new int[64];
+
+        public readonly long[][] Pieces = Util.CreateJaggedArray<long[][]>(2, 7);
+        public readonly long[] ZobristKeyHistory = new long[EngineConstants.MaxMoves];
+
+        public long AllPieces, EmptySpaces;
         public int CastlingRights;
-        public int PsqtScore;
+        public long CheckingPieces, PinnedPieces, DiscoveredPieces;
         public int ColorToMove, ColorToMoveInverse;
         public int EpIndex;
         public int MaterialKey;
-        public int Phase;
-        public int MoveCounter;
-
-        public long AllPieces, EmptySpaces;
-        public long ZobristKey, PawnZobristKey;
-        public long CheckingPieces, PinnedPieces, DiscoveredPieces;
         public long MoveCount;
+        public int MoveCounter;
         public long PassedPawnsAndOutposts;
-
-        public readonly int[] KingIndex = new int[2];
-        public readonly int[] KingAttackersFlag = new int[2];
-        public readonly int[] PieceIndexes = new int[64];
-
-        public readonly long[] DoubleAttacks = new long[2];
-
-        public readonly long[][] Pieces = Util.CreateJaggedArray<long[][]>(2, 7);
-        public readonly long[][] Attacks = Util.CreateJaggedArray<long[][]>(2, 7);
-
-        private readonly int[] _castlingAndEpHistory = new int[EngineConstants.MaxMoves];
-        public readonly long[] ZobristKeyHistory = new long[EngineConstants.MaxMoves];
+        public int Phase;
+        public int PsqtScore;
+        public long ZobristKey, PawnZobristKey;
 
         public override string ToString()
         {
@@ -48,10 +47,7 @@ namespace Chess22kDotNet
 
         public bool IsDiscoveredMove(int fromIndex)
         {
-            if (DiscoveredPieces == 0)
-            {
-                return false;
-            }
+            if (DiscoveredPieces == 0) return false;
 
             return (DiscoveredPieces & (1L << fromIndex)) != 0;
         }
@@ -59,7 +55,7 @@ namespace Chess22kDotNet
         private void PushHistoryValues()
         {
             ZobristKeyHistory[MoveCounter] = ZobristKey;
-            _castlingAndEpHistory[MoveCounter] = CastlingRights << 10 | EpIndex;
+            _castlingAndEpHistory[MoveCounter] = (CastlingRights << 10) | EpIndex;
             MoveCounter++;
         }
 
@@ -92,10 +88,7 @@ namespace Chess22kDotNet
 
             ChangeSideToMove();
 
-            if (EngineConstants.Assert)
-            {
-                ChessBoardTestUtil.TestValues(this);
-            }
+            if (EngineConstants.Assert) ChessBoardTestUtil.TestValues(this);
         }
 
         public void UndoNullMove()
@@ -103,10 +96,7 @@ namespace Chess22kDotNet
             PopHistoryValues();
             ChangeSideToMove();
 
-            if (EngineConstants.Assert)
-            {
-                ChessBoardTestUtil.TestValues(this);
-            }
+            if (EngineConstants.Assert) ChessBoardTestUtil.TestValues(this);
         }
 
         public void DoMove(int move)
@@ -167,7 +157,6 @@ namespace Chess22kDotNet
                         PawnZobristKey ^= Zobrist.Piece[ColorToMove][Pawn][toIndex];
                         // 2-move
                         if (InBetween[fromIndex][toIndex] != 0)
-                        {
                             if ((StaticMoves.PawnAttacks[ColorToMove][
                                      BitOperations.TrailingZeroCount(InBetween[fromIndex][toIndex])]
                                  & Pieces[ColorToMoveInverse][Pawn]) != 0)
@@ -175,7 +164,6 @@ namespace Chess22kDotNet
                                 EpIndex = BitOperations.TrailingZeroCount(InBetween[fromIndex][toIndex]);
                                 ZobristKey ^= Zobrist.EpIndex[EpIndex];
                             }
-                        }
                     }
 
                     break;
@@ -194,10 +182,7 @@ namespace Chess22kDotNet
                     KingIndex[ColorToMove] = toIndex;
                     if (CastlingRights != 0)
                     {
-                        if (MoveUtil.IsCastlingMove(move))
-                        {
-                            CastlingUtil.CastleRookUpdateKeyAndPsqt(this, toIndex);
-                        }
+                        if (MoveUtil.IsCastlingMove(move)) CastlingUtil.CastleRookUpdateKeyAndPsqt(this, toIndex);
 
                         ZobristKey ^= Zobrist.Castling[CastlingRights];
                         CastlingRights = CastlingUtil.GetKingMovedCastlingRights(CastlingRights, fromIndex);
@@ -252,33 +237,27 @@ namespace Chess22kDotNet
             ChangeSideToMove();
             SetCheckingPinnedAndDiscoPieces();
 
-            if (EngineConstants.Assert)
-            {
-                ChessBoardTestUtil.TestValues(this);
-            }
+            if (EngineConstants.Assert) ChessBoardTestUtil.TestValues(this);
         }
 
         public void SetCheckingPinnedAndDiscoPieces()
         {
             PinnedPieces = 0;
             DiscoveredPieces = 0;
-            CheckingPieces = Pieces[ColorToMoveInverse][Knight] & StaticMoves.KnightMoves[KingIndex[ColorToMove]]
-                             | Pieces[ColorToMoveInverse][Pawn] &
-                             StaticMoves.PawnAttacks[ColorToMove][KingIndex[ColorToMove]];
+            CheckingPieces = (Pieces[ColorToMoveInverse][Knight] & StaticMoves.KnightMoves[KingIndex[ColorToMove]])
+                             | (Pieces[ColorToMoveInverse][Pawn] &
+                                StaticMoves.PawnAttacks[ColorToMove][KingIndex[ColorToMove]]);
 
             for (var kingColor = White; kingColor <= Black; kingColor++)
             {
                 var enemyColor = 1 - kingColor;
 
-                if (!MaterialUtil.HasSlidingPieces(MaterialKey, enemyColor))
-                {
-                    continue;
-                }
+                if (!MaterialUtil.HasSlidingPieces(MaterialKey, enemyColor)) continue;
 
-                var enemyPiece = (Pieces[enemyColor][Bishop] | Pieces[enemyColor][Queen]) &
-                                 MagicUtil.GetBishopMovesEmptyBoard(KingIndex[kingColor])
-                                 | (Pieces[enemyColor][Rook] | Pieces[enemyColor][Queen]) &
-                                 MagicUtil.GetRookMovesEmptyBoard(KingIndex[kingColor]);
+                var enemyPiece = ((Pieces[enemyColor][Bishop] | Pieces[enemyColor][Queen]) &
+                                  MagicUtil.GetBishopMovesEmptyBoard(KingIndex[kingColor]))
+                                 | ((Pieces[enemyColor][Rook] | Pieces[enemyColor][Queen]) &
+                                    MagicUtil.GetRookMovesEmptyBoard(KingIndex[kingColor]));
                 while (enemyPiece != 0)
                 {
                     var checkedPiece = InBetween[KingIndex[kingColor]][BitOperations.TrailingZeroCount(enemyPiece)] &
@@ -340,10 +319,7 @@ namespace Chess22kDotNet
 
                     break;
                 case King:
-                    if (MoveUtil.IsCastlingMove(move))
-                    {
-                        CastlingUtil.UncastleRookUpdatePsqt(this, toIndex);
-                    }
+                    if (MoveUtil.IsCastlingMove(move)) CastlingUtil.UncastleRookUpdatePsqt(this, toIndex);
 
                     KingIndex[ColorToMoveInverse] = fromIndex;
                     break;
@@ -380,10 +356,7 @@ namespace Chess22kDotNet
             ChangeSideToMove();
             SetCheckingPinnedAndDiscoPieces();
 
-            if (EngineConstants.Assert)
-            {
-                ChessBoardTestUtil.TestValues(this);
-            }
+            if (EngineConstants.Assert) ChessBoardTestUtil.TestValues(this);
         }
 
         public bool IsLegal(int move)
@@ -407,18 +380,16 @@ namespace Chess22kDotNet
         public bool IsLegalEpMove(int fromIndex)
         {
             if (EpIndex == 0)
-            {
                 // required for tt-moves
                 return false;
-            }
 
             // do-move and hit
             Pieces[ColorToMoveInverse][Pawn] ^= Util.PowerLookup[EpIndex + ColorFactor8[ColorToMoveInverse]];
 
             // check if is in check
             var isInCheck = CheckUtil.IsInCheck(KingIndex[ColorToMove], ColorToMove, Pieces[ColorToMoveInverse],
-                Pieces[ColorToMove][All] ^ Util.PowerLookup[fromIndex] ^ Util.PowerLookup[EpIndex]
-                | Pieces[ColorToMoveInverse][All] ^ Util.PowerLookup[EpIndex + ColorFactor8[ColorToMoveInverse]]);
+                (Pieces[ColorToMove][All] ^ Util.PowerLookup[fromIndex] ^ Util.PowerLookup[EpIndex])
+                | (Pieces[ColorToMoveInverse][All] ^ Util.PowerLookup[EpIndex + ColorFactor8[ColorToMoveInverse]]));
 
             // undo-move and hit
             Pieces[ColorToMoveInverse][Pawn] |= Util.PowerLookup[EpIndex + ColorFactor8[ColorToMoveInverse]];
@@ -431,10 +402,7 @@ namespace Chess22kDotNet
             // check piece at from square
             var fromIndex = MoveUtil.GetFromIndex(move);
             var fromSquare = Util.PowerLookup[fromIndex];
-            if ((Pieces[ColorToMove][MoveUtil.GetSourcePieceIndex(move)] & fromSquare) == 0)
-            {
-                return false;
-            }
+            if ((Pieces[ColorToMove][MoveUtil.GetSourcePieceIndex(move)] & fromSquare) == 0) return false;
 
             // check piece at to square
             var toIndex = MoveUtil.GetToIndex(move);
@@ -442,17 +410,12 @@ namespace Chess22kDotNet
             var attackedPieceIndex = MoveUtil.GetAttackedPieceIndex(move);
             if (attackedPieceIndex == 0)
             {
-                if (PieceIndexes[toIndex] != Empty)
-                {
-                    return false;
-                }
+                if (PieceIndexes[toIndex] != Empty) return false;
             }
             else
             {
                 if ((Pieces[ColorToMoveInverse][attackedPieceIndex] & toSquare) == 0 && !MoveUtil.IsEpMove(move))
-                {
                     return false;
-                }
             }
 
             // check if move is possible
@@ -467,29 +430,19 @@ namespace Chess22kDotNet
                     {
                         if (ColorToMove == White)
                         {
-                            if (fromIndex > toIndex)
-                            {
-                                return false;
-                            }
+                            if (fromIndex > toIndex) return false;
 
                             // 2-move
                             if (toIndex - fromIndex == 16 && (AllPieces & Util.PowerLookup[fromIndex + 8]) != 0)
-                            {
                                 return false;
-                            }
                         }
                         else
                         {
-                            if (fromIndex < toIndex)
-                            {
-                                return false;
-                            }
+                            if (fromIndex < toIndex) return false;
 
                             // 2-move
                             if (fromIndex - toIndex == 16 && (AllPieces & Util.PowerLookup[fromIndex - 8]) != 0)
-                            {
                                 return false;
-                            }
                         }
                     }
 
@@ -501,10 +454,7 @@ namespace Chess22kDotNet
                 case Rook:
                 // fall-through
                 case Queen:
-                    if ((InBetween[fromIndex][toIndex] & AllPieces) != 0)
-                    {
-                        return false;
-                    }
+                    if ((InBetween[fromIndex][toIndex] & AllPieces) != 0) return false;
 
                     break;
                 case King:
@@ -513,9 +463,7 @@ namespace Chess22kDotNet
                     while (castlingIndexes != 0)
                     {
                         if (toIndex == BitOperations.TrailingZeroCount(castlingIndexes))
-                        {
                             return CastlingUtil.IsValidCastlingMove(this, fromIndex, toIndex);
-                        }
 
                         castlingIndexes &= castlingIndexes - 1;
                     }
@@ -524,48 +472,29 @@ namespace Chess22kDotNet
             }
 
             if ((fromSquare & PinnedPieces) != 0)
-            {
                 if ((PinnedMovement[fromIndex][KingIndex[ColorToMove]] & toSquare) == 0)
-                {
                     return false;
-                }
-            }
 
             if (CheckingPieces == 0) return true;
-            if (attackedPieceIndex == 0)
-            {
-                return IsLegalNonKingMove(move);
-            }
+            if (attackedPieceIndex == 0) return IsLegalNonKingMove(move);
 
-            if (BitOperations.PopCount((ulong) CheckingPieces) == 2)
-            {
-                return false;
-            }
+            if (BitOperations.PopCount((ulong) CheckingPieces) == 2) return false;
 
             return (toSquare & CheckingPieces) != 0;
         }
 
         public bool IsRepetition(int move)
         {
-            if (!EngineConstants.EnableRepetitionTable)
-            {
-                return false;
-            }
+            if (!EngineConstants.EnableRepetitionTable) return false;
 
             // if move was an attacking-move or pawn move, no repetition
-            if (!MoveUtil.IsQuiet(move) || MoveUtil.GetSourcePieceIndex(move) == Pawn)
-            {
-                return false;
-            }
+            if (!MoveUtil.IsQuiet(move) || MoveUtil.GetSourcePieceIndex(move) == Pawn) return false;
 
             var moveCountMin = Math.Max(0, MoveCounter - 50);
             for (var i = MoveCounter - 2; i >= moveCountMin; i -= 2)
             {
                 if (ZobristKey != ZobristKeyHistory[i]) continue;
-                if (Statistics.Enabled)
-                {
-                    Statistics.Repetitions++;
-                }
+                if (Statistics.Enabled) Statistics.Repetitions++;
 
                 return true;
             }
@@ -595,10 +524,7 @@ namespace Chess22kDotNet
 
         public void UpdateAttacks(long moves, int piece, int color, long kingArea)
         {
-            if ((moves & kingArea) != 0)
-            {
-                KingAttackersFlag[color] |= SchroderUtil.Flags[piece];
-            }
+            if ((moves & kingArea) != 0) KingAttackersFlag[color] |= SchroderUtil.Flags[piece];
 
             DoubleAttacks[color] |= Attacks[color][All] & moves;
             Attacks[color][All] |= moves;
@@ -614,10 +540,7 @@ namespace Chess22kDotNet
         public void UpdatePawnAttacks(int color, long kingArea)
         {
             Attacks[color][All] = Attacks[color][Pawn];
-            if ((Attacks[color][Pawn] & kingArea) != 0)
-            {
-                KingAttackersFlag[color] |= SchroderUtil.Flags[Pawn];
-            }
+            if ((Attacks[color][Pawn] & kingArea) != 0) KingAttackersFlag[color] |= SchroderUtil.Flags[Pawn];
         }
     }
 }

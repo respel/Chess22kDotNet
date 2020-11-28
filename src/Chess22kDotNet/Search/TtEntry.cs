@@ -18,7 +18,7 @@ namespace Chess22kDotNet.Search
 
         public byte Flag
         {
-            get => (byte)(_moveAndFlag & 3);
+            get => (byte) (_moveAndFlag & 3);
             set => _moveAndFlag = (_moveAndFlag & ~3) | value;
         }
 
@@ -26,33 +26,22 @@ namespace Chess22kDotNet.Search
         {
             set
             {
-                if (EngineConstants.Assert)
-                {
-                    Assert.IsTrue(value <= 255);
-                }
-                _depth = (short)(value + TtUtil.HalfMoveCounter);
+                if (EngineConstants.Assert) Assert.IsTrue(value <= 255);
+                _depth = (short) (value + TtUtil.HalfMoveCounter);
             }
-            get => (short)(_depth - TtUtil.HalfMoveCounter);
+            get => (short) (_depth - TtUtil.HalfMoveCounter);
         }
 
         public int GetScore(int ply)
         {
-            var score = (int)_score;
+            var score = (int) _score;
 
             // correct mate-score
             if (score > EvalConstants.ScoreMateBound)
-            {
                 score -= ply;
-            }
-            else if (score < -EvalConstants.ScoreMateBound)
-            {
-                score += ply;
-            }
+            else if (score < -EvalConstants.ScoreMateBound) score += ply;
 
-            if (EngineConstants.Assert)
-            {
-                Assert.IsTrue(score >= Util.ShortMin && score <= Util.ShortMax);
-            }
+            if (EngineConstants.Assert) Assert.IsTrue(score >= Util.ShortMin && score <= Util.ShortMax);
 
             return score;
         }
@@ -61,20 +50,12 @@ namespace Chess22kDotNet.Search
         {
             // correct mate-score
             if (score > EvalConstants.ScoreMateBound)
-            {
                 score += ply;
-            }
-            else if (score < -EvalConstants.ScoreMateBound)
-            {
-                score -= ply;
-            }
+            else if (score < -EvalConstants.ScoreMateBound) score -= ply;
 
-            if (EngineConstants.Assert)
-            {
-                Assert.IsTrue(score >= Util.ShortMin && score <= Util.ShortMax);
-            }
+            if (EngineConstants.Assert) Assert.IsTrue(score >= Util.ShortMin && score <= Util.ShortMax);
 
-            _score = (short)score;
+            _score = (short) score;
         }
     }
 }

@@ -10,8 +10,8 @@ namespace Chess22kDotNet.MainTests
 {
     public class PerftMultiThreaded
     {
-        private static readonly int[] Runs = {1, 1, 2, 4, 8, 16, 32};
         private const int Depth = 5;
+        private static readonly int[] Runs = {1, 1, 2, 4, 8, 16, 32};
 
         public static void Main()
         {
@@ -51,10 +51,7 @@ namespace Chess22kDotNet.MainTests
             while (threadData.HasNext())
             {
                 var move = threadData.Next();
-                if (!cb.IsLegal(move))
-                {
-                    continue;
-                }
+                if (!cb.IsLegal(move)) continue;
 
                 cb.DoMove(move);
                 EvalUtil.CalculateScore(cb, threadData);

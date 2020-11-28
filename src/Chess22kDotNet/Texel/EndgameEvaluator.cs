@@ -33,45 +33,24 @@ namespace Chess22kDotNet.Texel
                                                              EvalUtil.CalculateScore(cb, threadData)),
                     2);
                 if (MaterialUtil.IsKbnk(cb.MaterialKey))
-                {
                     kbnk.AddError(error);
-                }
                 else if (MaterialUtil.IsKqkp(cb.MaterialKey))
-                {
                     kqkp.AddError(error);
-                }
                 else if (MaterialUtil.IsKrkp(cb.MaterialKey))
-                {
                     krkp.AddError(error);
-                }
                 else if (MaterialUtil.IsKrkb(cb.MaterialKey))
-                {
                     krkb.AddError(error);
-                }
                 else if (MaterialUtil.IsKrkn(cb.MaterialKey))
-                {
                     krkn.AddError(error);
-                }
                 else if (MaterialUtil.IsKpk(cb.MaterialKey))
-                {
                     krkn.AddError(error);
-                }
                 else if (MaterialUtil.IsKbpk(cb.MaterialKey))
-                {
                     kbpk.AddError(error);
-                }
                 else if (MaterialUtil.IsKbpkp(cb.MaterialKey))
-                {
                     kbpkp.AddError(error);
-                }
                 else if (MaterialUtil.IsKrbkb(cb.MaterialKey))
-                {
                     krbkb.AddError(error);
-                }
-                else if (MaterialUtil.IsKrbkr(cb.MaterialKey))
-                {
-                    krbkr.AddError(error);
-                }
+                else if (MaterialUtil.IsKrbkr(cb.MaterialKey)) krbkr.AddError(error);
             }
 
             kpk.Print();
@@ -88,9 +67,9 @@ namespace Chess22kDotNet.Texel
 
         private class ErrorCount
         {
+            private readonly string _name;
             private int _count;
             private double _totalError;
-            private readonly string _name;
 
             public ErrorCount(string name)
             {
@@ -106,13 +85,9 @@ namespace Chess22kDotNet.Texel
             public void Print()
             {
                 if (_count == 0)
-                {
                     Console.WriteLine(_name + " 0");
-                }
                 else
-                {
                     Console.WriteLine($"{_name} {_totalError / _count}");
-                }
             }
         }
     }

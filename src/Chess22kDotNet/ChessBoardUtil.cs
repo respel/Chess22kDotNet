@@ -30,51 +30,29 @@ namespace Chess22kDotNet
             cb.CastlingRights = 15;
             if (fenArray.Length > 2)
             {
-                if (!fenArray[2].Contains("K"))
-                {
-                    cb.CastlingRights &= 7;
-                }
+                if (!fenArray[2].Contains("K")) cb.CastlingRights &= 7;
 
-                if (!fenArray[2].Contains("Q"))
-                {
-                    cb.CastlingRights &= 11;
-                }
+                if (!fenArray[2].Contains("Q")) cb.CastlingRights &= 11;
 
-                if (!fenArray[2].Contains("k"))
-                {
-                    cb.CastlingRights &= 13;
-                }
+                if (!fenArray[2].Contains("k")) cb.CastlingRights &= 13;
 
-                if (!fenArray[2].Contains("q"))
-                {
-                    cb.CastlingRights &= 14;
-                }
+                if (!fenArray[2].Contains("q")) cb.CastlingRights &= 14;
             }
             else
             {
                 // try to guess the castling rights
-                if (cb.KingIndex[White] != 3)
-                {
-                    cb.CastlingRights &= 3; // 0011
-                }
+                if (cb.KingIndex[White] != 3) cb.CastlingRights &= 3; // 0011
 
-                if (cb.KingIndex[Black] != 59)
-                {
-                    cb.CastlingRights &= 12; // 1100
-                }
+                if (cb.KingIndex[Black] != 59) cb.CastlingRights &= 12; // 1100
             }
 
             if (fenArray.Length > 3)
             {
                 // 4: en-passant: -
                 if (fenArray[3] == "-" || fenArray[3] == "–")
-                {
                     cb.EpIndex = 0;
-                }
                 else
-                {
                     cb.EpIndex = 104 - fenArray[3][0] + 8 * (int.Parse(fenArray[3].Substring(1)) - 1);
-                }
             }
 
             if (fenArray.Length > 4)
@@ -85,10 +63,7 @@ namespace Chess22kDotNet
 
                 // 6: counter: 1
                 cb.MoveCounter = int.Parse(fenArray[5]) * 2;
-                if (cb.ColorToMove == Black)
-                {
-                    cb.MoveCounter++;
-                }
+                if (cb.ColorToMove == Black) cb.MoveCounter++;
             }
             else
             {
@@ -108,16 +83,11 @@ namespace Chess22kDotNet
         {
             // clear pieces
             for (var color = 0; color < 2; color++)
-            {
-                for (var pieceIndex = 1; pieceIndex <= King; pieceIndex++)
-                {
-                    cb.Pieces[color][pieceIndex] = 0;
-                }
-            }
+            for (var pieceIndex = 1; pieceIndex <= King; pieceIndex++)
+                cb.Pieces[color][pieceIndex] = 0;
 
             var positionCount = 63;
             foreach (var character in fenPieces)
-            {
                 switch (character)
                 {
                     case '/':
@@ -169,7 +139,6 @@ namespace Chess22kDotNet
                         cb.Pieces[Black][King] |= Util.PowerLookup[positionCount--];
                         break;
                 }
-            }
         }
 
         public static void Copy(ChessBoard source, ChessBoard target)
@@ -224,7 +193,6 @@ namespace Chess22kDotNet
 
             Array.Fill(cb.PieceIndexes, Empty);
             foreach (var t in cb.Pieces)
-            {
                 for (var pieceIndex = 1; pieceIndex < cb.Pieces[0].Length; pieceIndex++)
                 {
                     var piece = t[pieceIndex];
@@ -234,7 +202,6 @@ namespace Chess22kDotNet
                         piece &= piece - 1;
                     }
                 }
-            }
 
             cb.SetCheckingPinnedAndDiscoPieces();
             cb.PsqtScore = EvalUtil.CalculatePositionScores(cb);
@@ -256,10 +223,7 @@ namespace Chess22kDotNet
         public static long CalculateTotalMoveCount()
         {
             long totalMoveCount = 0;
-            for (var i = 0; i < UciOptions.ThreadCount; i++)
-            {
-                totalMoveCount += ChessBoardInstances.Get(i).MoveCount;
-            }
+            for (var i = 0; i < UciOptions.ThreadCount; i++) totalMoveCount += ChessBoardInstances.Get(i).MoveCount;
 
             return totalMoveCount;
         }
@@ -273,10 +237,7 @@ namespace Chess22kDotNet
                 sb.Append((cb.Pieces[White][All] & Util.PowerLookup[i]) != 0
                     ? FenWhitePieces[cb.PieceIndexes[i]]
                     : FenBlackPieces[cb.PieceIndexes[i]]);
-                if (i % 8 == 0 && i != 0)
-                {
-                    sb.Append("/");
-                }
+                if (i % 8 == 0 && i != 0) sb.Append("/");
             }
 
             // color to move
@@ -291,40 +252,28 @@ namespace Chess22kDotNet
             else
             {
                 if ((cb.CastlingRights & 8) != 0)
-                {
                     // 1000
                     sb.Append("K");
-                }
 
                 if ((cb.CastlingRights & 4) != 0)
-                {
                     // 0100
                     sb.Append("Q");
-                }
 
                 if ((cb.CastlingRights & 2) != 0)
-                {
                     // 0010
                     sb.Append("k");
-                }
 
                 if ((cb.CastlingRights & 1) != 0)
-                {
                     // 0001
                     sb.Append("q");
-                }
             }
 
             // en passant
             sb.Append(" ");
             if (cb.EpIndex == 0)
-            {
                 sb.Append("-");
-            }
             else
-            {
                 sb.Append("" + (char) (104 - cb.EpIndex % 8) + (cb.EpIndex / 8 + 1));
-            }
 
             var fen = sb.ToString();
             fen = fen.Replace("11111111", "8");

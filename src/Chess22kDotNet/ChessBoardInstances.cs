@@ -19,10 +19,7 @@ namespace Chess22kDotNet
         public static void Init(int numberOfInstances)
         {
             _instances = new ChessBoard[numberOfInstances];
-            for (var i = 0; i < numberOfInstances; i++)
-            {
-                _instances[i] = new ChessBoard();
-            }
+            for (var i = 0; i < numberOfInstances; i++) _instances[i] = new ChessBoard();
         }
     }
 }

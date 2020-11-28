@@ -20,10 +20,7 @@ namespace Chess22kDotNet.JavaWrappers
         public static T[] CopyOfRange<T>(T[] original, int from, int to)
         {
             var copy = new T[to - from];
-            for (var i = from; i < Math.Min(to, original.Length); i++)
-            {
-                copy[i - from] = original[i];
-            }
+            for (var i = from; i < Math.Min(to, original.Length); i++) copy[i - @from] = original[i];
 
             return copy;
         }

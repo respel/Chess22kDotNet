@@ -46,10 +46,7 @@ namespace Chess22kDotNet
 
         public static void Reset()
         {
-            if (!Enabled)
-            {
-                return;
-            }
+            if (!Enabled) return;
 
             Array.Fill(Razored, 0);
             Array.Fill(Futile, 0);
@@ -93,10 +90,7 @@ namespace Chess22kDotNet
 
         public static void Print()
         {
-            if (!Enabled)
-            {
-                return;
-            }
+            if (!Enabled) return;
 
             var totalMoveCount = ChessBoardUtil.CalculateTotalMoveCount();
             Console.WriteLine("AB-nodes      " + AbNodes);
@@ -157,30 +151,22 @@ namespace Chess22kDotNet
             Console.WriteLine(message + values.Sum());
             if (!printDetails) return;
             for (var i = 0; i < values.Count; i++)
-            {
                 if (values[i] != 0)
-                {
                     Console.WriteLine(i + " " + values[i]);
-                }
-            }
         }
 
         private static void PrintPercentage(string message, long hitCount, long failCount)
         {
             if (hitCount + failCount != 0)
-            {
                 Console.WriteLine(message + hitCount + "/" + (failCount + hitCount) + " (" +
                                   hitCount * 100 / (hitCount + failCount) + "%)");
-            }
         }
 
-        public static void SetBestMove(ChessBoard cb, int bestMove, int ttMove, TtEntry ttEntry, int flag, int counterMove,
+        public static void SetBestMove(ChessBoard cb, int bestMove, int ttMove, TtEntry ttEntry, int flag,
+            int counterMove,
             int killer1Move, int killer2Move)
         {
-            if (!Enabled)
-            {
-                return;
-            }
+            if (!Enabled) return;
 
             switch (flag)
             {
@@ -198,17 +184,11 @@ namespace Chess22kDotNet
             if (bestMove == ttMove)
             {
                 if (ttEntry.Flag == TtUtil.FlagLower)
-                {
                     _bestMoveTtLower++;
-                }
                 else if (ttEntry.Flag == TtUtil.FlagUpper)
-                {
                     _bestMoveTtUpper++;
-                }
                 else
-                {
                     _bestMoveTt++;
-                }
             }
             else if (MoveUtil.IsPromotion(bestMove))
             {
@@ -218,13 +198,9 @@ namespace Chess22kDotNet
             {
                 // slow but disabled when statistics are disabled
                 if (SeeUtil.GetSeeCaptureScore(cb, bestMove) < 0)
-                {
                     _bestMoveLosingCapture++;
-                }
                 else
-                {
                     _bestMoveWinningCapture++;
-                }
             }
             else if (bestMove == counterMove)
             {

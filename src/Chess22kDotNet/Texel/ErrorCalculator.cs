@@ -7,8 +7,8 @@ namespace Chess22kDotNet.Texel
 {
     public class ErrorCalculator
     {
-        private readonly Dictionary<string, double> _fens = new Dictionary<string, double>();
         private readonly ChessBoard _cb;
+        private readonly Dictionary<string, double> _fens = new Dictionary<string, double>();
         private readonly ThreadData _threadData;
 
         public ErrorCalculator(ChessBoard cb, ThreadData threadData)

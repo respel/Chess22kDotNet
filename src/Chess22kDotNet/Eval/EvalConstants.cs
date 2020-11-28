@@ -14,9 +14,6 @@ namespace Chess22kDotNet.Eval
 
         public const int ScoreDraw = 0;
         public const int ScoreMateBound = 30000;
-
-        // other
-        public static readonly int[] OtherScores = {-10, 14, 18, -8, 16, 12, -158, 12, 492, 24, -44, 26};
         public const int IxRookFileSemiOpen = 0;
         public const int IxRookFileSemiOpenIsolated = 1;
         public const int IxRookFileOpen = 2;
@@ -29,11 +26,6 @@ namespace Chess22kDotNet.Eval
         public const int IxCastling = 9;
         public const int IxRookTrapped = 10;
         public const int IxOutpost = 11;
-
-        // threats
-        public static readonly int[] ThreatsMg = {38, 66, 90, 16, 66, 38, 12, 16, -6};
-        public static readonly int[] ThreatsEg = {34, 20, -64, 16, 10, -48, 28, 4, 14};
-        public static readonly int[] Threats = new int[ThreatsMg.Length];
         public const int IxMultiplePawnAttacks = 0;
         public const int IxPawnAttacks = 1;
         public const int IxQueenAttacked = 2;
@@ -43,19 +35,27 @@ namespace Chess22kDotNet.Eval
         public const int IxMajorAttacked = 6;
         public const int IxUnusedOutpost = 7;
         public const int IxPawnAttacked = 8;
-
-        // pawn
-        public static readonly int[] PawnScores = {10, 10, 12, 6};
         public const int IxPawnDouble = 0;
         public const int IxPawnIsolated = 1;
         public const int IxPawnBackward = 2;
         public const int IxPawnInverse = 3;
-
-        // imbalance
-        public static readonly int[] ImbalanceScores = {-10, 50, 12};
         public const int IxRookPair = 0;
         public const int IxBishopDouble = 1;
         public const int IxQueenNight = 2;
+
+        // other
+        public static readonly int[] OtherScores = {-10, 14, 18, -8, 16, 12, -158, 12, 492, 24, -44, 26};
+
+        // threats
+        public static readonly int[] ThreatsMg = {38, 66, 90, 16, 66, 38, 12, 16, -6};
+        public static readonly int[] ThreatsEg = {34, 20, -64, 16, 10, -48, 28, 4, 14};
+        public static readonly int[] Threats = new int[ThreatsMg.Length];
+
+        // pawn
+        public static readonly int[] PawnScores = {10, 10, 12, 6};
+
+        // imbalance
+        public static readonly int[] ImbalanceScores = {-10, 50, 12};
 
         public static readonly int[] Phase = {0, 0, 9, 10, 20, 40};
 
@@ -169,7 +169,9 @@ namespace Chess22kDotNet.Eval
         public static readonly int[] MobilityQueen = new int[MobilityQueenMg.Length];
         public static readonly int[] MobilityKing = new int[MobilityKingMg.Length];
 
-        /** piece, color, square */
+        /**
+         * piece, color, square
+         */
         public static readonly int[][][] Psqt = Util.CreateJaggedArray<int[][][]>(7, 2, 64);
 
         private static readonly int[][][] PsqtMg = Util.CreateJaggedArray<int[][][]>(7, 2, 64);
@@ -177,6 +179,41 @@ namespace Chess22kDotNet.Eval
 
         public static readonly int[] MirroredLeftRight = new int[64];
         public static readonly int[] MirroredUpDown = new int[64];
+
+        public static readonly long[] RookPrison =
+        {
+            0, Bitboard.A8, Bitboard.A8B8, Bitboard.A8B8C8, 0, Bitboard.G8H8, Bitboard.H8, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, Bitboard.A1, Bitboard.A1B1, Bitboard.A1B1C1, 0, Bitboard.G1H1, Bitboard.H1, 0
+        };
+
+        public static readonly long[] BishopPrison =
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, //8
+            Bitboard.B6C7, 0, 0, 0, 0, 0, 0, Bitboard.G6F7, //7
+            0, 0, 0, 0, 0, 0, 0, 0, //6
+            0, 0, 0, 0, 0, 0, 0, 0, //5
+            0, 0, 0, 0, 0, 0, 0, 0, //4
+            0, 0, 0, 0, 0, 0, 0, 0, //3
+            Bitboard.B3C2, 0, 0, 0, 0, 0, 0, Bitboard.G3F2, //2
+            0, 0, 0, 0, 0, 0, 0, 0 //1
+            // A  B  C  D  E  F  G  H
+        };
+
+        public static readonly int[] PromotionScore =
+        {
+            0,
+            0,
+            Material[Knight] - Material[Pawn],
+            Material[Bishop] - Material[Pawn],
+            Material[Rook] - Material[Pawn],
+            Material[Queen] - Material[Pawn]
+        };
 
         static EvalConstants()
         {
@@ -324,15 +361,9 @@ namespace Chess22kDotNet.Eval
                 -72, -40, -24, -30, -30, -24, -40, -72
             };
 
-            for (var i = 0; i < 64; i++)
-            {
-                MirroredLeftRight[i] = i / 8 * 8 + 7 - (i & 7);
-            }
+            for (var i = 0; i < 64; i++) MirroredLeftRight[i] = i / 8 * 8 + 7 - (i & 7);
 
-            for (var i = 0; i < 64; i++)
-            {
-                MirroredUpDown[i] = (7 - i / 8) * 8 + (i & 7);
-            }
+            for (var i = 0; i < 64; i++) MirroredUpDown[i] = (7 - i / 8) * 8 + (i & 7);
 
             // fix white arrays
             for (var piece = Pawn; piece <= King; piece++)
@@ -343,12 +374,10 @@ namespace Chess22kDotNet.Eval
 
             // create black arrays
             for (var piece = Pawn; piece <= King; piece++)
+            for (var i = 0; i < 64; i++)
             {
-                for (var i = 0; i < 64; i++)
-                {
-                    PsqtMg[piece][Black][i] = -PsqtMg[piece][White][MirroredUpDown[i]];
-                    PsqtEg[piece][Black][i] = -PsqtEg[piece][White][MirroredUpDown[i]];
-                }
+                PsqtMg[piece][Black][i] = -PsqtMg[piece][White][MirroredUpDown[i]];
+                PsqtEg[piece][Black][i] = -PsqtEg[piece][White][MirroredUpDown[i]];
             }
 
             Util.Reverse(RookPrison);
@@ -356,41 +385,6 @@ namespace Chess22kDotNet.Eval
 
             InitMgEg();
         }
-
-        public static readonly long[] RookPrison =
-        {
-            0, Bitboard.A8, Bitboard.A8B8, Bitboard.A8B8C8, 0, Bitboard.G8H8, Bitboard.H8, 0,
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, Bitboard.A1, Bitboard.A1B1, Bitboard.A1B1C1, 0, Bitboard.G1H1, Bitboard.H1, 0
-        };
-
-        public static readonly long[] BishopPrison =
-        {
-            0, 0, 0, 0, 0, 0, 0, 0, //8
-            Bitboard.B6C7, 0, 0, 0, 0, 0, 0, Bitboard.G6F7, //7
-            0, 0, 0, 0, 0, 0, 0, 0, //6
-            0, 0, 0, 0, 0, 0, 0, 0, //5
-            0, 0, 0, 0, 0, 0, 0, 0, //4
-            0, 0, 0, 0, 0, 0, 0, 0, //3
-            Bitboard.B3C2, 0, 0, 0, 0, 0, 0, Bitboard.G3F2, //2
-            0, 0, 0, 0, 0, 0, 0, 0 //1
-            // A  B  C  D  E  F  G  H
-        };
-
-        public static readonly int[] PromotionScore =
-        {
-            0,
-            0,
-            Material[Knight] - Material[Pawn],
-            Material[Bishop] - Material[Pawn],
-            Material[Rook] - Material[Pawn],
-            Material[Queen] - Material[Pawn],
-        };
 
 
         public static void InitMgEg()
@@ -402,35 +396,22 @@ namespace Chess22kDotNet.Eval
             InitMgEg(MobilityKing, MobilityKingMg, MobilityKingEg);
             InitMgEg(Threats, ThreatsMg, ThreatsEg);
 
-            for (var i = 0; i < 4; i++)
-            {
-                InitMgEg(ShieldBonus[i], ShieldBonusMg[i], ShieldBonusEg[i]);
-            }
+            for (var i = 0; i < 4; i++) InitMgEg(ShieldBonus[i], ShieldBonusMg[i], ShieldBonusEg[i]);
 
             for (var color = White; color <= Black; color++)
-            {
-                for (var piece = Pawn; piece <= King; piece++)
-                {
-                    InitMgEg(Psqt[piece][color], PsqtMg[piece][color], PsqtEg[piece][color]);
-                }
-            }
+            for (var piece = Pawn; piece <= King; piece++)
+                InitMgEg(Psqt[piece][color], PsqtMg[piece][color], PsqtEg[piece][color]);
         }
 
         private static void InitMgEg(IList<int> array, IReadOnlyList<int> arrayMg, IReadOnlyList<int> arrayEg)
         {
-            for (var i = 0; i < array.Count; i++)
-            {
-                array[i] = EvalUtil.Score(arrayMg[i], arrayEg[i]);
-            }
+            for (var i = 0; i < array.Count; i++) array[i] = EvalUtil.Score(arrayMg[i], arrayEg[i]);
         }
 
         public static void Main()
         {
             //increment a psqt with a constant
-            for (var i = 0; i < 64; i++)
-            {
-                PsqtEg[King][White][i] += 20;
-            }
+            for (var i = 0; i < 64; i++) PsqtEg[King][White][i] += 20;
 
             Console.WriteLine(PsqtTuning.GetArrayFriendlyFormatted(PsqtEg[King][White]));
         }

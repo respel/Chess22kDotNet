@@ -10,13 +10,9 @@ namespace Chess22kDotNet
         // 4 bits: white-king,white-queen,black-king,black-queen
         public static long GetCastlingIndexes(ChessBoard cb)
         {
-            if (cb.CastlingRights == 0)
-            {
-                return 0;
-            }
+            if (cb.CastlingRights == 0) return 0;
 
             if (cb.ColorToMove == White)
-            {
                 switch (cb.CastlingRights)
                 {
                     case 0:
@@ -40,9 +36,7 @@ namespace Chess22kDotNet
                     case 15:
                         return Bitboard.C1G1;
                 }
-            }
             else
-            {
                 switch (cb.CastlingRights)
                 {
                     case 0:
@@ -66,7 +60,6 @@ namespace Chess22kDotNet
                     case 15:
                         return Bitboard.C8G8;
                 }
-            }
 
             throw new ArgumentException("Unknown castling-right: " + cb.CastlingRights);
         }
@@ -176,15 +169,9 @@ namespace Chess22kDotNet
 
         public static bool IsValidCastlingMove(ChessBoard cb, int fromIndex, int toIndex)
         {
-            if (cb.CheckingPieces != 0)
-            {
-                return false;
-            }
+            if (cb.CheckingPieces != 0) return false;
 
-            if ((cb.AllPieces & GetRookInBetweenIndex(toIndex)) != 0)
-            {
-                return false;
-            }
+            if ((cb.AllPieces & GetRookInBetweenIndex(toIndex)) != 0) return false;
 
             var kingIndexes = InBetween[fromIndex][toIndex] | Util.PowerLookup[toIndex];
             while (kingIndexes != 0)
@@ -192,9 +179,7 @@ namespace Chess22kDotNet
                 // king does not move through a checked position?
                 if (CheckUtil.IsInCheckIncludingKing(BitOperations.TrailingZeroCount(kingIndexes), cb.ColorToMove,
                     cb.Pieces[cb.ColorToMoveInverse], cb.AllPieces))
-                {
                     return false;
-                }
 
                 kingIndexes &= kingIndexes - 1;
             }

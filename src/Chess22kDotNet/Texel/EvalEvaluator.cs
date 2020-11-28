@@ -21,9 +21,7 @@ namespace Chess22kDotNet.Texel
             ChessBoardInstances.Init(NumberOfThreads);
             ThreadData.InitInstances(NumberOfThreads);
             for (var i = 0; i < NumberOfThreads; i++)
-            {
                 Workers[i] = new ErrorCalculator(ChessBoardInstances.Get(i), ThreadData.GetInstance(i));
-            }
 
             // add fens to workers
             var workerIndex = 0;
@@ -49,10 +47,7 @@ namespace Chess22kDotNet.Texel
             {
                 tuningObject.ClearValues();
                 EvalConstants.InitMgEg();
-                for (var i = 0; i < NumberOfThreads; i++)
-                {
-                    ThreadData.GetInstance(i).ClearCaches();
-                }
+                for (var i = 0; i < NumberOfThreads; i++) ThreadData.GetInstance(i).ClearCaches();
 
                 var newError = await CalculateErrorMultiThreaded();
                 Console.WriteLine($"{newError} - {tuningObject.Name}");
@@ -73,7 +68,6 @@ namespace Chess22kDotNet.Texel
             double totalError = 0;
             // now retrieve the result
             foreach (var task in list)
-            {
                 try
                 {
                     totalError += await task;
@@ -82,7 +76,6 @@ namespace Chess22kDotNet.Texel
                 {
                     Console.WriteLine(e);
                 }
-            }
 
             return totalError / NumberOfThreads;
         }

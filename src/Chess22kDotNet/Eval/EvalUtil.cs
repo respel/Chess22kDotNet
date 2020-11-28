@@ -15,18 +15,12 @@ namespace Chess22kDotNet.Eval
 
         public static int GetScore(ChessBoard cb, ThreadData threadData)
         {
-            if (Statistics.Enabled)
-            {
-                Statistics.EvalNodes++;
-            }
+            if (Statistics.Enabled) Statistics.EvalNodes++;
 
             if (EngineConstants.EnableEvalCache && !EngineConstants.TestEvalCaches)
             {
                 var score = EvalCacheUtil.GetScore(cb.ZobristKey, threadData.EvalCache);
-                if (score != CacheMiss)
-                {
-                    return score;
-                }
+                if (score != CacheMiss) return score;
             }
 
             return CalculateScore(cb, threadData);
@@ -36,23 +30,16 @@ namespace Chess22kDotNet.Eval
         {
             var score = MaterialUtil.ScoreUnknown;
             if (BitOperations.PopCount((ulong) cb.AllPieces) <= 5)
-            {
                 score = MaterialUtil.IsDrawByMaterial(cb)
                     ? EvalConstants.ScoreDraw
                     : MaterialUtil.CalculateEndgameScore(cb);
-            }
 
             if (score == MaterialUtil.ScoreUnknown)
             {
                 score = TaperedEval(cb, threadData);
                 if (score > 25)
-                {
                     score = AdjustEndgame(cb, score, White, threadData.MaterialCache);
-                }
-                else if (score < -25)
-                {
-                    score = AdjustEndgame(cb, score, Black, threadData.MaterialCache);
-                }
+                else if (score < -25) score = AdjustEndgame(cb, score, Black, threadData.MaterialCache);
             }
 
             score *= ColorFactor[cb.ColorToMove];
@@ -60,59 +47,38 @@ namespace Chess22kDotNet.Eval
             {
                 var cachedScore = EvalCacheUtil.GetScore(cb.ZobristKey, threadData.EvalCache);
                 if (cachedScore != CacheMiss)
-                {
                     if (cachedScore != score)
-                    {
                         throw new ArgumentException($"Cached eval score != score: {cachedScore}, {score}");
-                    }
-                }
             }
 
             EvalCacheUtil.AddValue(cb.ZobristKey, score, threadData.EvalCache);
 
-            if (EngineConstants.TestEvalValues)
-            {
-                ChessBoardTestUtil.CompareScores(cb);
-            }
+            if (EngineConstants.TestEvalValues) ChessBoardTestUtil.CompareScores(cb);
 
             return score;
         }
 
         private static int AdjustEndgame(ChessBoard cb, int score, int color, int[] materialCache)
         {
-            if (BitOperations.PopCount((ulong) cb.Pieces[color][All]) > 3)
-            {
-                return score;
-            }
+            if (BitOperations.PopCount((ulong) cb.Pieces[color][All]) > 3) return score;
 
-            if (MaterialUtil.HasPawnsOrQueens(cb.MaterialKey, color))
-            {
-                return score;
-            }
+            if (MaterialUtil.HasPawnsOrQueens(cb.MaterialKey, color)) return score;
 
             switch (BitOperations.PopCount((ulong) cb.Pieces[color][All]))
             {
                 case 1:
                     return EvalConstants.ScoreDraw;
                 case 2:
-                    if (cb.Pieces[color][Rook] == 0)
-                    {
-                        return EvalConstants.ScoreDraw;
-                    }
+                    if (cb.Pieces[color][Rook] == 0) return EvalConstants.ScoreDraw;
 
                     goto case 3;
                 // fall-through
                 case 3:
-                    if (MaterialUtil.hasOnlyNights(cb.MaterialKey, color))
-                    {
-                        return EvalConstants.ScoreDraw;
-                    }
+                    if (MaterialUtil.hasOnlyNights(cb.MaterialKey, color)) return EvalConstants.ScoreDraw;
 
                     if (GetImbalances(cb, materialCache) * ColorFactor[color] <
                         EvalConstants.OtherScores[EvalConstants.IxDrawish])
-                    {
                         return score / 8;
-                    }
 
                     break;
             }
@@ -157,17 +123,16 @@ namespace Chess22kDotNet.Eval
             // opposite bishops endgame?
             if (!MaterialUtil.OppositeBishops(cb.MaterialKey)) return 1;
             return (cb.Pieces[White][Bishop] & Bitboard.BlackSquares) == 0 ==
-                   ((cb.Pieces[Black][Bishop] & Bitboard.WhiteSquares) == 0) ? 2 : 1;
+                   ((cb.Pieces[Black][Bishop] & Bitboard.WhiteSquares) == 0)
+                ? 2
+                : 1;
 
             // TODO rook and pawns without passed pawns
         }
 
         public static int CalculateSpace(ChessBoard cb)
         {
-            if (!MaterialUtil.HasPawns(cb.MaterialKey))
-            {
-                return 0;
-            }
+            if (!MaterialUtil.HasPawns(cb.MaterialKey)) return 0;
 
             var score = 0;
 
@@ -187,7 +152,7 @@ namespace Chess22kDotNet.Eval
                      * BitOperations.PopCount((ulong) (space & ~cb.Pieces[White][Pawn] & ~cb.Attacks[Black][Pawn] &
                                                        Bitboard.FileCdef));
             space = cb.Pieces[Black][Pawn] << 8;
-            space |= space << 8 | space << 16;
+            space |= (space << 8) | (space << 16);
             score -= EvalConstants.Space[BitOperations.PopCount((ulong) cb.Pieces[Black][All])]
                      * BitOperations.PopCount((ulong) (space & ~cb.Pieces[Black][Pawn] & ~cb.Attacks[White][Pawn] &
                                                        Bitboard.FileCdef));
@@ -200,10 +165,7 @@ namespace Chess22kDotNet.Eval
             if (!EngineConstants.TestEvalCaches)
             {
                 var cachedScore = PawnCacheUtil.UpdateBoardAndGetScore(cb, pawnCache);
-                if (cachedScore != CacheMiss)
-                {
-                    return cachedScore;
-                }
+                if (cachedScore != CacheMiss) return cachedScore;
             }
 
             var score = CalculatePawnScores(cb);
@@ -219,14 +181,10 @@ namespace Chess22kDotNet.Eval
             for (var i = 0; i < 8; i++)
             {
                 if (BitOperations.PopCount((ulong) (cb.Pieces[White][Pawn] & Bitboard.Files[i])) > 1)
-                {
                     score -= EvalConstants.PawnScores[EvalConstants.IxPawnDouble];
-                }
 
                 if (BitOperations.PopCount((ulong) (cb.Pieces[Black][Pawn] & Bitboard.Files[i])) > 1)
-                {
                     score += EvalConstants.PawnScores[EvalConstants.IxPawnDouble];
-                }
             }
 
             // bonus for connected pawns
@@ -267,9 +225,7 @@ namespace Chess22kDotNet.Eval
             {
                 if ((Bitboard.GetWhiteAdjacentMask(BitOperations.TrailingZeroCount(pawns)) & cb.Pieces[Black][Pawn]) ==
                     0)
-                {
                     cb.PassedPawnsAndOutposts |= pawns & -pawns;
-                }
 
                 pawns &= pawns - 1;
             }
@@ -280,9 +236,7 @@ namespace Chess22kDotNet.Eval
             {
                 if ((Bitboard.GetBlackAdjacentMask(BitOperations.TrailingZeroCount(pawns)) & cb.Pieces[White][Pawn]) ==
                     0)
-                {
                     cb.PassedPawnsAndOutposts |= pawns & -pawns;
-                }
 
                 pawns &= pawns - 1;
             }
@@ -297,48 +251,32 @@ namespace Chess22kDotNet.Eval
 
                 // isolated pawns
                 if ((Bitboard.FilesAdjacent[index & 7] & cb.Pieces[White][Pawn]) == 0)
-                {
                     score -= EvalConstants.PawnScores[EvalConstants.IxPawnIsolated];
-                }
 
                 // backward pawns
                 else if ((Bitboard.GetBlackAdjacentMask(index + 8) & cb.Pieces[White][Pawn]) == 0)
-                {
                     if ((StaticMoves.PawnAttacks[White][index + 8] & cb.Pieces[Black][Pawn]) != 0)
-                    {
                         if ((Bitboard.Files[index & 7] & cb.Pieces[Black][Pawn]) == 0)
-                        {
                             score -= EvalConstants.PawnScores[EvalConstants.IxPawnBackward];
-                        }
-                    }
-                }
 
                 // pawn defending 2 pawns
                 if (BitOperations.PopCount((ulong) (StaticMoves.PawnAttacks[White][index] & cb.Pieces[White][Pawn])) ==
                     2)
-                {
                     score -= EvalConstants.PawnScores[EvalConstants.IxPawnInverse];
-                }
 
                 // set passed pawns
                 if ((Bitboard.GetWhitePassedPawnMask(index) & cb.Pieces[Black][Pawn]) == 0)
-                {
                     cb.PassedPawnsAndOutposts |= pawns & -pawns;
-                }
 
                 // candidate passed pawns (no pawns in front, more friendly pawns behind and adjacent than enemy pawns)
                 else if (63 - BitOperations.LeadingZeroCount(
                     (ulong) ((cb.Pieces[White][Pawn] | cb.Pieces[Black][Pawn]) &
                              Bitboard.Files[index & 7])) == index)
-                {
                     if (BitOperations.PopCount((ulong) (cb.Pieces[White][Pawn] &
                                                         Bitboard.GetBlackPassedPawnMask(index + 8))) >=
                         BitOperations.PopCount(
                             (ulong) (cb.Pieces[Black][Pawn] & Bitboard.GetWhitePassedPawnMask(index))))
-                    {
                         score += EvalConstants.PassedCandidate[index / 8];
-                    }
-                }
 
                 pawns &= pawns - 1;
             }
@@ -351,47 +289,31 @@ namespace Chess22kDotNet.Eval
 
                 // isolated pawns
                 if ((Bitboard.FilesAdjacent[index & 7] & cb.Pieces[Black][Pawn]) == 0)
-                {
                     score += EvalConstants.PawnScores[EvalConstants.IxPawnIsolated];
-                }
 
                 // backward pawns
                 else if ((Bitboard.GetWhiteAdjacentMask(index - 8) & cb.Pieces[Black][Pawn]) == 0)
-                {
                     if ((StaticMoves.PawnAttacks[Black][index - 8] & cb.Pieces[White][Pawn]) != 0)
-                    {
                         if ((Bitboard.Files[index & 7] & cb.Pieces[White][Pawn]) == 0)
-                        {
                             score += EvalConstants.PawnScores[EvalConstants.IxPawnBackward];
-                        }
-                    }
-                }
 
                 // pawn defending 2 pawns
                 if (BitOperations.PopCount((ulong) (StaticMoves.PawnAttacks[Black][index] & cb.Pieces[Black][Pawn])) ==
                     2)
-                {
                     score += EvalConstants.PawnScores[EvalConstants.IxPawnInverse];
-                }
 
                 // set passed pawns
                 if ((Bitboard.GetBlackPassedPawnMask(index) & cb.Pieces[White][Pawn]) == 0)
-                {
                     cb.PassedPawnsAndOutposts |= pawns & -pawns;
-                }
 
                 // candidate passers
                 else if (BitOperations.TrailingZeroCount((cb.Pieces[White][Pawn] | cb.Pieces[Black][Pawn]) &
                                                          Bitboard.Files[index & 7]) == index)
-                {
                     if (BitOperations.PopCount((ulong) (cb.Pieces[Black][Pawn] &
                                                         Bitboard.GetWhitePassedPawnMask(index - 8))) >=
                         BitOperations.PopCount(
                             (ulong) (cb.Pieces[White][Pawn] & Bitboard.GetBlackPassedPawnMask(index))))
-                    {
                         score -= EvalConstants.PassedCandidate[7 - index / 8];
-                    }
-                }
 
                 pawns &= pawns - 1;
             }
@@ -404,10 +326,7 @@ namespace Chess22kDotNet.Eval
             if (!EngineConstants.TestEvalCaches)
             {
                 var cachedScore = MaterialCacheUtil.GetScore(cb.MaterialKey, materialCache);
-                if (cachedScore != CacheMiss)
-                {
-                    return cachedScore;
-                }
+                if (cachedScore != CacheMiss) return cachedScore;
             }
 
             var score = CalculateImbalances(cb);
@@ -436,38 +355,26 @@ namespace Chess22kDotNet.Eval
 
             // double bishop
             if (BitOperations.PopCount((ulong) cb.Pieces[White][Bishop]) == 2)
-            {
                 score += EvalConstants.ImbalanceScores[EvalConstants.IxBishopDouble];
-            }
 
             if (BitOperations.PopCount((ulong) cb.Pieces[Black][Bishop]) == 2)
-            {
                 score -= EvalConstants.ImbalanceScores[EvalConstants.IxBishopDouble];
-            }
 
             // queen and nights
             if (cb.Pieces[White][Queen] != 0)
-            {
                 score += BitOperations.PopCount((ulong) cb.Pieces[White][Knight]) *
                          EvalConstants.ImbalanceScores[EvalConstants.IxQueenNight];
-            }
 
             if (cb.Pieces[Black][Queen] != 0)
-            {
                 score -= BitOperations.PopCount((ulong) cb.Pieces[Black][Knight]) *
                          EvalConstants.ImbalanceScores[EvalConstants.IxQueenNight];
-            }
 
             // rook pair
             if (BitOperations.PopCount((ulong) cb.Pieces[White][Rook]) > 1)
-            {
                 score += EvalConstants.ImbalanceScores[EvalConstants.IxRookPair];
-            }
 
             if (BitOperations.PopCount((ulong) cb.Pieces[Black][Rook]) > 1)
-            {
                 score -= EvalConstants.ImbalanceScores[EvalConstants.IxRookPair];
-            }
 
             return score;
         }
@@ -527,14 +434,10 @@ namespace Chess22kDotNet.Eval
 
                 // multiple pawn attacks possible
                 if (BitOperations.PopCount((ulong) (whitePawnAttacks & blacks)) > 1)
-                {
                     score += EvalConstants.Threats[EvalConstants.IxMultiplePawnAttacks];
-                }
 
                 if (BitOperations.PopCount((ulong) (blackPawnAttacks & whites)) > 1)
-                {
                     score -= EvalConstants.Threats[EvalConstants.IxMultiplePawnAttacks];
-                }
 
                 // pawn attacked
                 score += BitOperations.PopCount((ulong) (whiteAttacks & blackPawns)) *
@@ -546,11 +449,11 @@ namespace Chess22kDotNet.Eval
             // minors attacked and not defended by a pawn
             score += BitOperations.PopCount((ulong) (whiteAttacks &
                                                      (cb.Pieces[Black][Knight] |
-                                                      cb.Pieces[Black][Bishop] & ~blackAttacks)))
+                                                      (cb.Pieces[Black][Bishop] & ~blackAttacks))))
                      * EvalConstants.Threats[EvalConstants.IxMajorAttacked];
             score -= BitOperations.PopCount((ulong) (blackAttacks &
                                                      (cb.Pieces[White][Knight] |
-                                                      cb.Pieces[White][Bishop] & ~whiteAttacks)))
+                                                      (cb.Pieces[White][Bishop] & ~whiteAttacks))))
                      * EvalConstants.Threats[EvalConstants.IxMajorAttacked];
 
             if (cb.Pieces[Black][Queen] != 0)
@@ -604,32 +507,22 @@ namespace Chess22kDotNet.Eval
 
                 // rook battery (same file)
                 if (BitOperations.PopCount((ulong) piece) == 2)
-                {
                     if ((BitOperations.TrailingZeroCount(piece) & 7) ==
-                        (63 - BitOperations.LeadingZeroCount((ulong) piece) & 7))
-                    {
+                        ((63 - BitOperations.LeadingZeroCount((ulong) piece)) & 7))
                         score += EvalConstants.OtherScores[EvalConstants.IxRookBattery];
-                    }
-                }
 
                 // rook on 7th, king on 8th
                 if (cb.KingIndex[Black] >= 56 && (piece & Bitboard.Rank7) != 0)
-                {
                     score += BitOperations.PopCount((ulong) (piece & Bitboard.Rank7)) *
                              EvalConstants.OtherScores[EvalConstants.IxRook7ThRank];
-                }
 
                 // prison
                 if ((piece & Bitboard.Rank1) != 0)
                 {
                     var trapped = piece & EvalConstants.RookPrison[cb.KingIndex[White]];
                     if (trapped != 0)
-                    {
-                        if (((trapped << 8 | trapped << 16) & whitePawns) != 0)
-                        {
+                        if ((((trapped << 8) | (trapped << 16)) & whitePawns) != 0)
                             score += EvalConstants.OtherScores[EvalConstants.IxRookTrapped];
-                        }
-                    }
                 }
 
                 // rook on open-file (no pawns) and semi-open-file (no friendly pawns)
@@ -638,17 +531,11 @@ namespace Chess22kDotNet.Eval
                     if ((whitePawns & Bitboard.GetFile(piece)) == 0)
                     {
                         if ((blackPawns & Bitboard.GetFile(piece)) == 0)
-                        {
                             score += EvalConstants.OtherScores[EvalConstants.IxRookFileOpen];
-                        }
                         else if ((blackPawns & blackPawnAttacks & Bitboard.GetFile(piece)) == 0)
-                        {
                             score += EvalConstants.OtherScores[EvalConstants.IxRookFileSemiOpenIsolated];
-                        }
                         else
-                        {
                             score += EvalConstants.OtherScores[EvalConstants.IxRookFileSemiOpen];
-                        }
                     }
 
                     piece &= piece - 1;
@@ -662,33 +549,23 @@ namespace Chess22kDotNet.Eval
 
                 // rook battery (same file)
                 if (BitOperations.PopCount((ulong) piece) == 2)
-                {
                     if ((BitOperations.TrailingZeroCount(piece) & 7) ==
-                        (63 - BitOperations.LeadingZeroCount((ulong) piece) & 7))
-                    {
+                        ((63 - BitOperations.LeadingZeroCount((ulong) piece)) & 7))
                         score -= EvalConstants.OtherScores[EvalConstants.IxRookBattery];
-                    }
-                }
 
                 // rook on 2nd, king on 1st
                 if (cb.KingIndex[White] <= 7 && (piece & Bitboard.Rank2) != 0)
-                {
                     score -= BitOperations.PopCount((ulong) (piece & Bitboard.Rank2)) *
                              EvalConstants.OtherScores[EvalConstants.IxRook7ThRank];
-                }
 
                 // prison
                 if ((piece & Bitboard.Rank8) != 0)
                 {
                     var trapped = piece & EvalConstants.RookPrison[cb.KingIndex[Black]];
                     if (trapped != 0)
-                    {
                         if (((Util.RightTripleShift(trapped, 8) | Util.RightTripleShift(trapped, 16)) & blackPawns) !=
                             0)
-                        {
                             score -= EvalConstants.OtherScores[EvalConstants.IxRookTrapped];
-                        }
-                    }
                 }
 
                 // rook on open-file (no pawns) and semi-open-file (no friendly pawns)
@@ -698,17 +575,11 @@ namespace Chess22kDotNet.Eval
                     if ((blackPawns & Bitboard.GetFile(piece)) == 0)
                     {
                         if ((whitePawns & Bitboard.GetFile(piece)) == 0)
-                        {
                             score -= EvalConstants.OtherScores[EvalConstants.IxRookFileOpen];
-                        }
                         else if ((whitePawns & whitePawnAttacks & Bitboard.GetFile(piece)) == 0)
-                        {
                             score -= EvalConstants.OtherScores[EvalConstants.IxRookFileSemiOpenIsolated];
-                        }
                         else
-                        {
                             score -= EvalConstants.OtherScores[EvalConstants.IxRookFileSemiOpen];
-                        }
                     }
 
                     piece &= piece - 1;
@@ -721,9 +592,7 @@ namespace Chess22kDotNet.Eval
                 // bishop outpost: protected by a pawn, cannot be attacked by enemy pawns
                 piece = cb.Pieces[White][Bishop] & cb.PassedPawnsAndOutposts & whitePawnAttacks;
                 if (piece != 0)
-                {
                     score += BitOperations.PopCount((ulong) piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
-                }
 
                 piece = cb.Pieces[White][Bishop];
                 if ((piece & Bitboard.WhiteSquares) != 0)
@@ -734,9 +603,7 @@ namespace Chess22kDotNet.Eval
 
                     // attacking center squares
                     if (BitOperations.PopCount((ulong) (cb.Attacks[White][Bishop] & Bitboard.E4D5)) == 2)
-                    {
                         score += EvalConstants.OtherScores[EvalConstants.IxBishopLong];
-                    }
                 }
 
                 if ((piece & Bitboard.BlackSquares) != 0)
@@ -747,9 +614,7 @@ namespace Chess22kDotNet.Eval
 
                     // attacking center squares
                     if (BitOperations.PopCount((ulong) (cb.Attacks[White][Bishop] & Bitboard.D4E5)) == 2)
-                    {
                         score += EvalConstants.OtherScores[EvalConstants.IxBishopLong];
-                    }
                 }
 
                 // prison
@@ -758,9 +623,7 @@ namespace Chess22kDotNet.Eval
                 {
                     if (BitOperations.PopCount(
                         (ulong) (EvalConstants.BishopPrison[BitOperations.TrailingZeroCount(piece)] & blackPawns)) == 2)
-                    {
                         score += EvalConstants.OtherScores[EvalConstants.IxBishopPrison];
-                    }
 
                     piece &= piece - 1;
                 }
@@ -772,9 +635,7 @@ namespace Chess22kDotNet.Eval
                 // bishop outpost: protected by a pawn, cannot be attacked by enemy pawns
                 piece = cb.Pieces[Black][Bishop] & cb.PassedPawnsAndOutposts & blackPawnAttacks;
                 if (piece != 0)
-                {
                     score -= BitOperations.PopCount((ulong) piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
-                }
 
                 piece = cb.Pieces[Black][Bishop];
                 if ((piece & Bitboard.WhiteSquares) != 0)
@@ -785,9 +646,7 @@ namespace Chess22kDotNet.Eval
 
                     // bonus for attacking center squares
                     if (BitOperations.PopCount((ulong) (cb.Attacks[Black][Bishop] & Bitboard.E4D5)) == 2)
-                    {
                         score -= EvalConstants.OtherScores[EvalConstants.IxBishopLong];
-                    }
                 }
 
                 if ((piece & Bitboard.BlackSquares) != 0)
@@ -798,9 +657,7 @@ namespace Chess22kDotNet.Eval
 
                     // bonus for attacking center squares
                     if (BitOperations.PopCount((ulong) (cb.Attacks[Black][Bishop] & Bitboard.D4E5)) == 2)
-                    {
                         score -= EvalConstants.OtherScores[EvalConstants.IxBishopLong];
-                    }
                 }
 
                 // prison
@@ -809,9 +666,7 @@ namespace Chess22kDotNet.Eval
                 {
                     if (BitOperations.PopCount(
                         (ulong) (EvalConstants.BishopPrison[BitOperations.TrailingZeroCount(piece)] & whitePawns)) == 2)
-                    {
                         score -= EvalConstants.OtherScores[EvalConstants.IxBishopPrison];
-                    }
 
                     piece &= piece - 1;
                 }
@@ -835,15 +690,11 @@ namespace Chess22kDotNet.Eval
             // knight outpost: protected by a pawn, cannot be attacked by enemy pawns
             piece = cb.Pieces[White][Knight] & cb.PassedPawnsAndOutposts & whitePawnAttacks;
             if (piece != 0)
-            {
                 score += BitOperations.PopCount((ulong) piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
-            }
 
             piece = cb.Pieces[Black][Knight] & cb.PassedPawnsAndOutposts & blackPawnAttacks;
             if (piece != 0)
-            {
                 score -= BitOperations.PopCount((ulong) piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
-            }
 
             // pinned-pieces
             if (cb.PinnedPieces != 0)
@@ -892,10 +743,7 @@ namespace Chess22kDotNet.Eval
 
         public static int CalculatePawnShieldBonus(ChessBoard cb)
         {
-            if (!MaterialUtil.HasPawns(cb.MaterialKey))
-            {
-                return 0;
-            }
+            if (!MaterialUtil.HasPawns(cb.MaterialKey)) return 0;
 
             int file;
 
@@ -910,10 +758,7 @@ namespace Chess22kDotNet.Eval
                 piece &= ~Bitboard.Files[file];
             }
 
-            if (cb.Pieces[Black][Queen] == 0)
-            {
-                whiteScore /= 2;
-            }
+            if (cb.Pieces[Black][Queen] == 0) whiteScore /= 2;
 
             var blackScore = 0;
             piece = cb.Pieces[Black][Pawn] & KingArea[cb.KingIndex[Black]] & ~cb.Attacks[White][Pawn];
@@ -926,10 +771,7 @@ namespace Chess22kDotNet.Eval
                 piece &= ~Bitboard.Files[file];
             }
 
-            if (cb.Pieces[White][Queen] == 0)
-            {
-                blackScore /= 2;
-            }
+            if (cb.Pieces[White][Queen] == 0) blackScore /= 2;
 
             return whiteScore - blackScore;
         }
@@ -1039,15 +881,13 @@ namespace Chess22kDotNet.Eval
         {
             var score = 0;
             for (var color = White; color <= Black; color++)
+            for (var pieceType = Pawn; pieceType <= King; pieceType++)
             {
-                for (var pieceType = Pawn; pieceType <= King; pieceType++)
+                var piece = cb.Pieces[color][pieceType];
+                while (piece != 0)
                 {
-                    var piece = cb.Pieces[color][pieceType];
-                    while (piece != 0)
-                    {
-                        score += EvalConstants.Psqt[pieceType][color][BitOperations.TrailingZeroCount(piece)];
-                        piece &= piece - 1;
-                    }
+                    score += EvalConstants.Psqt[pieceType][color][BitOperations.TrailingZeroCount(piece)];
+                    piece &= piece - 1;
                 }
             }
 

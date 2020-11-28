@@ -9,41 +9,48 @@ namespace Chess22kDotNet.Search
     public class ThreadData
     {
         private static ThreadData[] _instances;
+        private readonly int[][] _bfMoves = Util.CreateJaggedArray<int[][]>(2, 64 * 64);
 
-        static ThreadData()
-        {
-            InitInstances(UciOptions.ThreadCount);
-        }
+        private readonly int[][][] _counterMoves = Util.CreateJaggedArray<int[][][]>(2, 7, 64);
 
-        private readonly int _threadNumber;
-        private int _ply;
-
-        public readonly int[] Pv;
-        public ScoreType ScoreType;
-        public int BestScore;
-        public int Depth;
-
-        private readonly int[] _nextToGenerate = new int[EngineConstants.MaxPlies * 2];
-        private readonly int[] _nextToMove = new int[EngineConstants.MaxPlies * 2];
+        private readonly int[][] _hhMoves = Util.CreateJaggedArray<int[][]>(2, 64 * 64);
         private readonly int[] _killerMove1 = new int[EngineConstants.MaxPlies * 2];
         private readonly int[] _killerMove2 = new int[EngineConstants.MaxPlies * 2];
 
         private readonly int[] _moves = new int[1500];
         private readonly int[] _moveScores = new int[1500];
 
-        private readonly int[][][] _counterMoves = Util.CreateJaggedArray<int[][][]>(2, 7, 64);
+        private readonly int[] _nextToGenerate = new int[EngineConstants.MaxPlies * 2];
+        private readonly int[] _nextToMove = new int[EngineConstants.MaxPlies * 2];
 
-        private readonly int[][] _hhMoves = Util.CreateJaggedArray<int[][]>(2, 64 * 64);
-        private readonly int[][] _bfMoves = Util.CreateJaggedArray<int[][]>(2, 64 * 64);
+        private readonly int _threadNumber;
 
         // keys, scores
         public readonly int[] EvalCache = new int[(1 << EngineConstants.Power2EvalEntries) * 2];
 
+        // keys, scores
+        public readonly int[] MaterialCache = new int[(1 << EngineConstants.Power2MaterialEntries) * 2];
+
         // keys, passedPawnsOutposts, scores
         public readonly long[] PawnCache = new long[(1 << EngineConstants.Power2PawnEvalEntries) * 3];
 
-        // keys, scores
-        public readonly int[] MaterialCache = new int[(1 << EngineConstants.Power2MaterialEntries) * 2];
+        public readonly int[] Pv;
+        private int _ply;
+        public int BestScore;
+        public int Depth;
+        public ScoreType ScoreType;
+
+        static ThreadData()
+        {
+            InitInstances(UciOptions.ThreadCount);
+        }
+
+        public ThreadData(int threadNumber)
+        {
+            ClearHistoryHeuristics();
+            _threadNumber = threadNumber;
+            if (threadNumber == 0) Pv = new int[EngineConstants.PvLength];
+        }
 
         public static ThreadData GetInstance(int instanceNumber)
         {
@@ -53,44 +60,22 @@ namespace Chess22kDotNet.Search
         public static void InitInstances(int nrOfInstances)
         {
             _instances = new ThreadData[nrOfInstances];
-            for (var i = 0; i < _instances.Length; i++)
-            {
-                _instances[i] = new ThreadData(i);
-            }
-        }
-
-        public ThreadData(int threadNumber)
-        {
-            ClearHistoryHeuristics();
-            _threadNumber = threadNumber;
-            if (threadNumber == 0)
-            {
-                Pv = new int[EngineConstants.PvLength];
-            }
+            for (var i = 0; i < _instances.Length; i++) _instances[i] = new ThreadData(i);
         }
 
         public void SetBestMove(ChessBoard cb, int bestMove, int alpha, int beta, int bestScore,
             int depth)
         {
-            if (_threadNumber != 0)
-            {
-                return;
-            }
+            if (_threadNumber != 0) return;
 
             BestScore = bestScore;
             Depth = depth;
             if (bestScore <= alpha)
-            {
                 ScoreType = ScoreType.Upper;
-            }
             else if (bestScore >= beta)
-            {
                 ScoreType = ScoreType.Lower;
-            }
             else
-            {
                 ScoreType = ScoreType.Exact;
-            }
 
             PvUtil.Set(cb, Pv, bestMove);
         }
@@ -99,14 +84,10 @@ namespace Chess22kDotNet.Search
         {
             var ttEntry = TtUtil.GetEntry(cb.ZobristKey);
             if (ttEntry.Key == 0 || ttEntry.Move == 0)
-            {
                 Array.Fill(Pv, 0);
-            }
             else
-            {
                 SetBestMove(cb, ttEntry.Move, Util.ShortMin, Util.ShortMax, ttEntry.GetScore(0),
                     ttEntry.Depth);
-            }
         }
 
         public int GetBestMove()
@@ -137,27 +118,18 @@ namespace Chess22kDotNet.Search
         public void AddHhValue(int color, int move, int depth)
         {
             _hhMoves[color][MoveUtil.GetFromToIndex(move)] += depth * depth;
-            if (EngineConstants.Assert)
-            {
-                Assert.IsTrue(_hhMoves[color][MoveUtil.GetFromToIndex(move)] >= 0);
-            }
+            if (EngineConstants.Assert) Assert.IsTrue(_hhMoves[color][MoveUtil.GetFromToIndex(move)] >= 0);
         }
 
         public void AddBfValue(int color, int move, int depth)
         {
             _bfMoves[color][MoveUtil.GetFromToIndex(move)] += depth * depth;
-            if (EngineConstants.Assert)
-            {
-                Assert.IsTrue(_bfMoves[color][MoveUtil.GetFromToIndex(move)] >= 0);
-            }
+            if (EngineConstants.Assert) Assert.IsTrue(_bfMoves[color][MoveUtil.GetFromToIndex(move)] >= 0);
         }
 
         private int GetHhScore(int color, int fromToIndex)
         {
-            if (!EngineConstants.EnableHistoryHeuristic)
-            {
-                return 1;
-            }
+            if (!EngineConstants.EnableHistoryHeuristic) return 1;
 
             return 100 * _hhMoves[color][fromToIndex] / _bfMoves[color][fromToIndex];
         }
@@ -173,10 +145,8 @@ namespace Chess22kDotNet.Search
         public void AddCounterMove(int color, int parentMove, int counterMove)
         {
             if (EngineConstants.EnableCounterMoves)
-            {
                 _counterMoves[color][MoveUtil.GetSourcePieceIndex(parentMove)][MoveUtil.GetToIndex(parentMove)] =
                     counterMove;
-            }
         }
 
         public int GetCounter(int color, int parentMove)
@@ -237,19 +207,14 @@ namespace Chess22kDotNet.Search
             {
                 _moveScores[j] = MoveUtil.GetAttackedPieceIndex(_moves[j]) * 6 -
                                  MoveUtil.GetSourcePieceIndex(_moves[j]);
-                if (MoveUtil.GetMoveType(_moves[j]) == MoveUtil.TypePromotionQ)
-                {
-                    _moveScores[j] += Queen * 6;
-                }
+                if (MoveUtil.GetMoveType(_moves[j]) == MoveUtil.TypePromotionQ) _moveScores[j] += Queen * 6;
             }
         }
 
         public void SetHhScores(int colorToMove)
         {
             for (var j = _nextToMove[_ply]; j < _nextToGenerate[_ply]; j++)
-            {
                 _moveScores[j] = GetHhScore(colorToMove, MoveUtil.GetFromToIndex(_moves[j]));
-            }
         }
 
         public void Sort()
@@ -263,10 +228,7 @@ namespace Chess22kDotNet.Search
                 {
                     _moveScores[j + 1] = _moveScores[j];
                     _moves[j + 1] = _moves[j];
-                    if (j-- == left)
-                    {
-                        break;
-                    }
+                    if (j-- == left) break;
                 }
 
                 _moveScores[j + 1] = score;
@@ -278,9 +240,7 @@ namespace Chess22kDotNet.Search
         {
             var sb = new StringBuilder();
             for (var j = _nextToMove[_ply]; j < _nextToGenerate[_ply]; j++)
-            {
                 sb.Append(new MoveWrapper(_moves[j]) + ", ");
-            }
 
             return sb.ToString();
         }

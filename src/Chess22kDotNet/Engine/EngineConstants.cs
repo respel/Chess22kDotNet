@@ -17,9 +17,6 @@ namespace Chess22kDotNet.Engine
         // Repetition-table
         public const bool EnableRepetitionTable = true;
 
-        // TT values
-        public static int Power2TtEntries = 23;
-
         // Search improvements
         public const bool EnableCounterMoves = true;
         public const bool EnableKillerMoves = true;
@@ -51,5 +48,8 @@ namespace Chess22kDotNet.Engine
         public const int Power2MaterialEntries = 11;
         public const bool EnablePawnEvalCache = true;
         public const int Power2PawnEvalEntries = 12;
+
+        // TT values
+        public static int Power2TtEntries = 23;
     }
 }

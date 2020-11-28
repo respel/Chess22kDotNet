@@ -8,37 +8,25 @@ namespace Chess22kDotNet.Eval
 
         public static int GetScore(int key, int[] materialCache)
         {
-            if (!EngineConstants.EnableMaterialCache)
-            {
-                return ChessConstants.CacheMiss;
-            }
+            if (!EngineConstants.EnableMaterialCache) return ChessConstants.CacheMiss;
 
             var index = GetIndex(key);
 
             if (materialCache[index] == key)
             {
-                if (Statistics.Enabled)
-                {
-                    Statistics.MaterialCacheHits++;
-                }
+                if (Statistics.Enabled) Statistics.MaterialCacheHits++;
 
                 return materialCache[index + 1];
             }
 
-            if (Statistics.Enabled)
-            {
-                Statistics.MaterialCacheMisses++;
-            }
+            if (Statistics.Enabled) Statistics.MaterialCacheMisses++;
 
             return ChessConstants.CacheMiss;
         }
 
         public static void AddValue(int key, int score, int[] materialCache)
         {
-            if (!EngineConstants.EnableMaterialCache)
-            {
-                return;
-            }
+            if (!EngineConstants.EnableMaterialCache) return;
 
             if (EngineConstants.Assert)
             {

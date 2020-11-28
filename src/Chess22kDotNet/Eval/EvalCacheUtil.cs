@@ -12,28 +12,19 @@ namespace Chess22kDotNet.Eval
 
             if (evalCache[index] == (int) key)
             {
-                if (Statistics.Enabled)
-                {
-                    Statistics.EvalCacheHits++;
-                }
+                if (Statistics.Enabled) Statistics.EvalCacheHits++;
 
                 return evalCache[index + 1];
             }
 
-            if (Statistics.Enabled)
-            {
-                Statistics.EvalCacheMisses++;
-            }
+            if (Statistics.Enabled) Statistics.EvalCacheMisses++;
 
             return ChessConstants.CacheMiss;
         }
 
         public static void AddValue(long key, int score, int[] evalCache)
         {
-            if (!EngineConstants.EnableEvalCache)
-            {
-                return;
-            }
+            if (!EngineConstants.EnableEvalCache) return;
 
             if (EngineConstants.Assert)
             {

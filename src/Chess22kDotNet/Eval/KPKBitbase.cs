@@ -1619,7 +1619,7 @@ namespace Chess22kDotNet.Eval
         {
             return whiteKingIndex + (blackKingIndex << 6) + //
                    ((whiteToMove ? 1 : 0) << 12) + //
-                   ((7 - pawnIndex & 7) << 13) + ((6 - pawnIndex / 8) << 15);
+                   (((7 - pawnIndex) & 7) << 13) + ((6 - pawnIndex / 8) << 15);
         }
 
         public static bool IsDraw(ChessBoard cb)

@@ -56,10 +56,7 @@ namespace Chess22kDotNet.Engine
             }
             finally
             {
-                if (systemExit)
-                {
-                    Environment.Exit(1);
-                }
+                if (systemExit) Environment.Exit(1);
             }
         }
     }

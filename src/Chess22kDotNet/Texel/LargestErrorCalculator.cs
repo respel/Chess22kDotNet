@@ -32,9 +32,7 @@ namespace Chess22kDotNet.Texel
             }
 
             for (var i = 0; i < LargestError.Length; i++)
-            {
                 Console.WriteLine($"{LargestErrorFen[i],60} -> {LargestError[i]}");
-            }
         }
     }
 }
