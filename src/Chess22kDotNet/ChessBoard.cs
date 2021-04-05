@@ -157,6 +157,7 @@ namespace Chess22kDotNet
                         PawnZobristKey ^= Zobrist.Piece[ColorToMove][Pawn][toIndex];
                         // 2-move
                         if (InBetween[fromIndex][toIndex] != 0)
+                        {
                             if ((StaticMoves.PawnAttacks[ColorToMove][
                                      BitOperations.TrailingZeroCount(InBetween[fromIndex][toIndex])]
                                  & Pieces[ColorToMoveInverse][Pawn]) != 0)
@@ -164,6 +165,7 @@ namespace Chess22kDotNet
                                 EpIndex = BitOperations.TrailingZeroCount(InBetween[fromIndex][toIndex]);
                                 ZobristKey ^= Zobrist.EpIndex[EpIndex];
                             }
+                        }
                     }
 
                     break;
@@ -472,8 +474,10 @@ namespace Chess22kDotNet
             }
 
             if ((fromSquare & PinnedPieces) != 0)
+            {
                 if ((PinnedMovement[fromIndex][KingIndex[ColorToMove]] & toSquare) == 0)
                     return false;
+            }
 
             if (CheckingPieces == 0) return true;
             if (attackedPieceIndex == 0) return IsLegalNonKingMove(move);
