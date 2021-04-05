@@ -16,7 +16,7 @@ namespace Chess22kDotNet.Texel
             foreach (var entry in fens)
             {
                 ChessBoardUtil.SetFen(entry.Key, cb);
-                PieceCounts[BitOperations.PopCount((ulong) cb.AllPieces)]++;
+                PieceCounts[BitOperations.PopCount((ulong)cb.AllPieces)]++;
             }
 
             for (var i = 0; i < 33; i++) Console.WriteLine(i + " " + PieceCounts[i]);

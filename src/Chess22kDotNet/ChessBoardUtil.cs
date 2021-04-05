@@ -70,8 +70,8 @@ namespace Chess22kDotNet
                 // if counter is not set, try to guess
                 // assume in the beginning every 2 moves, a pawn is moved
                 var pawnsNotAtStartingPosition =
-                    16 - BitOperations.PopCount((ulong) (cb.Pieces[White][Pawn] & Bitboard.Rank2))
-                       - BitOperations.PopCount((ulong) (cb.Pieces[Black][Pawn] & Bitboard.Rank7));
+                    16 - BitOperations.PopCount((ulong)(cb.Pieces[White][Pawn] & Bitboard.Rank2))
+                       - BitOperations.PopCount((ulong)(cb.Pieces[Black][Pawn] & Bitboard.Rank7));
                 cb.MoveCounter = pawnsNotAtStartingPosition * 2;
             }
 
@@ -83,8 +83,8 @@ namespace Chess22kDotNet
         {
             // clear pieces
             for (var color = 0; color < 2; color++)
-            for (var pieceIndex = 1; pieceIndex <= King; pieceIndex++)
-                cb.Pieces[color][pieceIndex] = 0;
+                for (var pieceIndex = 1; pieceIndex <= King; pieceIndex++)
+                    cb.Pieces[color][pieceIndex] = 0;
 
             var positionCount = 63;
             foreach (var character in fenPieces)
@@ -207,13 +207,13 @@ namespace Chess22kDotNet
             cb.PsqtScore = EvalUtil.CalculatePositionScores(cb);
 
             cb.Phase = EvalUtil.PhaseTotal -
-                       (BitOperations.PopCount((ulong) (cb.Pieces[White][Knight] | cb.Pieces[Black][Knight])) *
+                       (BitOperations.PopCount((ulong)(cb.Pieces[White][Knight] | cb.Pieces[Black][Knight])) *
                         EvalConstants.Phase[Knight]
-                        + BitOperations.PopCount((ulong) (cb.Pieces[White][Bishop] | cb.Pieces[Black][Bishop])) *
+                        + BitOperations.PopCount((ulong)(cb.Pieces[White][Bishop] | cb.Pieces[Black][Bishop])) *
                         EvalConstants.Phase[Bishop]
-                        + BitOperations.PopCount((ulong) (cb.Pieces[White][Rook] | cb.Pieces[Black][Rook])) *
+                        + BitOperations.PopCount((ulong)(cb.Pieces[White][Rook] | cb.Pieces[Black][Rook])) *
                         EvalConstants.Phase[Rook]
-                        + BitOperations.PopCount((ulong) (cb.Pieces[White][Queen] | cb.Pieces[Black][Queen])) *
+                        + BitOperations.PopCount((ulong)(cb.Pieces[White][Queen] | cb.Pieces[Black][Queen])) *
                         EvalConstants.Phase[Queen]);
 
             Zobrist.SetPawnKey(cb);
@@ -273,7 +273,7 @@ namespace Chess22kDotNet
             if (cb.EpIndex == 0)
                 sb.Append("-");
             else
-                sb.Append("" + (char) (104 - cb.EpIndex % 8) + (cb.EpIndex / 8 + 1));
+                sb.Append("" + (char)(104 - cb.EpIndex % 8) + (cb.EpIndex / 8 + 1));
 
             var fen = sb.ToString();
             fen = fen.Replace("11111111", "8");

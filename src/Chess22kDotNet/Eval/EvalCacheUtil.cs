@@ -10,7 +10,7 @@ namespace Chess22kDotNet.Eval
         {
             var index = GetIndex(key);
 
-            if (evalCache[index] == (int) key)
+            if (evalCache[index] == (int)key)
             {
                 if (Statistics.Enabled) Statistics.EvalCacheHits++;
 
@@ -33,13 +33,13 @@ namespace Chess22kDotNet.Eval
             }
 
             var index = GetIndex(key);
-            evalCache[index] = (int) key;
+            evalCache[index] = (int)key;
             evalCache[index + 1] = score;
         }
 
         private static int GetIndex(long key)
         {
-            return (int) Util.RightTripleShift(key, Power2TableShifts) << 1;
+            return (int)Util.RightTripleShift(key, Power2TableShifts) << 1;
         }
     }
 }

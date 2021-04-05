@@ -12,7 +12,7 @@ namespace Chess22kDotNet.Eval
 
         public static int CalculateKbnkScore(ChessBoard cb)
         {
-            if (BitOperations.PopCount((ulong) cb.Pieces[White][All]) > 1) return 1000 + CalculateKbnkScore(cb, White);
+            if (BitOperations.PopCount((ulong)cb.Pieces[White][All]) > 1) return 1000 + CalculateKbnkScore(cb, White);
 
             return -1000 - CalculateKbnkScore(cb, Black);
         }

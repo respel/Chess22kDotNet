@@ -29,7 +29,7 @@ namespace Chess22kDotNet.Eval
         public static int CalculateScore(ChessBoard cb, ThreadData threadData)
         {
             var score = MaterialUtil.ScoreUnknown;
-            if (BitOperations.PopCount((ulong) cb.AllPieces) <= 5)
+            if (BitOperations.PopCount((ulong)cb.AllPieces) <= 5)
                 score = MaterialUtil.IsDrawByMaterial(cb)
                     ? EvalConstants.ScoreDraw
                     : MaterialUtil.CalculateEndgameScore(cb);
@@ -60,11 +60,11 @@ namespace Chess22kDotNet.Eval
 
         private static int AdjustEndgame(ChessBoard cb, int score, int color, int[] materialCache)
         {
-            if (BitOperations.PopCount((ulong) cb.Pieces[color][All]) > 3) return score;
+            if (BitOperations.PopCount((ulong)cb.Pieces[color][All]) > 3) return score;
 
             if (MaterialUtil.HasPawnsOrQueens(cb.MaterialKey, color)) return score;
 
-            switch (BitOperations.PopCount((ulong) cb.Pieces[color][All]))
+            switch (BitOperations.PopCount((ulong)cb.Pieces[color][All]))
             {
                 case 1:
                     return EvalConstants.ScoreDraw;
@@ -115,7 +115,7 @@ namespace Chess22kDotNet.Eval
 
         public static int GetEgScore(int score)
         {
-            return (short) (score & 0xffff);
+            return (short)(score & 0xffff);
         }
 
         private static int CalculateScaleFactor(ChessBoard cb)
@@ -137,24 +137,24 @@ namespace Chess22kDotNet.Eval
             var score = 0;
 
             score += EvalConstants.OtherScores[EvalConstants.IxSpace]
-                     * BitOperations.PopCount((ulong) (Util.RightTripleShift(cb.Pieces[White][Pawn], 8) &
+                     * BitOperations.PopCount((ulong)(Util.RightTripleShift(cb.Pieces[White][Pawn], 8) &
                                                        (cb.Pieces[White][Knight] | cb.Pieces[White][Bishop]) &
                                                        Bitboard.Rank234));
             score -= EvalConstants.OtherScores[EvalConstants.IxSpace]
-                     * BitOperations.PopCount((ulong) ((cb.Pieces[Black][Pawn] << 8) &
+                     * BitOperations.PopCount((ulong)((cb.Pieces[Black][Pawn] << 8) &
                                                        (cb.Pieces[Black][Knight] | cb.Pieces[Black][Bishop]) &
                                                        Bitboard.Rank567));
 
             // idea taken from Laser
             var space = Util.RightTripleShift(cb.Pieces[White][Pawn], 8);
             space |= Util.RightTripleShift(space, 8) | Util.RightTripleShift(space, 16);
-            score += EvalConstants.Space[BitOperations.PopCount((ulong) cb.Pieces[White][All])]
-                     * BitOperations.PopCount((ulong) (space & ~cb.Pieces[White][Pawn] & ~cb.Attacks[Black][Pawn] &
+            score += EvalConstants.Space[BitOperations.PopCount((ulong)cb.Pieces[White][All])]
+                     * BitOperations.PopCount((ulong)(space & ~cb.Pieces[White][Pawn] & ~cb.Attacks[Black][Pawn] &
                                                        Bitboard.FileCdef));
             space = cb.Pieces[Black][Pawn] << 8;
             space |= (space << 8) | (space << 16);
-            score -= EvalConstants.Space[BitOperations.PopCount((ulong) cb.Pieces[Black][All])]
-                     * BitOperations.PopCount((ulong) (space & ~cb.Pieces[Black][Pawn] & ~cb.Attacks[White][Pawn] &
+            score -= EvalConstants.Space[BitOperations.PopCount((ulong)cb.Pieces[Black][All])]
+                     * BitOperations.PopCount((ulong)(space & ~cb.Pieces[Black][Pawn] & ~cb.Attacks[White][Pawn] &
                                                        Bitboard.FileCdef));
 
             return score;
@@ -180,10 +180,10 @@ namespace Chess22kDotNet.Eval
             // penalty for doubled pawns
             for (var i = 0; i < 8; i++)
             {
-                if (BitOperations.PopCount((ulong) (cb.Pieces[White][Pawn] & Bitboard.Files[i])) > 1)
+                if (BitOperations.PopCount((ulong)(cb.Pieces[White][Pawn] & Bitboard.Files[i])) > 1)
                     score -= EvalConstants.PawnScores[EvalConstants.IxPawnDouble];
 
-                if (BitOperations.PopCount((ulong) (cb.Pieces[Black][Pawn] & Bitboard.Files[i])) > 1)
+                if (BitOperations.PopCount((ulong)(cb.Pieces[Black][Pawn] & Bitboard.Files[i])) > 1)
                     score += EvalConstants.PawnScores[EvalConstants.IxPawnDouble];
             }
 
@@ -260,7 +260,7 @@ namespace Chess22kDotNet.Eval
                             score -= EvalConstants.PawnScores[EvalConstants.IxPawnBackward];
 
                 // pawn defending 2 pawns
-                if (BitOperations.PopCount((ulong) (StaticMoves.PawnAttacks[White][index] & cb.Pieces[White][Pawn])) ==
+                if (BitOperations.PopCount((ulong)(StaticMoves.PawnAttacks[White][index] & cb.Pieces[White][Pawn])) ==
                     2)
                     score -= EvalConstants.PawnScores[EvalConstants.IxPawnInverse];
 
@@ -270,12 +270,12 @@ namespace Chess22kDotNet.Eval
 
                 // candidate passed pawns (no pawns in front, more friendly pawns behind and adjacent than enemy pawns)
                 else if (63 - BitOperations.LeadingZeroCount(
-                    (ulong) ((cb.Pieces[White][Pawn] | cb.Pieces[Black][Pawn]) &
+                    (ulong)((cb.Pieces[White][Pawn] | cb.Pieces[Black][Pawn]) &
                              Bitboard.Files[index & 7])) == index)
-                    if (BitOperations.PopCount((ulong) (cb.Pieces[White][Pawn] &
+                    if (BitOperations.PopCount((ulong)(cb.Pieces[White][Pawn] &
                                                         Bitboard.GetBlackPassedPawnMask(index + 8))) >=
                         BitOperations.PopCount(
-                            (ulong) (cb.Pieces[Black][Pawn] & Bitboard.GetWhitePassedPawnMask(index))))
+                            (ulong)(cb.Pieces[Black][Pawn] & Bitboard.GetWhitePassedPawnMask(index))))
                         score += EvalConstants.PassedCandidate[index / 8];
 
                 pawns &= pawns - 1;
@@ -298,7 +298,7 @@ namespace Chess22kDotNet.Eval
                             score += EvalConstants.PawnScores[EvalConstants.IxPawnBackward];
 
                 // pawn defending 2 pawns
-                if (BitOperations.PopCount((ulong) (StaticMoves.PawnAttacks[Black][index] & cb.Pieces[Black][Pawn])) ==
+                if (BitOperations.PopCount((ulong)(StaticMoves.PawnAttacks[Black][index] & cb.Pieces[Black][Pawn])) ==
                     2)
                     score += EvalConstants.PawnScores[EvalConstants.IxPawnInverse];
 
@@ -309,10 +309,10 @@ namespace Chess22kDotNet.Eval
                 // candidate passers
                 else if (BitOperations.TrailingZeroCount((cb.Pieces[White][Pawn] | cb.Pieces[Black][Pawn]) &
                                                          Bitboard.Files[index & 7]) == index)
-                    if (BitOperations.PopCount((ulong) (cb.Pieces[Black][Pawn] &
+                    if (BitOperations.PopCount((ulong)(cb.Pieces[Black][Pawn] &
                                                         Bitboard.GetWhitePassedPawnMask(index - 8))) >=
                         BitOperations.PopCount(
-                            (ulong) (cb.Pieces[White][Pawn] & Bitboard.GetBlackPassedPawnMask(index))))
+                            (ulong)(cb.Pieces[White][Pawn] & Bitboard.GetBlackPassedPawnMask(index))))
                         score -= EvalConstants.PassedCandidate[7 - index / 8];
 
                 pawns &= pawns - 1;
@@ -342,38 +342,38 @@ namespace Chess22kDotNet.Eval
             score += CalculateMaterialScore(cb);
 
             // knights and pawns
-            score += BitOperations.PopCount((ulong) cb.Pieces[White][Knight]) *
-                     EvalConstants.KnightPawn[BitOperations.PopCount((ulong) cb.Pieces[White][Pawn])];
-            score -= BitOperations.PopCount((ulong) cb.Pieces[Black][Knight]) *
-                     EvalConstants.KnightPawn[BitOperations.PopCount((ulong) cb.Pieces[Black][Pawn])];
+            score += BitOperations.PopCount((ulong)cb.Pieces[White][Knight]) *
+                     EvalConstants.KnightPawn[BitOperations.PopCount((ulong)cb.Pieces[White][Pawn])];
+            score -= BitOperations.PopCount((ulong)cb.Pieces[Black][Knight]) *
+                     EvalConstants.KnightPawn[BitOperations.PopCount((ulong)cb.Pieces[Black][Pawn])];
 
             // rooks and pawns
-            score += BitOperations.PopCount((ulong) cb.Pieces[White][Rook]) *
-                     EvalConstants.RookPawn[BitOperations.PopCount((ulong) cb.Pieces[White][Pawn])];
-            score -= BitOperations.PopCount((ulong) cb.Pieces[Black][Rook]) *
-                     EvalConstants.RookPawn[BitOperations.PopCount((ulong) cb.Pieces[Black][Pawn])];
+            score += BitOperations.PopCount((ulong)cb.Pieces[White][Rook]) *
+                     EvalConstants.RookPawn[BitOperations.PopCount((ulong)cb.Pieces[White][Pawn])];
+            score -= BitOperations.PopCount((ulong)cb.Pieces[Black][Rook]) *
+                     EvalConstants.RookPawn[BitOperations.PopCount((ulong)cb.Pieces[Black][Pawn])];
 
             // double bishop
-            if (BitOperations.PopCount((ulong) cb.Pieces[White][Bishop]) == 2)
+            if (BitOperations.PopCount((ulong)cb.Pieces[White][Bishop]) == 2)
                 score += EvalConstants.ImbalanceScores[EvalConstants.IxBishopDouble];
 
-            if (BitOperations.PopCount((ulong) cb.Pieces[Black][Bishop]) == 2)
+            if (BitOperations.PopCount((ulong)cb.Pieces[Black][Bishop]) == 2)
                 score -= EvalConstants.ImbalanceScores[EvalConstants.IxBishopDouble];
 
             // queen and nights
             if (cb.Pieces[White][Queen] != 0)
-                score += BitOperations.PopCount((ulong) cb.Pieces[White][Knight]) *
+                score += BitOperations.PopCount((ulong)cb.Pieces[White][Knight]) *
                          EvalConstants.ImbalanceScores[EvalConstants.IxQueenNight];
 
             if (cb.Pieces[Black][Queen] != 0)
-                score -= BitOperations.PopCount((ulong) cb.Pieces[Black][Knight]) *
+                score -= BitOperations.PopCount((ulong)cb.Pieces[Black][Knight]) *
                          EvalConstants.ImbalanceScores[EvalConstants.IxQueenNight];
 
             // rook pair
-            if (BitOperations.PopCount((ulong) cb.Pieces[White][Rook]) > 1)
+            if (BitOperations.PopCount((ulong)cb.Pieces[White][Rook]) > 1)
                 score += EvalConstants.ImbalanceScores[EvalConstants.IxRookPair];
 
-            if (BitOperations.PopCount((ulong) cb.Pieces[Black][Rook]) > 1)
+            if (BitOperations.PopCount((ulong)cb.Pieces[Black][Rook]) > 1)
                 score -= EvalConstants.ImbalanceScores[EvalConstants.IxRookPair];
 
             return score;
@@ -411,47 +411,47 @@ namespace Chess22kDotNet.Eval
             if (MaterialUtil.HasPawns(cb.MaterialKey))
             {
                 // unused outposts
-                score += BitOperations.PopCount((ulong) (cb.PassedPawnsAndOutposts & cb.EmptySpaces &
+                score += BitOperations.PopCount((ulong)(cb.PassedPawnsAndOutposts & cb.EmptySpaces &
                                                          whiteMinorAttacks & whitePawnAttacks))
                          * EvalConstants.Threats[EvalConstants.IxUnusedOutpost];
-                score -= BitOperations.PopCount((ulong) (cb.PassedPawnsAndOutposts & cb.EmptySpaces &
+                score -= BitOperations.PopCount((ulong)(cb.PassedPawnsAndOutposts & cb.EmptySpaces &
                                                          blackMinorAttacks & blackPawnAttacks))
                          * EvalConstants.Threats[EvalConstants.IxUnusedOutpost];
 
                 // pawn push threat
                 piece = (whitePawns << 8) & cb.EmptySpaces & ~blackAttacks;
-                score += BitOperations.PopCount((ulong) (Bitboard.GetWhitePawnAttacks(piece) & blacks)) *
+                score += BitOperations.PopCount((ulong)(Bitboard.GetWhitePawnAttacks(piece) & blacks)) *
                          EvalConstants.Threats[EvalConstants.IxPawnPushThreat];
                 piece = Util.RightTripleShift(blackPawns, 8) & cb.EmptySpaces & ~whiteAttacks;
-                score -= BitOperations.PopCount((ulong) (Bitboard.GetBlackPawnAttacks(piece) & whites)) *
+                score -= BitOperations.PopCount((ulong)(Bitboard.GetBlackPawnAttacks(piece) & whites)) *
                          EvalConstants.Threats[EvalConstants.IxPawnPushThreat];
 
                 // piece attacked by pawn
-                score += BitOperations.PopCount((ulong) (whitePawnAttacks & blacks & ~blackPawns)) *
+                score += BitOperations.PopCount((ulong)(whitePawnAttacks & blacks & ~blackPawns)) *
                          EvalConstants.Threats[EvalConstants.IxPawnAttacks];
-                score -= BitOperations.PopCount((ulong) (blackPawnAttacks & whites & ~whitePawns)) *
+                score -= BitOperations.PopCount((ulong)(blackPawnAttacks & whites & ~whitePawns)) *
                          EvalConstants.Threats[EvalConstants.IxPawnAttacks];
 
                 // multiple pawn attacks possible
-                if (BitOperations.PopCount((ulong) (whitePawnAttacks & blacks)) > 1)
+                if (BitOperations.PopCount((ulong)(whitePawnAttacks & blacks)) > 1)
                     score += EvalConstants.Threats[EvalConstants.IxMultiplePawnAttacks];
 
-                if (BitOperations.PopCount((ulong) (blackPawnAttacks & whites)) > 1)
+                if (BitOperations.PopCount((ulong)(blackPawnAttacks & whites)) > 1)
                     score -= EvalConstants.Threats[EvalConstants.IxMultiplePawnAttacks];
 
                 // pawn attacked
-                score += BitOperations.PopCount((ulong) (whiteAttacks & blackPawns)) *
+                score += BitOperations.PopCount((ulong)(whiteAttacks & blackPawns)) *
                          EvalConstants.Threats[EvalConstants.IxPawnAttacked];
-                score -= BitOperations.PopCount((ulong) (blackAttacks & whitePawns)) *
+                score -= BitOperations.PopCount((ulong)(blackAttacks & whitePawns)) *
                          EvalConstants.Threats[EvalConstants.IxPawnAttacked];
             }
 
             // minors attacked and not defended by a pawn
-            score += BitOperations.PopCount((ulong) (whiteAttacks &
+            score += BitOperations.PopCount((ulong)(whiteAttacks &
                                                      (cb.Pieces[Black][Knight] |
                                                       (cb.Pieces[Black][Bishop] & ~blackAttacks))))
                      * EvalConstants.Threats[EvalConstants.IxMajorAttacked];
-            score -= BitOperations.PopCount((ulong) (blackAttacks &
+            score -= BitOperations.PopCount((ulong)(blackAttacks &
                                                      (cb.Pieces[White][Knight] |
                                                       (cb.Pieces[White][Bishop] & ~whiteAttacks))))
                      * EvalConstants.Threats[EvalConstants.IxMajorAttacked];
@@ -459,27 +459,27 @@ namespace Chess22kDotNet.Eval
             if (cb.Pieces[Black][Queen] != 0)
             {
                 // queen attacked by rook
-                score += BitOperations.PopCount((ulong) (cb.Attacks[White][Rook] & cb.Pieces[Black][Queen])) *
+                score += BitOperations.PopCount((ulong)(cb.Attacks[White][Rook] & cb.Pieces[Black][Queen])) *
                          EvalConstants.Threats[EvalConstants.IxQueenAttacked];
                 // queen attacked by minors
-                score += BitOperations.PopCount((ulong) (whiteMinorAttacks & cb.Pieces[Black][Queen])) *
+                score += BitOperations.PopCount((ulong)(whiteMinorAttacks & cb.Pieces[Black][Queen])) *
                          EvalConstants.Threats[EvalConstants.IxQueenAttackedMinor];
             }
 
             if (cb.Pieces[White][Queen] != 0)
             {
                 // queen attacked by rook
-                score -= BitOperations.PopCount((ulong) (cb.Attacks[Black][Rook] & cb.Pieces[White][Queen])) *
+                score -= BitOperations.PopCount((ulong)(cb.Attacks[Black][Rook] & cb.Pieces[White][Queen])) *
                          EvalConstants.Threats[EvalConstants.IxQueenAttacked];
                 // queen attacked by minors
-                score -= BitOperations.PopCount((ulong) (blackMinorAttacks & cb.Pieces[White][Queen])) *
+                score -= BitOperations.PopCount((ulong)(blackMinorAttacks & cb.Pieces[White][Queen])) *
                          EvalConstants.Threats[EvalConstants.IxQueenAttackedMinor];
             }
 
             // rook attacked by minors
-            score += BitOperations.PopCount((ulong) (whiteMinorAttacks & cb.Pieces[Black][Rook])) *
+            score += BitOperations.PopCount((ulong)(whiteMinorAttacks & cb.Pieces[Black][Rook])) *
                      EvalConstants.Threats[EvalConstants.IxRookAttacked];
-            score -= BitOperations.PopCount((ulong) (blackMinorAttacks & cb.Pieces[White][Rook])) *
+            score -= BitOperations.PopCount((ulong)(blackMinorAttacks & cb.Pieces[White][Rook])) *
                      EvalConstants.Threats[EvalConstants.IxRookAttacked];
 
             return score;
@@ -506,14 +506,14 @@ namespace Chess22kDotNet.Eval
                 piece = cb.Pieces[White][Rook];
 
                 // rook battery (same file)
-                if (BitOperations.PopCount((ulong) piece) == 2)
+                if (BitOperations.PopCount((ulong)piece) == 2)
                     if ((BitOperations.TrailingZeroCount(piece) & 7) ==
-                        ((63 - BitOperations.LeadingZeroCount((ulong) piece)) & 7))
+                        ((63 - BitOperations.LeadingZeroCount((ulong)piece)) & 7))
                         score += EvalConstants.OtherScores[EvalConstants.IxRookBattery];
 
                 // rook on 7th, king on 8th
                 if (cb.KingIndex[Black] >= 56 && (piece & Bitboard.Rank7) != 0)
-                    score += BitOperations.PopCount((ulong) (piece & Bitboard.Rank7)) *
+                    score += BitOperations.PopCount((ulong)(piece & Bitboard.Rank7)) *
                              EvalConstants.OtherScores[EvalConstants.IxRook7ThRank];
 
                 // prison
@@ -548,14 +548,14 @@ namespace Chess22kDotNet.Eval
                 piece = cb.Pieces[Black][Rook];
 
                 // rook battery (same file)
-                if (BitOperations.PopCount((ulong) piece) == 2)
+                if (BitOperations.PopCount((ulong)piece) == 2)
                     if ((BitOperations.TrailingZeroCount(piece) & 7) ==
-                        ((63 - BitOperations.LeadingZeroCount((ulong) piece)) & 7))
+                        ((63 - BitOperations.LeadingZeroCount((ulong)piece)) & 7))
                         score -= EvalConstants.OtherScores[EvalConstants.IxRookBattery];
 
                 // rook on 2nd, king on 1st
                 if (cb.KingIndex[White] <= 7 && (piece & Bitboard.Rank2) != 0)
-                    score -= BitOperations.PopCount((ulong) (piece & Bitboard.Rank2)) *
+                    score -= BitOperations.PopCount((ulong)(piece & Bitboard.Rank2)) *
                              EvalConstants.OtherScores[EvalConstants.IxRook7ThRank];
 
                 // prison
@@ -592,17 +592,17 @@ namespace Chess22kDotNet.Eval
                 // bishop outpost: protected by a pawn, cannot be attacked by enemy pawns
                 piece = cb.Pieces[White][Bishop] & cb.PassedPawnsAndOutposts & whitePawnAttacks;
                 if (piece != 0)
-                    score += BitOperations.PopCount((ulong) piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
+                    score += BitOperations.PopCount((ulong)piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
 
                 piece = cb.Pieces[White][Bishop];
                 if ((piece & Bitboard.WhiteSquares) != 0)
                 {
                     // pawns on same color as bishop
                     score += EvalConstants.BishopPawn[
-                        BitOperations.PopCount((ulong) (whitePawns & Bitboard.WhiteSquares))];
+                        BitOperations.PopCount((ulong)(whitePawns & Bitboard.WhiteSquares))];
 
                     // attacking center squares
-                    if (BitOperations.PopCount((ulong) (cb.Attacks[White][Bishop] & Bitboard.E4D5)) == 2)
+                    if (BitOperations.PopCount((ulong)(cb.Attacks[White][Bishop] & Bitboard.E4D5)) == 2)
                         score += EvalConstants.OtherScores[EvalConstants.IxBishopLong];
                 }
 
@@ -610,10 +610,10 @@ namespace Chess22kDotNet.Eval
                 {
                     // pawns on same color as bishop
                     score += EvalConstants.BishopPawn[
-                        BitOperations.PopCount((ulong) (whitePawns & Bitboard.BlackSquares))];
+                        BitOperations.PopCount((ulong)(whitePawns & Bitboard.BlackSquares))];
 
                     // attacking center squares
-                    if (BitOperations.PopCount((ulong) (cb.Attacks[White][Bishop] & Bitboard.D4E5)) == 2)
+                    if (BitOperations.PopCount((ulong)(cb.Attacks[White][Bishop] & Bitboard.D4E5)) == 2)
                         score += EvalConstants.OtherScores[EvalConstants.IxBishopLong];
                 }
 
@@ -622,7 +622,7 @@ namespace Chess22kDotNet.Eval
                 while (piece != 0)
                 {
                     if (BitOperations.PopCount(
-                        (ulong) (EvalConstants.BishopPrison[BitOperations.TrailingZeroCount(piece)] & blackPawns)) == 2)
+                        (ulong)(EvalConstants.BishopPrison[BitOperations.TrailingZeroCount(piece)] & blackPawns)) == 2)
                         score += EvalConstants.OtherScores[EvalConstants.IxBishopPrison];
 
                     piece &= piece - 1;
@@ -635,17 +635,17 @@ namespace Chess22kDotNet.Eval
                 // bishop outpost: protected by a pawn, cannot be attacked by enemy pawns
                 piece = cb.Pieces[Black][Bishop] & cb.PassedPawnsAndOutposts & blackPawnAttacks;
                 if (piece != 0)
-                    score -= BitOperations.PopCount((ulong) piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
+                    score -= BitOperations.PopCount((ulong)piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
 
                 piece = cb.Pieces[Black][Bishop];
                 if ((piece & Bitboard.WhiteSquares) != 0)
                 {
                     // penalty for many pawns on same color as bishop
                     score -= EvalConstants.BishopPawn[
-                        BitOperations.PopCount((ulong) (blackPawns & Bitboard.WhiteSquares))];
+                        BitOperations.PopCount((ulong)(blackPawns & Bitboard.WhiteSquares))];
 
                     // bonus for attacking center squares
-                    if (BitOperations.PopCount((ulong) (cb.Attacks[Black][Bishop] & Bitboard.E4D5)) == 2)
+                    if (BitOperations.PopCount((ulong)(cb.Attacks[Black][Bishop] & Bitboard.E4D5)) == 2)
                         score -= EvalConstants.OtherScores[EvalConstants.IxBishopLong];
                 }
 
@@ -653,10 +653,10 @@ namespace Chess22kDotNet.Eval
                 {
                     // penalty for many pawns on same color as bishop
                     score -= EvalConstants.BishopPawn[
-                        BitOperations.PopCount((ulong) (blackPawns & Bitboard.BlackSquares))];
+                        BitOperations.PopCount((ulong)(blackPawns & Bitboard.BlackSquares))];
 
                     // bonus for attacking center squares
-                    if (BitOperations.PopCount((ulong) (cb.Attacks[Black][Bishop] & Bitboard.D4E5)) == 2)
+                    if (BitOperations.PopCount((ulong)(cb.Attacks[Black][Bishop] & Bitboard.D4E5)) == 2)
                         score -= EvalConstants.OtherScores[EvalConstants.IxBishopLong];
                 }
 
@@ -665,7 +665,7 @@ namespace Chess22kDotNet.Eval
                 while (piece != 0)
                 {
                     if (BitOperations.PopCount(
-                        (ulong) (EvalConstants.BishopPrison[BitOperations.TrailingZeroCount(piece)] & whitePawns)) == 2)
+                        (ulong)(EvalConstants.BishopPrison[BitOperations.TrailingZeroCount(piece)] & whitePawns)) == 2)
                         score -= EvalConstants.OtherScores[EvalConstants.IxBishopPrison];
 
                     piece &= piece - 1;
@@ -690,11 +690,11 @@ namespace Chess22kDotNet.Eval
             // knight outpost: protected by a pawn, cannot be attacked by enemy pawns
             piece = cb.Pieces[White][Knight] & cb.PassedPawnsAndOutposts & whitePawnAttacks;
             if (piece != 0)
-                score += BitOperations.PopCount((ulong) piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
+                score += BitOperations.PopCount((ulong)piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
 
             piece = cb.Pieces[Black][Knight] & cb.PassedPawnsAndOutposts & blackPawnAttacks;
             if (piece != 0)
-                score -= BitOperations.PopCount((ulong) piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
+                score -= BitOperations.PopCount((ulong)piece) * EvalConstants.OtherScores[EvalConstants.IxOutpost];
 
             // pinned-pieces
             if (cb.PinnedPieces != 0)
@@ -733,9 +733,9 @@ namespace Chess22kDotNet.Eval
             }
 
             if (cb.CastlingRights == 0) return score;
-            score += BitOperations.PopCount((ulong) (cb.CastlingRights & 12)) *
+            score += BitOperations.PopCount((ulong)(cb.CastlingRights & 12)) *
                      EvalConstants.OtherScores[EvalConstants.IxCastling];
-            score -= BitOperations.PopCount((ulong) (cb.CastlingRights & 3)) *
+            score -= BitOperations.PopCount((ulong)(cb.CastlingRights & 3)) *
                      EvalConstants.OtherScores[EvalConstants.IxCastling];
 
             return score;
@@ -764,10 +764,10 @@ namespace Chess22kDotNet.Eval
             piece = cb.Pieces[Black][Pawn] & KingArea[cb.KingIndex[Black]] & ~cb.Attacks[White][Pawn];
             while (piece != 0)
             {
-                file = (63 - BitOperations.LeadingZeroCount((ulong) piece)) & 7;
+                file = (63 - BitOperations.LeadingZeroCount((ulong)piece)) & 7;
                 blackScore +=
                     EvalConstants.ShieldBonus[Math.Min(7 - file, file)]
-                        [7 - (63 - BitOperations.LeadingZeroCount((ulong) piece)) / 8];
+                        [7 - (63 - BitOperations.LeadingZeroCount((ulong)piece)) / 8];
                 piece &= ~Bitboard.Files[file];
             }
 
@@ -818,7 +818,7 @@ namespace Chess22kDotNet.Eval
                 {
                     moves = StaticMoves.KnightMoves[BitOperations.TrailingZeroCount(piece)];
                     cb.UpdateAttacks(moves, Knight, color, kingArea);
-                    tempScore += EvalConstants.MobilityKnight[BitOperations.PopCount((ulong) (moves & safeMoves))];
+                    tempScore += EvalConstants.MobilityKnight[BitOperations.PopCount((ulong)(moves & safeMoves))];
                     piece &= piece - 1;
                 }
 
@@ -829,7 +829,7 @@ namespace Chess22kDotNet.Eval
                     moves = MagicUtil.GetBishopMoves(BitOperations.TrailingZeroCount(piece),
                         cb.AllPieces ^ cb.Pieces[color][Queen]);
                     cb.UpdateAttacks(moves, Bishop, color, kingArea);
-                    tempScore += EvalConstants.MobilityBishop[BitOperations.PopCount((ulong) (moves & safeMoves))];
+                    tempScore += EvalConstants.MobilityBishop[BitOperations.PopCount((ulong)(moves & safeMoves))];
                     piece &= piece - 1;
                 }
 
@@ -840,7 +840,7 @@ namespace Chess22kDotNet.Eval
                     moves = MagicUtil.GetRookMoves(BitOperations.TrailingZeroCount(piece),
                         cb.AllPieces ^ cb.Pieces[color][Rook] ^ cb.Pieces[color][Queen]);
                     cb.UpdateAttacks(moves, Rook, color, kingArea);
-                    tempScore += EvalConstants.MobilityRook[BitOperations.PopCount((ulong) (moves & safeMoves))];
+                    tempScore += EvalConstants.MobilityRook[BitOperations.PopCount((ulong)(moves & safeMoves))];
                     piece &= piece - 1;
                 }
 
@@ -850,7 +850,7 @@ namespace Chess22kDotNet.Eval
                 {
                     moves = MagicUtil.GetQueenMoves(BitOperations.TrailingZeroCount(piece), cb.AllPieces);
                     cb.UpdateAttacks(moves, Queen, color, kingArea);
-                    tempScore += EvalConstants.MobilityQueen[BitOperations.PopCount((ulong) (moves & safeMoves))];
+                    tempScore += EvalConstants.MobilityQueen[BitOperations.PopCount((ulong)(moves & safeMoves))];
                     piece &= piece - 1;
                 }
 
@@ -864,7 +864,7 @@ namespace Chess22kDotNet.Eval
             cb.DoubleAttacks[White] |= cb.Attacks[White][All] & moves;
             cb.Attacks[White][All] |= moves;
             score += EvalConstants.MobilityKing[
-                BitOperations.PopCount((ulong) (moves & ~cb.Pieces[White][All] & ~cb.Attacks[Black][All]))];
+                BitOperations.PopCount((ulong)(moves & ~cb.Pieces[White][All] & ~cb.Attacks[Black][All]))];
 
             // BLACK king
             moves = StaticMoves.KingMoves[cb.KingIndex[Black]] & ~StaticMoves.KingMoves[cb.KingIndex[White]];
@@ -872,7 +872,7 @@ namespace Chess22kDotNet.Eval
             cb.DoubleAttacks[Black] |= cb.Attacks[Black][All] & moves;
             cb.Attacks[Black][All] |= moves;
             score -= EvalConstants.MobilityKing[
-                BitOperations.PopCount((ulong) (moves & ~cb.Pieces[Black][All] & ~cb.Attacks[White][All]))];
+                BitOperations.PopCount((ulong)(moves & ~cb.Pieces[Black][All] & ~cb.Attacks[White][All]))];
 
             return score;
         }
@@ -881,35 +881,35 @@ namespace Chess22kDotNet.Eval
         {
             var score = 0;
             for (var color = White; color <= Black; color++)
-            for (var pieceType = Pawn; pieceType <= King; pieceType++)
-            {
-                var piece = cb.Pieces[color][pieceType];
-                while (piece != 0)
+                for (var pieceType = Pawn; pieceType <= King; pieceType++)
                 {
-                    score += EvalConstants.Psqt[pieceType][color][BitOperations.TrailingZeroCount(piece)];
-                    piece &= piece - 1;
+                    var piece = cb.Pieces[color][pieceType];
+                    while (piece != 0)
+                    {
+                        score += EvalConstants.Psqt[pieceType][color][BitOperations.TrailingZeroCount(piece)];
+                        piece &= piece - 1;
+                    }
                 }
-            }
 
             return score;
         }
 
         public static int CalculateMaterialScore(ChessBoard cb)
         {
-            return (BitOperations.PopCount((ulong) cb.Pieces[White][Pawn]) -
-                    BitOperations.PopCount((ulong) cb.Pieces[Black][Pawn])) *
+            return (BitOperations.PopCount((ulong)cb.Pieces[White][Pawn]) -
+                    BitOperations.PopCount((ulong)cb.Pieces[Black][Pawn])) *
                    EvalConstants.Material[Pawn]
-                   + (BitOperations.PopCount((ulong) cb.Pieces[White][Knight]) -
-                      BitOperations.PopCount((ulong) cb.Pieces[Black][Knight])) *
+                   + (BitOperations.PopCount((ulong)cb.Pieces[White][Knight]) -
+                      BitOperations.PopCount((ulong)cb.Pieces[Black][Knight])) *
                    EvalConstants.Material[Knight]
-                   + (BitOperations.PopCount((ulong) cb.Pieces[White][Bishop]) -
-                      BitOperations.PopCount((ulong) cb.Pieces[Black][Bishop])) *
+                   + (BitOperations.PopCount((ulong)cb.Pieces[White][Bishop]) -
+                      BitOperations.PopCount((ulong)cb.Pieces[Black][Bishop])) *
                    EvalConstants.Material[Bishop]
-                   + (BitOperations.PopCount((ulong) cb.Pieces[White][Rook]) -
-                      BitOperations.PopCount((ulong) cb.Pieces[Black][Rook])) *
+                   + (BitOperations.PopCount((ulong)cb.Pieces[White][Rook]) -
+                      BitOperations.PopCount((ulong)cb.Pieces[Black][Rook])) *
                    EvalConstants.Material[Rook]
-                   + (BitOperations.PopCount((ulong) cb.Pieces[White][Queen]) -
-                      BitOperations.PopCount((ulong) cb.Pieces[Black][Queen])) *
+                   + (BitOperations.PopCount((ulong)cb.Pieces[White][Queen]) -
+                      BitOperations.PopCount((ulong)cb.Pieces[Black][Queen])) *
                    EvalConstants.Material[Queen];
         }
     }

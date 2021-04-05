@@ -44,34 +44,34 @@ namespace Chess22kDotNet.Eval
         public const int IxQueenNight = 2;
 
         // other
-        public static readonly int[] OtherScores = {-10, 14, 18, -8, 16, 12, -158, 12, 492, 24, -44, 26};
+        public static readonly int[] OtherScores = { -10, 14, 18, -8, 16, 12, -158, 12, 492, 24, -44, 26 };
 
         // threats
-        public static readonly int[] ThreatsMg = {38, 66, 90, 16, 66, 38, 12, 16, -6};
-        public static readonly int[] ThreatsEg = {34, 20, -64, 16, 10, -48, 28, 4, 14};
+        public static readonly int[] ThreatsMg = { 38, 66, 90, 16, 66, 38, 12, 16, -6 };
+        public static readonly int[] ThreatsEg = { 34, 20, -64, 16, 10, -48, 28, 4, 14 };
         public static readonly int[] Threats = new int[ThreatsMg.Length];
 
         // pawn
-        public static readonly int[] PawnScores = {10, 10, 12, 6};
+        public static readonly int[] PawnScores = { 10, 10, 12, 6 };
 
         // imbalance
-        public static readonly int[] ImbalanceScores = {-10, 50, 12};
+        public static readonly int[] ImbalanceScores = { -10, 50, 12 };
 
-        public static readonly int[] Phase = {0, 0, 9, 10, 20, 40};
+        public static readonly int[] Phase = { 0, 0, 9, 10, 20, 40 };
 
-        public static readonly int[] Material = {0, 100, 398, 438, 710, 1380, 3000};
-        public static readonly int[] KnightPawn = {42, -16, 0, 4, 10, 12, 20, 30, 36};
-        public static readonly int[] RookPawn = {50, -2, -4, -2, -4, 0, 0, 0, 0};
-        public static readonly int[] BishopPawn = {20, 8, 6, 0, -6, -12, -18, -28, -34};
+        public static readonly int[] Material = { 0, 100, 398, 438, 710, 1380, 3000 };
+        public static readonly int[] KnightPawn = { 42, -16, 0, 4, 10, 12, 20, 30, 36 };
+        public static readonly int[] RookPawn = { 50, -2, -4, -2, -4, 0, 0, 0, 0 };
+        public static readonly int[] BishopPawn = { 20, 8, 6, 0, -6, -12, -18, -28, -34 };
 
-        public static readonly int[] Pinned = {0, 6, -14, -52, -68, -88};
-        public static readonly int[] Discovered = {0, -14, 124, 98, 176, 0, 32};
-        public static readonly int[] DoubleAttacked = {0, 16, 34, 72, 4, -14, 0};
-        public static readonly int[] Space = {0, 0, 124, 0, 0, -6, -6, -8, -7, -4, -4, -2, 0, -1, 0, 3, 7};
+        public static readonly int[] Pinned = { 0, 6, -14, -52, -68, -88 };
+        public static readonly int[] Discovered = { 0, -14, 124, 98, 176, 0, 32 };
+        public static readonly int[] DoubleAttacked = { 0, 16, 34, 72, 4, -14, 0 };
+        public static readonly int[] Space = { 0, 0, 124, 0, 0, -6, -6, -8, -7, -4, -4, -2, 0, -1, 0, 3, 7 };
 
-        public static readonly int[] PawnBlockage = {0, 0, -8, 2, 6, 32, 66, 192};
-        public static readonly int[] PawnConnected = {0, 0, 14, 16, 24, 62, 138};
-        public static readonly int[] PawnNeighbour = {0, 0, 4, 12, 28, 92, 326};
+        public static readonly int[] PawnBlockage = { 0, 0, -8, 2, 6, 32, 66, 192 };
+        public static readonly int[] PawnConnected = { 0, 0, 14, 16, 24, 62, 138 };
+        public static readonly int[] PawnNeighbour = { 0, 0, 4, 12, 28, 92, 326 };
 
         private static readonly int[][] ShieldBonusMg =
         {
@@ -91,9 +91,9 @@ namespace Chess22kDotNet.Eval
 
         public static readonly int[][] ShieldBonus = Util.CreateJaggedArray<int[][]>(4, 7);
 
-        public static readonly int[] PassedScoreEg = {0, 14, 16, 34, 62, 128, 232};
-        public static readonly int[] PassedCandidate = {0, 0, 0, 8, 14, 42};
-        public static readonly float[] PassedKingMulti = {0, 1.4f, 1.4f, 1.2f, 1.1f, 1.0f, 0.8f, 0.8f};
+        public static readonly int[] PassedScoreEg = { 0, 14, 16, 34, 62, 128, 232 };
+        public static readonly int[] PassedCandidate = { 0, 0, 0, 8, 14, 42 };
+        public static readonly float[] PassedKingMulti = { 0, 1.4f, 1.4f, 1.2f, 1.1f, 1.0f, 0.8f, 0.8f };
 
         public static readonly float[] PassedMultipliers =
         {
@@ -113,13 +113,13 @@ namespace Chess22kDotNet.Eval
             0, 0, 0, 40, 60, 70, 80, 90, 100, 120, 150, 200, 260, 300, 390, 450, 520, 640, 740, 760, 1260
         };
 
-        public static readonly int[] KsQueenTropism = {0, 0, 2, 2, 2, 2, 1, 1}; // index 0 and 1 are never evaluated	
-        public static readonly int[] KsCheckQueen = {0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 3, 3, 2, 1, 0, 0, 0};
-        public static readonly int[] KsFriends = {2, 2, 1, 1, 0, 0, 0, 0, 3};
-        public static readonly int[] KsWeak = {0, 1, 2, 2, 2, 2, 2, 1, -5};
-        public static readonly int[] KsAttacks = {0, 2, 2, 2, 2, 2, 3, 4, 4};
-        public static readonly int[] KsKnightDefenders = {1, 0, 0, 0, 0, 0, 0, 0, 0};
-        public static readonly int[] KsDoubleAttacks = {0, 1, 1, 3, 3, 9, 0, 0, 0};
+        public static readonly int[] KsQueenTropism = { 0, 0, 2, 2, 2, 2, 1, 1 }; // index 0 and 1 are never evaluated	
+        public static readonly int[] KsCheckQueen = { 0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 3, 3, 2, 1, 0, 0, 0 };
+        public static readonly int[] KsFriends = { 2, 2, 1, 1, 0, 0, 0, 0, 3 };
+        public static readonly int[] KsWeak = { 0, 1, 2, 2, 2, 2, 2, 1, -5 };
+        public static readonly int[] KsAttacks = { 0, 2, 2, 2, 2, 2, 3, 4, 4 };
+        public static readonly int[] KsKnightDefenders = { 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+        public static readonly int[] KsDoubleAttacks = { 0, 1, 1, 3, 3, 9, 0, 0, 0 };
 
         public static readonly int[] KsAttackPattern =
         {
@@ -139,15 +139,15 @@ namespace Chess22kDotNet.Eval
             1 // unsafe check
         };
 
-        private static readonly int[] MobilityKnightMg = {-36, -16, -6, 2, 12, 16, 24, 24, 42};
-        private static readonly int[] MobilityKnightEg = {-98, -30, -12, 0, 4, 16, 16, 18, 8};
-        private static readonly int[] MobilityBishopMg = {-32, -16, -4, 4, 8, 14, 16, 16, 14, 16, 30, 38, -14, 54};
-        private static readonly int[] MobilityBishopEg = {-54, -28, -10, 0, 8, 12, 16, 18, 22, 20, 14, 18, 38, 18};
+        private static readonly int[] MobilityKnightMg = { -36, -16, -6, 2, 12, 16, 24, 24, 42 };
+        private static readonly int[] MobilityKnightEg = { -98, -30, -12, 0, 4, 16, 16, 18, 8 };
+        private static readonly int[] MobilityBishopMg = { -32, -16, -4, 4, 8, 14, 16, 16, 14, 16, 30, 38, -14, 54 };
+        private static readonly int[] MobilityBishopEg = { -54, -28, -10, 0, 8, 12, 16, 18, 22, 20, 14, 18, 38, 18 };
 
         private static readonly int[] MobilityRookMg =
             {-54, -44, -40, -34, -32, -24, -20, -8, 0, 10, 14, 24, 32, 40, 26};
 
-        private static readonly int[] MobilityRookEg = {-62, -38, -22, -12, 2, 4, 12, 8, 14, 14, 18, 20, 20, 22, 30};
+        private static readonly int[] MobilityRookEg = { -62, -38, -22, -12, 2, 4, 12, 8, 14, 14, 18, 20, 20, 22, 30 };
 
         private static readonly int[] MobilityQueenMg =
         {
@@ -161,8 +161,8 @@ namespace Chess22kDotNet.Eval
             -24, 64, -90
         };
 
-        private static readonly int[] MobilityKingMg = {-4, -2, 0, 4, 10, 18, 24, 46, 62};
-        private static readonly int[] MobilityKingEg = {-22, 4, 12, 8, 2, -14, -16, -30, -64};
+        private static readonly int[] MobilityKingMg = { -4, -2, 0, 4, 10, 18, 24, 46, 62 };
+        private static readonly int[] MobilityKingEg = { -22, 4, 12, 8, 2, -14, -16, -30, -64 };
         public static readonly int[] MobilityKnight = new int[MobilityKnightMg.Length];
         public static readonly int[] MobilityBishop = new int[MobilityBishopMg.Length];
         public static readonly int[] MobilityRook = new int[MobilityRookMg.Length];
@@ -374,11 +374,11 @@ namespace Chess22kDotNet.Eval
 
             // create black arrays
             for (var piece = Pawn; piece <= King; piece++)
-            for (var i = 0; i < 64; i++)
-            {
-                PsqtMg[piece][Black][i] = -PsqtMg[piece][White][MirroredUpDown[i]];
-                PsqtEg[piece][Black][i] = -PsqtEg[piece][White][MirroredUpDown[i]];
-            }
+                for (var i = 0; i < 64; i++)
+                {
+                    PsqtMg[piece][Black][i] = -PsqtMg[piece][White][MirroredUpDown[i]];
+                    PsqtEg[piece][Black][i] = -PsqtEg[piece][White][MirroredUpDown[i]];
+                }
 
             Util.Reverse(RookPrison);
             Util.Reverse(BishopPrison);
@@ -399,8 +399,8 @@ namespace Chess22kDotNet.Eval
             for (var i = 0; i < 4; i++) InitMgEg(ShieldBonus[i], ShieldBonusMg[i], ShieldBonusEg[i]);
 
             for (var color = White; color <= Black; color++)
-            for (var piece = Pawn; piece <= King; piece++)
-                InitMgEg(Psqt[piece][color], PsqtMg[piece][color], PsqtEg[piece][color]);
+                for (var piece = Pawn; piece <= King; piece++)
+                    InitMgEg(Psqt[piece][color], PsqtMg[piece][color], PsqtEg[piece][color]);
         }
 
         private static void InitMgEg(int[] array, int[] arrayMg, int[] arrayEg)

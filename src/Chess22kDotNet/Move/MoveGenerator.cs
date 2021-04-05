@@ -12,7 +12,7 @@ namespace Chess22kDotNet.Move
         {
             if (cb.CheckingPieces == 0)
                 GenerateNotInCheckMoves(threadData, cb);
-            else if (BitOperations.PopCount((ulong) cb.CheckingPieces) == 1)
+            else if (BitOperations.PopCount((ulong)cb.CheckingPieces) == 1)
                 GenerateOutOfCheckMoves(threadData, cb);
             else
                 // double check, only the king can move
@@ -23,7 +23,7 @@ namespace Chess22kDotNet.Move
         {
             if (cb.CheckingPieces == 0)
                 GenerateNotInCheckAttacks(threadData, cb);
-            else if (BitOperations.PopCount((ulong) cb.CheckingPieces) == 1)
+            else if (BitOperations.PopCount((ulong)cb.CheckingPieces) == 1)
                 GenerateOutOfCheckAttacks(threadData, cb);
             else
                 // double check, only the king can attack

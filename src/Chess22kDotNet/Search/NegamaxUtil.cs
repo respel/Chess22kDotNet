@@ -15,9 +15,9 @@ namespace Chess22kDotNet.Search
         private const int PhaseQuiet = 5;
 
         // Margins shamelessly stolen from Laser
-        private static readonly int[] StaticNullmoveMargin = {0, 60, 130, 210, 300, 400, 510};
-        private static readonly int[] RazoringMargin = {0, 240, 280, 300};
-        private static readonly int[] FutilityMargin = {0, 80, 170, 270, 380, 500, 630};
+        private static readonly int[] StaticNullmoveMargin = { 0, 60, 130, 210, 300, 400, 510 };
+        private static readonly int[] RazoringMargin = { 0, 240, 280, 300 };
+        private static readonly int[] FutilityMargin = { 0, 80, 170, 270, 380, 500, 630 };
         private static readonly int[][] LmrTable = Util.CreateJaggedArray<int[][]>(64, 64);
 
         public static bool IsRunning = false;
@@ -26,8 +26,8 @@ namespace Chess22kDotNet.Search
         {
             // Ethereal LMR formula with depth and number of performed moves
             for (var depth = 1; depth < 64; depth++)
-            for (var moveNumber = 1; moveNumber < 64; moveNumber++)
-                LmrTable[depth][moveNumber] = (int) (0.6f + Math.Log(depth) * Math.Log(moveNumber * 1.2f) / 2.5f);
+                for (var moveNumber = 1; moveNumber < 64; moveNumber++)
+                    LmrTable[depth][moveNumber] = (int)(0.6f + Math.Log(depth) * Math.Log(moveNumber * 1.2f) / 2.5f);
         }
 
         public static int CalculateBestMove(ChessBoard cb, ThreadData threadData, int ply, int depth,

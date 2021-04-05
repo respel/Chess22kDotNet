@@ -15,8 +15,8 @@ namespace Chess22kDotNet
         static Util()
         {
             for (var i = 0; i < 64; i++)
-            for (var j = 0; j < 64; j++)
-                Distance[i][j] = (byte) Math.Max(Math.Abs((i >> 3) - (j >> 3)), Math.Abs((i & 7) - (j & 7)));
+                for (var j = 0; j < 64; j++)
+                    Distance[i][j] = (byte)Math.Max(Math.Abs((i >> 3) - (j >> 3)), Math.Abs((i & 7) - (j & 7)));
 
             for (var i = 0; i < 64; i++) PowerLookup[i] = 1L << i;
         }
@@ -34,17 +34,17 @@ namespace Chess22kDotNet
 
         public static long RightTripleShift(long a, int shiftAmount)
         {
-            return (long) ((ulong) a >> shiftAmount);
+            return (long)((ulong)a >> shiftAmount);
         }
 
         public static int RightTripleShift(int a, int shiftAmount)
         {
-            return (int) ((uint) a >> shiftAmount);
+            return (int)((uint)a >> shiftAmount);
         }
 
         public static T CreateJaggedArray<T>(params int[] lengths)
         {
-            return (T) InitializeJaggedArray(typeof(T).GetElementType(), 0, lengths);
+            return (T)InitializeJaggedArray(typeof(T).GetElementType(), 0, lengths);
         }
 
         private static object InitializeJaggedArray(Type type, int index, int[] lengths)

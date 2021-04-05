@@ -12,8 +12,8 @@ namespace Chess22kDotNet.Texel
 
             for (var i = 0; i < floatValues.Length; i++)
             {
-                Values[i] = (int) (floatValues[i] * 10);
-                OrgValues[i] = (int) (floatValues[i] * 10);
+                Values[i] = (int)(floatValues[i] * 10);
+                OrgValues[i] = (int)(floatValues[i] * 10);
             }
         }
 
@@ -36,7 +36,7 @@ namespace Chess22kDotNet.Texel
 
         public override void RestoreValues()
         {
-            for (var i = 0; i < Values.Length; i++) _floatValues[i] = (float) OrgValues[i] / 10;
+            for (var i = 0; i < Values.Length; i++) _floatValues[i] = (float)OrgValues[i] / 10;
         }
 
         public override void ClearValues()

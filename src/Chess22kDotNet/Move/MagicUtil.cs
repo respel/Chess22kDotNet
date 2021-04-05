@@ -77,14 +77,14 @@ namespace Chess22kDotNet.Move
         {
             var magic = RookMagics[fromIndex];
             return magic.MagicMoves[
-                (int) Util.RightTripleShift((allPieces & magic.MovementMask) * magic.MagicNumber, magic.Shift)];
+                (int)Util.RightTripleShift((allPieces & magic.MovementMask) * magic.MagicNumber, magic.Shift)];
         }
 
         public static long GetBishopMoves(int fromIndex, long allPieces)
         {
             var magic = BishopMagics[fromIndex];
             return magic.MagicMoves[
-                (int) Util.RightTripleShift((allPieces & magic.MovementMask) * magic.MagicNumber, magic.Shift)];
+                (int)Util.RightTripleShift((allPieces & magic.MovementMask) * magic.MagicNumber, magic.Shift)];
         }
 
         public static long GetQueenMoves(int fromIndex, long allPieces)
@@ -92,10 +92,10 @@ namespace Chess22kDotNet.Move
             var rookMagic = RookMagics[fromIndex];
             var bishopMagic = BishopMagics[fromIndex];
             return rookMagic.MagicMoves[
-                       (int) Util.RightTripleShift((allPieces & rookMagic.MovementMask) * rookMagic.MagicNumber,
+                       (int)Util.RightTripleShift((allPieces & rookMagic.MovementMask) * rookMagic.MagicNumber,
                            rookMagic.Shift)]
                    | bishopMagic.MagicMoves[
-                       (int) Util.RightTripleShift((allPieces & bishopMagic.MovementMask) * bishopMagic.MagicNumber,
+                       (int)Util.RightTripleShift((allPieces & bishopMagic.MovementMask) * bishopMagic.MagicNumber,
                            bishopMagic.Shift)];
         }
 
@@ -118,8 +118,8 @@ namespace Chess22kDotNet.Move
         {
             for (var i = 0x0; i < 0x40; i++)
             {
-                RookMagics[i].Shift = 0x40 - BitOperations.PopCount((ulong) RookMagics[i].MovementMask);
-                BishopMagics[i].Shift = 0x40 - BitOperations.PopCount((ulong) BishopMagics[i].MovementMask);
+                RookMagics[i].Shift = 0x40 - BitOperations.PopCount((ulong)RookMagics[i].MovementMask);
+                BishopMagics[i].Shift = 0x40 - BitOperations.PopCount((ulong)BishopMagics[i].MovementMask);
             }
         }
 
@@ -128,14 +128,14 @@ namespace Chess22kDotNet.Move
             var occupancyVariations = new long[0x40][];
             for (var index = 0x0; index < 0x40; index++)
             {
-                var variationCount = (int) Util.PowerLookup[BitOperations.PopCount((ulong) magics[index].MovementMask)];
+                var variationCount = (int)Util.PowerLookup[BitOperations.PopCount((ulong)magics[index].MovementMask)];
                 occupancyVariations[index] = new long[variationCount];
 
                 for (var variationIndex = 0x1; variationIndex < variationCount; variationIndex++)
                 {
                     var currentMask = magics[index].MovementMask;
 
-                    for (var i = 0x0; i < 0x20 - BitOperations.LeadingZeroCount((uint) variationIndex); i++)
+                    for (var i = 0x0; i < 0x20 - BitOperations.LeadingZeroCount((uint)variationIndex); i++)
                     {
                         if ((Util.PowerLookup[i] & variationIndex) != 0x0)
                             occupancyVariations[index][variationIndex] |= currentMask & -currentMask;
@@ -200,7 +200,7 @@ namespace Chess22kDotNet.Move
                 for (var variationIndex = 0x0; variationIndex < rookOccupancyVariations[index].Length; variationIndex++)
                 {
                     long validMoves = 0x0;
-                    var magicIndex = (int) Util.RightTripleShift(
+                    var magicIndex = (int)Util.RightTripleShift(
                         rookOccupancyVariations[index][variationIndex] * RookMagicNumbers[index],
                         RookMagics[index].Shift);
 
@@ -243,7 +243,7 @@ namespace Chess22kDotNet.Move
                     variationIndex++)
                 {
                     long validMoves = 0x0;
-                    var magicIndex = (int) Util.RightTripleShift(
+                    var magicIndex = (int)Util.RightTripleShift(
                         bishopOccupancyVariations[index][variationIndex] * BishopMagicNumbers[index],
                         BishopMagics[index].Shift);
 

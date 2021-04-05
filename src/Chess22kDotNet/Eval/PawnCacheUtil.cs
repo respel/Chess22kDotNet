@@ -17,7 +17,7 @@ namespace Chess22kDotNet.Eval
 
                 if (!EngineConstants.TestEvalCaches) cb.PassedPawnsAndOutposts = pawnCache[index + 1];
 
-                return (int) pawnCache[index + 2];
+                return (int)pawnCache[index + 2];
             }
 
             if (Statistics.Enabled) Statistics.PawnEvalCacheMisses++;
@@ -43,7 +43,7 @@ namespace Chess22kDotNet.Eval
 
         private static int GetIndex(long key)
         {
-            return (int) Util.RightTripleShift(key, Power2TableShifts) * 3;
+            return (int)Util.RightTripleShift(key, Power2TableShifts) * 3;
         }
     }
 }

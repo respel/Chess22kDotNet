@@ -22,18 +22,18 @@ namespace Chess22kDotNet.Eval
 
                 var kingArea = KingArea[kingIndex];
                 counter += EvalConstants.KsFriends[
-                    BitOperations.PopCount((ulong) (kingArea & cb.Pieces[kingColor][All]))];
+                    BitOperations.PopCount((ulong)(kingArea & cb.Pieces[kingColor][All]))];
                 counter += EvalConstants.KsAttacks[
-                    BitOperations.PopCount((ulong) (kingArea & cb.Attacks[enemyColor][All]))];
+                    BitOperations.PopCount((ulong)(kingArea & cb.Attacks[enemyColor][All]))];
                 counter += EvalConstants.KsKnightDefenders[
-                    BitOperations.PopCount((ulong) (kingArea & cb.Attacks[kingColor][Knight]))];
-                counter += EvalConstants.KsWeak[BitOperations.PopCount((ulong) (kingArea & cb.Attacks[enemyColor][All]
+                    BitOperations.PopCount((ulong)(kingArea & cb.Attacks[kingColor][Knight]))];
+                counter += EvalConstants.KsWeak[BitOperations.PopCount((ulong)(kingArea & cb.Attacks[enemyColor][All]
                     & ~(cb.Attacks[kingColor][Pawn] |
                         cb.Attacks[kingColor][Knight] |
                         cb.Attacks[kingColor][Bishop] |
                         cb.Attacks[kingColor][Rook])))];
                 counter += EvalConstants.KsDoubleAttacks[
-                    BitOperations.PopCount((ulong) (kingArea & cb.DoubleAttacks[enemyColor] &
+                    BitOperations.PopCount((ulong)(kingArea & cb.DoubleAttacks[enemyColor] &
                                                     ~cb.Attacks[kingColor][Pawn]))];
 
                 counter += Checks(cb, kingColor);
@@ -43,7 +43,7 @@ namespace Chess22kDotNet.Eval
 
                 // bonus if there are discovered checks possible
                 if (cb.DiscoveredPieces != 0)
-                    counter += BitOperations.PopCount((ulong) (cb.DiscoveredPieces & cb.Pieces[enemyColor][All])) * 2;
+                    counter += BitOperations.PopCount((ulong)(cb.DiscoveredPieces & cb.Pieces[enemyColor][All])) * 2;
 
                 if (cb.Pieces[enemyColor][Queen] != 0)
                     // bonus for small king-queen distance
@@ -94,7 +94,7 @@ namespace Chess22kDotNet.Eval
             if (queenMoves == 0) return counter;
             // safe check queen
             if ((queenMoves & notDefended) != 0)
-                counter += EvalConstants.KsCheckQueen[BitOperations.PopCount((ulong) cb.Pieces[kingColor][All])];
+                counter += EvalConstants.KsCheckQueen[BitOperations.PopCount((ulong)cb.Pieces[kingColor][All])];
 
             // safe check queen touch
             if ((queenMoves & unsafeKingMoves) != 0) counter += EvalConstants.KsOther[0];

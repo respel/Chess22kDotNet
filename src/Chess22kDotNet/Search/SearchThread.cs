@@ -6,8 +6,8 @@ namespace Chess22kDotNet.Search
     public class SearchThread
     {
         // Laser based SMP skip
-        private static readonly int[] SmpSkipDepths = {1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4};
-        private static readonly int[] SmpSkipAmount = {1, 2, 1, 2, 3, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6};
+        private static readonly int[] SmpSkipDepths = { 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4 };
+        private static readonly int[] SmpSkipAmount = { 1, 2, 1, 2, 3, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6 };
         private static readonly int SmpMaxCycles = SmpSkipAmount.Length;
         private readonly ChessBoard _cb;
         private readonly ThreadData _threadData;

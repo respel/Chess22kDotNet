@@ -39,11 +39,11 @@ namespace Chess22kDotNet.Move
             Move = move;
 
             FromIndex = MoveUtil.GetFromIndex(move);
-            FromFile = (char) (104 - FromIndex % 8);
+            FromFile = (char)(104 - FromIndex % 8);
             FromRank = FromIndex / 8 + 1;
 
             ToIndex = MoveUtil.GetToIndex(move);
-            ToFile = (char) (104 - ToIndex % 8);
+            ToFile = (char)(104 - ToIndex % 8);
             ToRank = ToIndex / 8 + 1;
 
             PieceIndex = MoveUtil.GetSourcePieceIndex(move);
@@ -125,37 +125,37 @@ namespace Chess22kDotNet.Move
                 switch (PieceIndex)
                 {
                     case ChessConstants.Pawn when ToRank == 1 || ToRank == 8:
-                    {
-                        if (moveString.Length == 5)
                         {
-                            switch (moveString.Substring(4, 1))
+                            if (moveString.Length == 5)
                             {
-                                case "n":
-                                    IsKnightPromotion = true;
-                                    Move = MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionN, FromIndex, ToIndex);
-                                    break;
-                                case "r":
-                                    IsRookPromotion = true;
-                                    Move = MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionR, FromIndex, ToIndex);
-                                    break;
-                                case "b":
-                                    IsBishopPromotion = true;
-                                    Move = MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionB, FromIndex, ToIndex);
-                                    break;
-                                case "q":
-                                    IsQueenPromotion = true;
-                                    Move = MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionQ, FromIndex, ToIndex);
-                                    break;
+                                switch (moveString.Substring(4, 1))
+                                {
+                                    case "n":
+                                        IsKnightPromotion = true;
+                                        Move = MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionN, FromIndex, ToIndex);
+                                        break;
+                                    case "r":
+                                        IsRookPromotion = true;
+                                        Move = MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionR, FromIndex, ToIndex);
+                                        break;
+                                    case "b":
+                                        IsBishopPromotion = true;
+                                        Move = MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionB, FromIndex, ToIndex);
+                                        break;
+                                    case "q":
+                                        IsQueenPromotion = true;
+                                        Move = MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionQ, FromIndex, ToIndex);
+                                        break;
+                                }
                             }
-                        }
-                        else
-                        {
-                            IsQueenPromotion = true;
-                            Move = MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionQ, FromIndex, ToIndex);
-                        }
+                            else
+                            {
+                                IsQueenPromotion = true;
+                                Move = MoveUtil.CreatePromotionMove(MoveUtil.TypePromotionQ, FromIndex, ToIndex);
+                            }
 
-                        break;
-                    }
+                            break;
+                        }
                     case ChessConstants.King when FromIndex - ToIndex == 2 || FromIndex - ToIndex == -2:
                         // castling
                         Move = MoveUtil.CreateCastlingMove(FromIndex, ToIndex);
@@ -229,7 +229,7 @@ namespace Chess22kDotNet.Move
 
         public override bool Equals(object obj)
         {
-            var compare = (MoveWrapper) obj;
+            var compare = (MoveWrapper)obj;
             return compare != null && compare.ToString().Equals(ToString());
         }
 
