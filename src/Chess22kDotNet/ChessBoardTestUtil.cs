@@ -88,8 +88,8 @@ namespace Chess22kDotNet
             var testCb = ChessBoardInstances.Get(1);
 
             for (var color = White; color <= Black; color++)
-            for (var piece = Pawn; piece <= King; piece++)
-                testCb.Pieces[color][piece] = Util.MirrorHorizontal(cb.Pieces[color][piece]);
+                for (var piece = Pawn; piece <= King; piece++)
+                    testCb.Pieces[color][piece] = Util.MirrorHorizontal(cb.Pieces[color][piece]);
 
             testCb.ColorToMove = cb.ColorToMove;
             ChessBoardUtil.Init(testCb);

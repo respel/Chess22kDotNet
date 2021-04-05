@@ -164,12 +164,12 @@ namespace Chess22kDotNet
         // special
         public const long WhiteCorners = -0x70F1F3E7CF8F0E1L;
         public const long BlackCorners = 0x1f0f0783c1e0f0f8L;
-        public static long[] RankPromotion = {Rank7, Rank2};
-        public static long[] RankNonPromotion = {~RankPromotion[0], ~RankPromotion[1]};
-        public static long[] RankFirst = {Rank1, Rank8};
+        public static long[] RankPromotion = { Rank7, Rank2 };
+        public static long[] RankNonPromotion = { ~RankPromotion[0], ~RankPromotion[1] };
+        public static long[] RankFirst = { Rank1, Rank8 };
 
-        public static readonly long[] Ranks = {Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8};
-        public static readonly long[] Files = {FileH, FileG, FileF, FileE, FileD, FileC, FileB, FileA};
+        public static readonly long[] Ranks = { Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8 };
+        public static readonly long[] Files = { FileH, FileG, FileF, FileE, FileD, FileC, FileB, FileA };
 
         public static readonly long[] FilesAdjacent =
         {

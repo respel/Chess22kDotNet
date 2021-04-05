@@ -49,19 +49,19 @@ namespace Chess22kDotNet.Eval
             new[] {0, 1 << 16, 1 << 20, 1 << 23, 1 << 26, 1 << 29}
         };
 
-        private static readonly int[] Shift = {0, 16};
-        private static readonly int[] MaskMinorMajor = {MaskMinorMajorWhite, MaskMinorMajorBlack};
-        private static readonly int[] MaskNonNights = {0xff8f, -7405568};
-        private static readonly int[] MaskPawnsQueens = {0xe00f, -535887872};
-        private static readonly int[] MaskSlidingPieces = {0xff80, -8388608};
+        private static readonly int[] Shift = { 0, 16 };
+        private static readonly int[] MaskMinorMajor = { MaskMinorMajorWhite, MaskMinorMajorBlack };
+        private static readonly int[] MaskNonNights = { 0xff8f, -7405568 };
+        private static readonly int[] MaskPawnsQueens = { 0xe00f, -535887872 };
+        private static readonly int[] MaskSlidingPieces = { 0xff80, -8388608 };
 
         public static void SetKey(ChessBoard cb)
         {
             cb.MaterialKey = 0;
             for (var color = White; color <= Black; color++)
-            for (var pieceType = Pawn; pieceType <= Queen; pieceType++)
-                cb.MaterialKey += BitOperations.PopCount((ulong) cb.Pieces[color][pieceType]) *
-                                  Values[color][pieceType];
+                for (var pieceType = Pawn; pieceType <= Queen; pieceType++)
+                    cb.MaterialKey += BitOperations.PopCount((ulong)cb.Pieces[color][pieceType]) *
+                                      Values[color][pieceType];
         }
 
         public static bool ContainsMajorPieces(int material)
@@ -86,26 +86,26 @@ namespace Chess22kDotNet.Eval
 
         public static bool OppositeBishops(int material)
         {
-            return BitOperations.PopCount((ulong) (material & MaskMinorMajorAll)) == 2 &&
-                   BitOperations.PopCount((ulong) (material & MaskSingleBishops)) == 2;
+            return BitOperations.PopCount((ulong)(material & MaskMinorMajorAll)) == 2 &&
+                   BitOperations.PopCount((ulong)(material & MaskSingleBishops)) == 2;
         }
 
         public static bool OnlyWhitePawnsOrOneNightOrBishop(int material)
         {
-            return BitOperations.PopCount((ulong) (material & MaskMinorMajorWhite)) switch
+            return BitOperations.PopCount((ulong)(material & MaskMinorMajorWhite)) switch
             {
                 0 => true,
-                1 => BitOperations.PopCount((ulong) (material & MaskSingleBishopNightWhite)) == 1,
+                1 => BitOperations.PopCount((ulong)(material & MaskSingleBishopNightWhite)) == 1,
                 _ => false
             };
         }
 
         public static bool OnlyBlackPawnsOrOneNightOrBishop(int material)
         {
-            return BitOperations.PopCount((ulong) (material & MaskMinorMajorBlack)) switch
+            return BitOperations.PopCount((ulong)(material & MaskMinorMajorBlack)) switch
             {
                 0 => true,
-                1 => BitOperations.PopCount((ulong) (material & MaskSingleBishopNightBlack)) == 1,
+                1 => BitOperations.PopCount((ulong)(material & MaskSingleBishopNightBlack)) == 1,
                 _ => false
             };
         }

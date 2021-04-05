@@ -8,6 +8,6 @@ namespace Chess22kDotNet.Eval
         private const int FlagRook = 1 << (ChessConstants.Rook - 1);
         private const int FlagQueen = 1 << (ChessConstants.Queen - 1);
 
-        public static readonly int[] Flags = {0, FlagPawn, FlagNight, FlagBishop, FlagRook, FlagQueen};
+        public static readonly int[] Flags = { 0, FlagPawn, FlagNight, FlagBishop, FlagRook, FlagQueen };
     }
 }

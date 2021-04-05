@@ -18,7 +18,7 @@ namespace Chess22kDotNet.Eval
             var passedPawns = cb.PassedPawnsAndOutposts & cb.Pieces[White][Pawn];
             while (passedPawns != 0)
             {
-                var index = 63 - BitOperations.LeadingZeroCount((ulong) passedPawns);
+                var index = 63 - BitOperations.LeadingZeroCount((ulong)passedPawns);
 
                 score += GetPassedPawnScore(cb, index, White);
 
@@ -101,7 +101,7 @@ namespace Chess22kDotNet.Eval
             multiplier *= EvalConstants.PassedKingMulti[8 - Util.GetDistance(cb.KingIndex[enemyColor], index)];
 
             var scoreIndex = 7 * color + ColorFactor[color] * index / 8;
-            return (int) (EvalConstants.PassedScoreEg[scoreIndex] * multiplier);
+            return (int)(EvalConstants.PassedScoreEg[scoreIndex] * multiplier);
         }
 
         private static int GetBlackPromotionDistance(ChessBoard cb, int index)
@@ -166,7 +166,7 @@ namespace Chess22kDotNet.Eval
                 if (cb.ColorToMove == Black) promotionDistance++;
 
                 // check if own pieces are blocking the path
-                if (63 - BitOperations.LeadingZeroCount((ulong) (cb.Pieces[White][All] & Bitboard.Files[index & 7])) >
+                if (63 - BitOperations.LeadingZeroCount((ulong)(cb.Pieces[White][All] & Bitboard.Files[index & 7])) >
                     index)
                     promotionDistance++;
 

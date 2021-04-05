@@ -11,7 +11,7 @@ namespace Chess22kDotNet.MainTests
     public class PerftMultiThreaded
     {
         private const int Depth = 5;
-        private static readonly int[] Runs = {1, 1, 2, 4, 8, 16, 32};
+        private static readonly int[] Runs = { 1, 1, 2, 4, 8, 16, 32 };
 
         public static void Main()
         {

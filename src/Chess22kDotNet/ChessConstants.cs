@@ -29,11 +29,11 @@ namespace Chess22kDotNet
 
         public const int ScoreNotRunning = 7777;
 
-        public static readonly string[] FenWhitePieces = {"1", "P", "N", "B", "R", "Q", "K"};
-        public static readonly string[] FenBlackPieces = {"1", "p", "n", "b", "r", "q", "k"};
+        public static readonly string[] FenWhitePieces = { "1", "P", "N", "B", "R", "Q", "K" };
+        public static readonly string[] FenBlackPieces = { "1", "p", "n", "b", "r", "q", "k" };
 
-        public static readonly int[] ColorFactor = {1, -1};
-        public static readonly int[] ColorFactor8 = {8, -8};
+        public static readonly int[] ColorFactor = { 1, -1 };
+        public static readonly int[] ColorFactor8 = { 8, -8 };
 
         public static readonly long[] KingArea = new long[64];
 
@@ -48,108 +48,108 @@ namespace Chess22kDotNet
         {
             // fill from->to where to > from
             for (var from = 0; from < 64; from++)
-            for (var to = from + 1; to < 64; to++)
-            {
-                // horizontal
-                int i;
-                if (from / 8 == to / 8)
+                for (var to = from + 1; to < 64; to++)
                 {
-                    i = to - 1;
-                    while (i > from)
+                    // horizontal
+                    int i;
+                    if (from / 8 == to / 8)
                     {
-                        InBetween[from][to] |= Util.PowerLookup[i];
-                        i--;
+                        i = to - 1;
+                        while (i > from)
+                        {
+                            InBetween[from][to] |= Util.PowerLookup[i];
+                            i--;
+                        }
                     }
-                }
 
-                // vertical
-                if (from % 8 == to % 8)
-                {
-                    i = to - 8;
-                    while (i > from)
+                    // vertical
+                    if (from % 8 == to % 8)
                     {
-                        InBetween[from][to] |= Util.PowerLookup[i];
-                        i -= 8;
+                        i = to - 8;
+                        while (i > from)
+                        {
+                            InBetween[from][to] |= Util.PowerLookup[i];
+                            i -= 8;
+                        }
                     }
-                }
 
-                // diagonal \
-                if ((to - from) % 9 == 0 && to % 8 > from % 8)
-                {
-                    i = to - 9;
-                    while (i > from)
+                    // diagonal \
+                    if ((to - from) % 9 == 0 && to % 8 > from % 8)
                     {
-                        InBetween[from][to] |= Util.PowerLookup[i];
-                        i -= 9;
+                        i = to - 9;
+                        while (i > from)
+                        {
+                            InBetween[from][to] |= Util.PowerLookup[i];
+                            i -= 9;
+                        }
                     }
-                }
 
-                // diagonal /
-                if ((to - from) % 7 == 0 && to % 8 < from % 8)
-                {
-                    i = to - 7;
-                    while (i > from)
+                    // diagonal /
+                    if ((to - from) % 7 == 0 && to % 8 < from % 8)
                     {
-                        InBetween[from][to] |= Util.PowerLookup[i];
-                        i -= 7;
+                        i = to - 7;
+                        while (i > from)
+                        {
+                            InBetween[from][to] |= Util.PowerLookup[i];
+                            i -= 7;
+                        }
                     }
                 }
-            }
 
             // fill from->to where to < from
             for (var from = 0; from < 64; from++)
-            for (var to = 0; to < from; to++)
-                InBetween[from][to] = InBetween[to][from];
+                for (var to = 0; to < from; to++)
+                    InBetween[from][to] = InBetween[to][from];
 
-            int[] directions = {-1, -7, -8, -9, 1, 7, 8, 9};
+            int[] directions = { -1, -7, -8, -9, 1, 7, 8, 9 };
             // PINNED MOVEMENT, x-ray from the king to the pinned-piece and beyond
             for (var pinnedPieceIndex = 0; pinnedPieceIndex < 64; pinnedPieceIndex++)
-            for (var kingIndex = 0; kingIndex < 64; kingIndex++)
-            {
-                var correctDirection = 0;
-                foreach (var direction in directions)
+                for (var kingIndex = 0; kingIndex < 64; kingIndex++)
                 {
-                    if (correctDirection != 0) break;
-
-                    var xray = kingIndex + direction;
-                    while (xray >= 0 && xray < 64)
+                    var correctDirection = 0;
+                    foreach (var direction in directions)
                     {
-                        if (direction == -1 || direction == -9 || direction == 7)
-                            if ((xray & 7) == 7)
-                                break;
+                        if (correctDirection != 0) break;
 
-                        if (direction == 1 || direction == 9 || direction == -7)
-                            if ((xray & 7) == 0)
-                                break;
-
-                        if (xray == pinnedPieceIndex)
+                        var xray = kingIndex + direction;
+                        while (xray >= 0 && xray < 64)
                         {
-                            correctDirection = direction;
-                            break;
+                            if (direction == -1 || direction == -9 || direction == 7)
+                                if ((xray & 7) == 7)
+                                    break;
+
+                            if (direction == 1 || direction == 9 || direction == -7)
+                                if ((xray & 7) == 0)
+                                    break;
+
+                            if (xray == pinnedPieceIndex)
+                            {
+                                correctDirection = direction;
+                                break;
+                            }
+
+                            xray += direction;
                         }
-
-                        xray += direction;
                     }
-                }
 
-                if (correctDirection == 0) continue;
-                {
-                    var xray = kingIndex + correctDirection;
-                    while (xray >= 0 && xray < 64)
+                    if (correctDirection == 0) continue;
                     {
-                        if (correctDirection == -1 || correctDirection == -9 || correctDirection == 7)
-                            if ((xray & 7) == 7)
-                                break;
+                        var xray = kingIndex + correctDirection;
+                        while (xray >= 0 && xray < 64)
+                        {
+                            if (correctDirection == -1 || correctDirection == -9 || correctDirection == 7)
+                                if ((xray & 7) == 7)
+                                    break;
 
-                        if (correctDirection == 1 || correctDirection == 9 || correctDirection == -7)
-                            if ((xray & 7) == 0)
-                                break;
+                            if (correctDirection == 1 || correctDirection == 9 || correctDirection == -7)
+                                if ((xray & 7) == 0)
+                                    break;
 
-                        PinnedMovement[pinnedPieceIndex][kingIndex] |= Util.PowerLookup[xray];
-                        xray += correctDirection;
+                            PinnedMovement[pinnedPieceIndex][kingIndex] |= Util.PowerLookup[xray];
+                            xray += correctDirection;
+                        }
                     }
                 }
-            }
 
             // fill king-safety masks:
             //

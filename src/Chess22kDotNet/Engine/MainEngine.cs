@@ -41,7 +41,7 @@ namespace Chess22kDotNet.Engine
 
         private static async Task MaxTimeTask(CancellationToken cancellationToken)
         {
-            await Task.Delay((int) TimeUtil.GetMaxTimeMs(), cancellationToken);
+            await Task.Delay((int)TimeUtil.GetMaxTimeMs(), cancellationToken);
             if (cancellationToken.IsCancellationRequested) return;
             if (Pondering)
             {

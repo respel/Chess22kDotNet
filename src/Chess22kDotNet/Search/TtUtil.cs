@@ -23,7 +23,7 @@ namespace Chess22kDotNet.Search
         {
             if (!force && _isInitialized) return;
             _keyShifts = 64 - EngineConstants.Power2TtEntries;
-            var maxEntries = (int) (Util.PowerLookup[EngineConstants.Power2TtEntries] + BucketSize - 1);
+            var maxEntries = (int)(Util.PowerLookup[EngineConstants.Power2TtEntries] + BucketSize - 1);
 
             _entries = new TtEntry[maxEntries];
 
@@ -54,7 +54,7 @@ namespace Chess22kDotNet.Search
 
         private static int GetIndex(long key)
         {
-            return (int) Util.RightTripleShift(key, _keyShifts) << 1;
+            return (int)Util.RightTripleShift(key, _keyShifts) << 1;
         }
 
         public static void AddValue(long key, int score, int ply, int depth, int flag, int move)
@@ -98,8 +98,8 @@ namespace Chess22kDotNet.Search
             {
                 Key = key,
                 Move = move,
-                Flag = (byte) flag,
-                Depth = (short) depth
+                Flag = (byte)flag,
+                Depth = (short)depth
             };
             _entries[replaceIndex].SetScore(score, ply);
         }
@@ -131,7 +131,7 @@ namespace Chess22kDotNet.Search
                 case 8192:
                 case 16384:
                 case 32768:
-                    var power2Entries = (int) (Math.Log(value) / Math.Log(2) + 16);
+                    var power2Entries = (int)(Math.Log(value) / Math.Log(2) + 16);
                     if (EngineConstants.Power2TtEntries != power2Entries)
                     {
                         EngineConstants.Power2TtEntries = power2Entries;

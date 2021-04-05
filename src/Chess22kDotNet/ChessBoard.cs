@@ -266,7 +266,7 @@ namespace Chess22kDotNet2
                     {
                         CheckingPieces |= enemyPiece & -enemyPiece;
                     }
-                    else if (BitOperations.PopCount((ulong) checkedPiece) == 1)
+                    else if (BitOperations.PopCount((ulong)checkedPiece) == 1)
                     {
                         PinnedPieces |= checkedPiece & Pieces[kingColor][All];
                         DiscoveredPieces |= checkedPiece & Pieces[enemyColor][All];
@@ -478,7 +478,7 @@ namespace Chess22kDotNet2
             if (CheckingPieces == 0) return true;
             if (attackedPieceIndex == 0) return IsLegalNonKingMove(move);
 
-            if (BitOperations.PopCount((ulong) CheckingPieces) == 2) return false;
+            if (BitOperations.PopCount((ulong)CheckingPieces) == 2) return false;
 
             return (toSquare & CheckingPieces) != 0;
         }

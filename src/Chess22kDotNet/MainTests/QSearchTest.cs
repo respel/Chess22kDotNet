@@ -5,7 +5,7 @@ using Chess22kDotNet.Search;
 using Chess22kDotNet.Texel;
 
 namespace Chess22kDotNet.MainTests
-{ 
+{
     /**
     * * compares regular search scores vs Quiescence scores
     *
@@ -57,7 +57,7 @@ namespace Chess22kDotNet.MainTests
                 }
             }
 
-            var averageError = (int) (totalError / (totalPositions - sameScore));
+            var averageError = (int)(totalError / (totalPositions - sameScore));
             Console.WriteLine($"{sameScore / totalPositions:f4} {averageError}");
             Console.WriteLine("msec: " + watch.ElapsedMilliseconds);
         }

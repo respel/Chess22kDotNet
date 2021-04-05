@@ -15,9 +15,9 @@ namespace Chess22kDotNet
         {
             var r = new Random();
             for (var colorIndex = 0; colorIndex <= Black; colorIndex++)
-            for (var pieceIndex = 0; pieceIndex <= King; pieceIndex++)
-            for (var square = 0; square < 64; square++)
-                Piece[colorIndex][pieceIndex][square] = LongRandom(r);
+                for (var pieceIndex = 0; pieceIndex <= King; pieceIndex++)
+                    for (var square = 0; square < 64; square++)
+                        Piece[colorIndex][pieceIndex][square] = LongRandom(r);
 
             for (var i = 0; i < Castling.Length; i++) Castling[i] = LongRandom(r);
 
@@ -39,15 +39,15 @@ namespace Chess22kDotNet
             cb.ZobristKey = 0;
 
             for (var color = 0; color < 2; color++)
-            for (var pieceType = Pawn; pieceType <= King; pieceType++)
-            {
-                var pieces = cb.Pieces[color][pieceType];
-                while (pieces != 0)
+                for (var pieceType = Pawn; pieceType <= King; pieceType++)
                 {
-                    cb.ZobristKey ^= Piece[color][pieceType][BitOperations.TrailingZeroCount(pieces)];
-                    pieces &= pieces - 1;
+                    var pieces = cb.Pieces[color][pieceType];
+                    while (pieces != 0)
+                    {
+                        cb.ZobristKey ^= Piece[color][pieceType][BitOperations.TrailingZeroCount(pieces)];
+                        pieces &= pieces - 1;
+                    }
                 }
-            }
 
             cb.ZobristKey ^= Castling[cb.CastlingRights];
             if (cb.ColorToMove == White) cb.ZobristKey ^= SideToMove;

@@ -57,9 +57,9 @@ namespace Chess22kDotNet.Texel
         public override bool IsUpdated()
         {
             for (var i = 0; i < _orgValues.Length; i++)
-            for (var j = 0; j < _orgValues[0].Length; j++)
-                if (_orgValues[i][j] != _values[i][j])
-                    return true;
+                for (var j = 0; j < _orgValues[0].Length; j++)
+                    if (_orgValues[i][j] != _values[i][j])
+                        return true;
 
             return false;
         }
@@ -74,8 +74,8 @@ namespace Chess22kDotNet.Texel
         public override void RestoreValues()
         {
             for (var i = 0; i < _values.Length; i++)
-            for (var j = 0; j < _orgValues[0].Length; j++)
-                _values[i][j] = _orgValues[i][j];
+                for (var j = 0; j < _orgValues[0].Length; j++)
+                    _values[i][j] = _orgValues[i][j];
         }
     }
 }
