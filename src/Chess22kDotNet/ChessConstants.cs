@@ -39,9 +39,9 @@ namespace Chess22kDotNet
 
         public static readonly long[][] InBetween = Util.CreateJaggedArray<long[][]>(64, 64);
 
-        /**
-         * pinned-piece index, king index
-         */
+        /// <summary>
+        /// pinned-piece index, king index
+        /// </summary>
         public static readonly long[][] PinnedMovement = Util.CreateJaggedArray<long[][]>(64, 64);
 
         static ChessConstants()
