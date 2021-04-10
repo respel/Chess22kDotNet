@@ -9,6 +9,8 @@ namespace Chess22kDotNet
 {
     public class ChessBoard
     {
+
+        
         private readonly int[] _castlingAndEpHistory = new int[EngineConstants.MaxMoves];
         public readonly long[][] Attacks = Util.CreateJaggedArray<long[][]>(2, 7);
 
