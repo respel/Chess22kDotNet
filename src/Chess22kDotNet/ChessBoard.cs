@@ -5,7 +5,7 @@ using Chess22kDotNet.Eval;
 using Chess22kDotNet.Move;
 using static Chess22kDotNet.ChessConstants;
 
-namespace Chess22kDotNet
+namespace Chess22kDotNet2
 {
     public class ChessBoard
     {
