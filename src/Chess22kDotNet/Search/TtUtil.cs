@@ -23,7 +23,7 @@ namespace Chess22kDotNet.Search
         {
             if (!force && _isInitialized) return;
             _keyShifts = 64 - EngineConstants.Power2TtEntries;
-            var maxEntries = (int) (Util.PowerLookup[EngineConstants.Power2TtEntries] + BucketSize - 1);
+            var maxEntries = (int) (Util.PowerLookup[EngineConstants.Power2TtEntries] + BucketSize - 1) * 2;
 
             _entries = new TtEntry[maxEntries];
 
